@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block additionalHeadMaterial %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='manageUsers.css') }}">
+	<script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+	<script type=text/javascript src="{{ url_for('scripts', filename='manageUsers.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+<div id="pageContainer">
+	<div id="addUser">
+		<h2>Add New User</h2>
+		<div id="addUserControls">
+			<label for="newUsername">New User Name:</label>
+			<input type="text" id="newUsername">
+			<label for="newPassword">Password:</label>
+			<input type="password" id="newPassword">
+			<label for="isAdmin">Is Admin:</label>
+			<input type="checkbox" id="isAdmin">
+			<input type="button" onclick="addNewUser()" value="Add New User" id="addNewUserBtn">
+			<span id="newUserFeedback"></span>
+		</div>
+	</div>
+	<div id="currentUsers">
+		<h2>Current Users</h2>
+		<span id="currentUserFeedback"></span>
+		<div id="userTableContainer">
+
+		</div>
+	</div>
+</div>
+{% endblock %}

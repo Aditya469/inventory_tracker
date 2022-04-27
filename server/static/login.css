@@ -1,0 +1,14 @@
+#pageContainer{
+  display: flex;
+  justify-content: center;
+}
+
+#logo{
+  position:relative;
+  z-index: 1;
+}
+
+form{
+  display: grid;
+  row-gap: 5px;
+}
