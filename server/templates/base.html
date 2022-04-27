@@ -1,0 +1,49 @@
+<!doctype html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='common.css')}}">
+	<script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+	<script>
+		function onMeatballClick(){
+			$("#meatballMenu").toggle();
+		}
+	</script>
+	{% block additionalHeadMaterial %}{% endblock %}
+</head>
+<body>
+	<div id="navBarContainer">
+		{% if g.user != None %}
+		<img id="logo" src="{{ url_for('static','logo.png') }}">
+		<div id="navBar">
+			<span class="navSpacer">|</span>
+			<a class="navLink" href="{{ url_for('frontPage.getDashboard') }}">Overview Page</a>
+			<span class="navSpacer">|</span>
+			<a class="navLink" href="{{ url_for('frontPage.getFrontPage') }}">Barcodes and New Stock</a>
+			<span class="navSpacer">|</span>
+			<a class="navLink" href="{{ url_for('dataInput.qualityConcernPage') }}">Stock Management</a>
+			<span class="navSpacer">|</span>
+			<a class="navLink" href="{{ url_for('dataInput.qualityConcernPage') }}">Add New Job</a>
+			<span class="navSpacer">|</span>
+			<span class="navLink" id="meatballMenuBtn" onclick="onMeatballClick()">&bull;&bull;&bull;</span>
+			<span class="navSpacer">|</span>
+		</div>
+		<div id="meatballMenu" hidden>
+			{% if g.user['isAdmin'] %}
+			<a class="navLink meatballs" href="{{ url_for('users.manageUsers') }}">Users</a>
+			<br>
+			{% endif %}
+			<a class="navLink meatballs" href="{{ url_for('users.changePassword') }}">Change Password</a>
+			<br>
+			<a class="navLink meatballs" href="{{ url_for('auth.logout') }}">Log Out</a>
+		</div>
+		{% endif %}
+	</div>
+	<section id="page">
+		<section class="content">
+			{% for message in get_flashed_messages() %}
+				<div class="flash">{{ message }}</div>
+			{% endfor %}
+			{% block content %}{% endblock %}
+		</section>
+	</section>
+</body>

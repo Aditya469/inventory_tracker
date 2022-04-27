@@ -1,0 +1,22 @@
+#pageContainer{
+  display: flex;
+}
+
+#addUser{
+  width: 400px;
+}
+
+#addUserControls{
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-items: start;
+}
+
+#addNewUserBtn{
+  grid-column: 2;
+}
+
+#addNewUserBtn, input[type=text], input[type=password]{
+  width:200px;
+
+}

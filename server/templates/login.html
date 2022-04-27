@@ -1,0 +1,23 @@
+<!doctype html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='common.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+</head>
+<body>
+    <div id="navBarContainer">
+    </div>
+    <div id="pageContainer">
+        <section id="content">
+        <img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+            <form method="post">
+                <label for="username">Username</label>
+                <input name="username" id="username" required>
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <input type="submit" value="Log In">
+            </form>
+        </section>
+    </div>
+</body>
