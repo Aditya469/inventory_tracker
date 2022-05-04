@@ -19,7 +19,7 @@ def create_app():
 
     from . import db
     db.initApp(app)
-    '''
+
     from . import scripts
     app.register_blueprint(scripts.bp)
 
@@ -31,5 +31,5 @@ def create_app():
 
     from . import users
     app.register_blueprint(users.bp)
-    '''
+
     return app

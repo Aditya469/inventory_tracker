@@ -13,10 +13,10 @@
 <body>
 	<div id="navBarContainer">
 		{% if g.user != None %}
-		<img id="logo" src="{{ url_for('static','logo.png') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" id="logo">
 		<div id="navBar">
 			<span class="navSpacer">|</span>
-			<a class="navLink" href="{{ url_for('frontPage.getDashboard') }}">Overview Page</a>
+			<a class="navLink" href="{{ url_for('overview.getOverview') }}">Overview Page</a>
 			<span class="navSpacer">|</span>
 			<a class="navLink" href="{{ url_for('frontPage.getFrontPage') }}">Barcodes and New Stock</a>
 			<span class="navSpacer">|</span>

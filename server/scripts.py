@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, render_template
+    Blueprint, render_template, make_response
 )
 from werkzeug.utils import secure_filename
 
@@ -11,7 +11,9 @@ bp = Blueprint('scripts', __name__)
 @bp.route('/scripts/<filename>',)
 @login_required
 def getFile(filename):
-    filename = secure_filename("templates/scripts/" + filename)
-    return render_template(filename)
+    filename = "scripts/" + secure_filename(filename)
+    response = make_response(render_template(filename))
+    response.mimetype = 'text/javascript'
+    return response
 
 

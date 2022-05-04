@@ -5,7 +5,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
-from .db import get_db
+from .db import getDbSession, User
 
 bp = Blueprint('auth', __name__)
 
@@ -15,38 +15,38 @@ def login():
 	if request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
-		db = get_db()
+		dbSession = getDbSession()
 		error = None
-		user = db.execute(
-			"SELECT * FROM users WHERE username = ?", (username,)
-		).fetchone()
+		user = dbSession.query(User).filter(User.username == username).first()
 		
 		if user is None:
 			error = 'Incorrect username'
-		elif not check_password_hash(user['password'], password):
+		elif not check_password_hash(user.passwordHash, password):
 			error = 'Incorrect login'
 			
 		if error is None:
 			session.clear()
-			session['username'] = user['username']
-			return redirect(url_for('frontPage.getFrontPage'))
+			session['username'] = user.username
+			return redirect(url_for('overview.getOverview'))
 
 		flash(error)
-		
+
 	return render_template('login.html')
 
 
 @bp.before_app_request
 def load_logged_in_user():
 	username = session.get('username')
-	
+
 	if username is None:
 		g.user = None
 	else:
-		g.user = get_db().execute(
-			'SELECT * FROM users WHERE username = ?', (username,)
-		).fetchone()
-		
+		dbSession = getDbSession()
+		g.user = dbSession.query(User).filter(User.username == username).first()
+		print(g.user)
+
+
+
 		
 @bp.route('/logout')
 def logout():
