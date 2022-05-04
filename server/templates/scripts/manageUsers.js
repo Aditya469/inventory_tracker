@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $.ajax({
-        url: {{ url_for('users.getUsers') }},
+        url: "{{ url_for('users.getUsers') }}",
         type: "GET",
         success:function(responseData){
             console.log(responseData);
@@ -61,7 +61,7 @@ function addNewUser(){
         formData.append("isAdmin", "0");
 
     $.ajax({
-        url: {{ url_for("users.addUser") }},
+        url: "{{ url_for("users.addUser") }}",
         type: "POST",
         data: formData,
         processData: false,
@@ -86,7 +86,7 @@ function resetPassword(username){
     formData.append("username", username);
 
     $.ajax({
-        url: {{ url_for("users.resetPassword") }},
+        url: "{{ url_for("users.resetPassword") }}",
         type: "POST",
         data: formData,
         processData: false,
@@ -108,7 +108,7 @@ function deleteUser(username){
     formData.append("username", username);
 
     $.ajax({
-        url: {{ url_for("users.deleteUser") }},
+        url: "{{ url_for("users.deleteUser") }}",
         type: "POST",
         data: formData,
         processData: false,

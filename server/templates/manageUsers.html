@@ -7,7 +7,7 @@
 {% block additionalHeadMaterial %}
 	<link rel="stylesheet" href="{{ url_for('static', filename='manageUsers.css') }}">
 	<script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
-	<script type=text/javascript src="{{ url_for('scripts', filename='manageUsers.js') }}"></script>
+	<script type=text/javascript src="{{ url_for('scripts.getFile', filename='manageUsers.js') }}"></script>
 {% endblock %}
 
 {% block content %}

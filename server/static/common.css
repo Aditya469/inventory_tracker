@@ -15,7 +15,7 @@ body{
 
 #navBarContainer{
   width: 100%;
-  background-color: #f6a71d;
+  background-color: #249e16;
   position: absolute;
   top: 0px;
   left: 0px;
@@ -28,7 +28,7 @@ body{
   right: 0px;
   padding-left: 10px;
   padding-right: 10px;
-  background-color: #f6a71d;
+  background-color: #16630e;
   text-align: right;
 }
 
@@ -46,7 +46,7 @@ body{
 }
 
 th{
-    background-color: #f6a71d;
+    background-color: #249e16;
     border: 1px solid black;
 }
 
