@@ -32,4 +32,10 @@ def create_app():
     from . import users
     app.register_blueprint(users.bp)
 
+    from . import stockManagement
+    app.register_blueprint(stockManagement.bp)
+
+    from . import productManagement
+    app.register_blueprint(productManagement.bp)
+
     return app

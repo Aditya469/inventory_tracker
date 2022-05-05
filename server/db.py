@@ -15,6 +15,7 @@ class ItemId(Base):
 	__tablename__ = "itemIds"
 
 	idNumber = Column(Integer, primary_key=True, unique=True)
+	isPendingAssignment = Column(Boolean, default=True)
 	isAssigned = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", backref='itemIds', uselist=False)
 
@@ -29,6 +30,7 @@ class StockItem(Base):
 	expiryDate = Column(Date)
 	quantityRemaining = Column(Numeric)
 	canExpire = Column(Boolean, default=False)
+	assignedToJob = Column(Boolean, default=False)
 
 
 class ProductType(Base):
@@ -58,12 +60,29 @@ class checkInOutRecord(Base):
 	quantityCheckedIn = Column(Numeric)
 
 
+class Bin(Base):
+	__tablename__ = "bins"
+
+	id = Column(Integer, primary_key=True)
+	idString = Column(String)
+	locationName = Column(String)
+
+
 class User(Base):
 	__tablename__ = "users"
 
 	username = Column(Text, primary_key=True, unique=True)
 	passwordHash = Column(Text)
 	isAdmin = Column(Boolean, default=False)
+
+
+class Setting(Base):
+	__tablename__ = "settings"
+
+	name = Column(String, primary_key=True)
+	value = Column(String, primary_key=True)
+
+
 
 
 def initApp(app):
@@ -79,6 +98,21 @@ def initApp(app):
 	if res == 0:
 		adminUser = User(username='admin', passwordHash=generate_password_hash('admin'), isAdmin=True)
 		session.add(adminUser)
+
+		# set up default settings
+		session.add(Setting(name="stickerSheetPageHeight_mm", value="297"))
+		session.add(Setting(name="stickerSheetPageWidth_mm", value="210"))
+		session.add(Setting(name="stickerSheetStickersHeight_mm", value="266"))
+		session.add(Setting(name="stickerSheetStickersWidth_mm", value="190"))
+		session.add(Setting(name="stickerSheetDpi", value="300"))
+		session.add(Setting(name="stickerSheetRows", value="6"))
+		session.add(Setting(name="stickerSheetColumns", value="3"))
+		session.add(Setting(name="stickerPadding_mm", value="5"))
+
+		session.add(Setting(name="idCardHeight_mm", value="55"))
+		session.add(Setting(name="idCardHeight_mm", value="85"))
+		session.add(Setting(name="idCardDpi", value="300"))
+
 		session.commit()
 
 	#app.teardown_appcontext(close_db)
