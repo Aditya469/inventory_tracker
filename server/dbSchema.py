@@ -25,7 +25,7 @@ class StockItem(Base):
 	expiryDate = Column(Date)
 	quantityRemaining = Column(Numeric)
 	canExpire = Column(Boolean, default=False)
-	assignedToJob = Column(Boolean, default=False)
+	price = Column(Numeric)
 
 
 class ProductType(Base):
@@ -33,26 +33,31 @@ class ProductType(Base):
 
 	id = Column(Integer, primary_key=True)
 	productName = Column(Text)
-	productIdentifier1 = Column(Text)  # identifiers are to allow related stock to be collated,
+	tracksSpecificItems = Column(Boolean, default=False)
+	tracksAllItemsOfProductType = Column(Boolean, default=False)
+	# descriptors are to allow related stock to be collated,
 	# e.g. different size paint tins
-	productIdentifier2 = Column(Text)
-	productIdentifier3 = Column(Text)
-	addedTimestamp = Column(DateTime)
+	productDescriptor1 = Column(Text)
+	productDescriptor2 = Column(Text)
+	productDescriptor3 = Column(Text)
+	addedTimestamp = Column(DateTime, server_default=func.now())
 	initialQuantity = Column(Numeric)
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
+	canExpire = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", backref='productTypes', uselist=False)
 
 
-class checkInOutRecord(Base):
+class CheckInOutRecord(Base):
 	__tablename__ = "checkInOutLog"
 
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItem.id"))
+	qtyBeforeCheckout = Column(Numeric, default=0)
 	checkoutTimestamp = Column(DateTime(timezone=True))
-	quantityCheckedOut = Column(Numeric)
+	quantityCheckedOut = Column(Numeric, default=0)
 	checkinTimestamp = Column(DateTime(timezone=True))
-	quantityCheckedIn = Column(Numeric)
+	quantityCheckedIn = Column(Numeric, default=0)
 
 
 class Bin(Base):

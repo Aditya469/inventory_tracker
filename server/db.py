@@ -40,6 +40,11 @@ def initApp(app):
 		session.add(Setting(name="idCardHeight_mm", value="85"))
 		session.add(Setting(name="idCardDpi", value="300"))
 
+		# set up placeholder product
+		undefinedProduct = ProductType(
+			productName="undefined product type"
+		)
+
 		session.commit()
 
 		# set up some development data for temporary use
@@ -48,11 +53,13 @@ def initApp(app):
 			IDs.append(ItemId())
 			session.add(IDs[i])
 
-		session.commit()
+		session.flush()
 
-		productType1 = ProductType(productName="productType1")
+		productType1 = ProductType(productName="productType1", tracksSpecificItems=True)
 		session.add(productType1)
-		session.commit()
+		productType2 = ProductType(productName="productType2", tracksAllItemsOfProductType=False)
+		session.add(productType2)
+		session.flush()
 
 		stockItem1 = StockItem(
 			idNumber=IDs[0].idNumber,
@@ -61,7 +68,7 @@ def initApp(app):
 		)
 		stockItem2 = StockItem(
 			idNumber=IDs[1].idNumber,
-			productType=productType1.id,
+			productType=productType2.id,
 			quantityRemaining=10
 		)
 		session.add(stockItem1)
