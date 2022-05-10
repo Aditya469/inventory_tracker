@@ -1,13 +1,17 @@
-from .dbSchema import Base, ItemId, StockItem, CheckInOutRecord, ProductType
 import json
 import logging
+import os
+import sys
+import datetime
 import pika
-from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKey, Integer, Numeric, Sequence, String, \
-	Text, inspect
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-dbConnString = 'sqlite:///inventoryDB.sqlite'
+from dbSchema import Base, StockItem, CheckInOutRecord, ProductType, ItemId
+
+systemRootDir = "/home/richard/work/DigitME/inventory_tracker"
+dbConnString = f'sqlite:///{systemRootDir}/inventoryDB.sqlite'
 
 def onAddStockRequest(ch, method, properties, body):
 	print(" [x] Received %r" % body)
@@ -19,10 +23,7 @@ def onAddStockRequest(ch, method, properties, body):
 
 	Session = sessionmaker(bind=engine, future=True)
 	session = Session()
-	requestParams = json.loads(body)
-
-	stockItem = StockItem()
-	session.add(stockItem)
+	requestParams = json.loads(bytes.decode(body, 'utf-8'))
 
 	if 'idNumber' not in requestParams:
 		logging.error("Failed to process request to add item. ID number not provided")
@@ -30,34 +31,54 @@ def onAddStockRequest(ch, method, properties, body):
 		return
 
 	logging.info(f"Adding item with ID number {requestParams['idNumber']}")
-	stockItem.idNumber = requestParams['idNumber']
+	stockItem = session.query(StockItem).filter(StockItem.idNumber == requestParams['idNumber']).first()
+	if stockItem is not None:
+		productType = session.query(ProductType).filter(ProductType.id == stockItem.productType).first()
+		if productType.tracksSpecificItems or not productType.tracksAllItemsOfProductType:
+			logging.error("Got an ID number that exists for a non-bulk product")
+			ch.basic_ack(delivery_tag=method.delivery_tag)
+			return
 
-	stockItem.addedTimestamp = func.now()
+		# stockItem is an existing bulk stock entry
+		session.add(stockItem)
+		stockItem.quantityRemaining += productType.initialQuantity
+		session.commit()
+		ch.basic_ack(delivery_tag=method.delivery_tag)
+		return
 
-	if 'expiryDate' in requestParams:
-		stockItem.expiryDate = requestParams['expiryDate']
-
-	if 'canExpire' in requestParams:
-		stockItem.canExpire = requestParams['canExpire']
-
-	if 'barcode' not in requestParams or session.query(ProductType)\
-			.filter(ProductType.barcode == requestParams['barcode']).count() == 0:
-		stockItem.productType = session\
-			.query(ProductType.id)\
-			.filter(ProductType.productName == "undefined product type")\
-			.first()
 	else:
-		productType = session\
-			.query(ProductType)\
-			.filter(ProductType.barcode == requestParams['barcode'])\
-			.first()
+		stockItem = StockItem()
+		session.add(stockItem)
+		itemId = session.query(ItemId).filter(ItemId.idNumber == requestParams['idNumber']).first()
+		session.add(itemId)
+		itemId.isPendingAssignment = False
+		itemId.isAssigned = True
 		stockItem.idNumber = requestParams['idNumber']
-		stockItem.productType = productType.id
-		stockItem.quantityRemaining = productType['initialQuantity']
-		stockItem.price = productType.expectedPrice
+		stockItem.addedTimestamp = func.now()
 
-	session.commit()
-	ch.basic_ack(delivery_tag=method.delivery_tag)
+		if 'expiryDate' in requestParams:
+			stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
+
+		if 'canExpire' in requestParams:
+			stockItem.canExpire = requestParams['canExpire'] == "True"
+
+		if 'barcode' not in requestParams \
+				or session.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).count() == 0:
+			stockItem.productType = session\
+				.query(ProductType.id)\
+				.filter(ProductType.productName == "undefined product type")\
+				.first()
+		else:
+			productType = session\
+				.query(ProductType)\
+				.filter(ProductType.barcode == requestParams['barcode'])\
+				.first()
+			stockItem.productType = productType.id
+			stockItem.quantityRemaining = productType.initialQuantity
+			stockItem.price = productType.expectedPrice
+
+		session.commit()
+		ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def onCheckInoutRequest(ch, method, properities, body):
@@ -112,20 +133,35 @@ def onCheckInoutRequest(ch, method, properities, body):
 			checkInOutRecord.checkinTimestamp = func.now()
 			session.add(checkInOutRecord)
 			stockItem.quantityRemaining += float(requestParams['quantityRemaining'])
-
-
-
+	session.commit()
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def main():
 	rabbitMqHost = 'localhost'
 	logging.basicConfig(filename="worker.log", level=logging.DEBUG, format='%(asctime)s %(message)s')
+	logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 	logging.info("Worker starting")
-	logging.info(f"Connected to rabbitMQ node at {rabbitMqHost}")
 	connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitMqHost))
+	logging.info(f"Connected to rabbitMQ node at {rabbitMqHost}")
 
 	channel = connection.channel()
-	channel.declare(queue='checkInOutRequests')
+	channel.queue_declare(queue='addStockRequests')
+	channel.queue_declare(queue='checkInOutRequests')
 
+	channel.basic_consume(queue='addStockRequests', on_message_callback=onAddStockRequest)
 	channel.basic_consume(queue='checkInOutRequests', on_message_callback=onCheckInoutRequest)
+	logging.info("Waiting for messages")
+	print(' [*] Waiting for messages. To exit press CTRL+C')
+	channel.start_consuming()
+
+
+if __name__ == '__main__':
+	try:
+		main()
+	except KeyboardInterrupt:
+		print('Interrupted')
+		try:
+			sys.exit(0)
+		except SystemExit:
+			os._exit(0)

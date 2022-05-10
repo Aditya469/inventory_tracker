@@ -11,12 +11,12 @@ from sqlalchemy.sql import func
 
 from .dbSchema import Base, User, ProductType, StockItem, Setting, ItemId
 
+
 def initApp(app):
 	# engine = create_engine('postgresql://server:server@localhost:5432/inventorydb')
 	engine = create_engine('sqlite:///inventoryDB.sqlite', echo=True)  # temporary for dev use
 	Base.metadata.create_all(engine)
 
-	# check if admin user exists and add the default if they don't
 	Session = sessionmaker(bind=engine, future=True)
 	session = Session()
 
@@ -41,38 +41,9 @@ def initApp(app):
 		session.add(Setting(name="idCardDpi", value="300"))
 
 		# set up placeholder product
-		undefinedProduct = ProductType(
+		session.add(ProductType(
 			productName="undefined product type"
-		)
-
-		session.commit()
-
-		# set up some development data for temporary use
-		IDs = []
-		for i in range(6):
-			IDs.append(ItemId())
-			session.add(IDs[i])
-
-		session.flush()
-
-		productType1 = ProductType(productName="productType1", tracksSpecificItems=True)
-		session.add(productType1)
-		productType2 = ProductType(productName="productType2", tracksAllItemsOfProductType=False)
-		session.add(productType2)
-		session.flush()
-
-		stockItem1 = StockItem(
-			idNumber=IDs[0].idNumber,
-			productType=productType1.id,
-			quantityRemaining=10
-		)
-		stockItem2 = StockItem(
-			idNumber=IDs[1].idNumber,
-			productType=productType2.id,
-			quantityRemaining=10
-		)
-		session.add(stockItem1)
-		session.add(stockItem2)
+		))
 
 		session.commit()
 

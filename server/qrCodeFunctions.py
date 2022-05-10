@@ -11,7 +11,7 @@ def fetchAvailableItemIds(countRequired):
 	dbSession = getDbSession()
 
 	countToCreate = countRequired - dbSession \
-		.query(ItemId).filter(ItemId.isAssigned is False).filter(ItemId.isAssigned is False).count()
+		.query(ItemId).filter(ItemId.isAssigned == False).filter(ItemId.isAssigned == False).count()
 
 	for i in range(countToCreate):
 		newId = ItemId()
@@ -21,7 +21,8 @@ def fetchAvailableItemIds(countRequired):
 
 	availableIds = dbSession\
 		.query(ItemId)\
-		.filter(ItemId.isPendingAssignment)\
+		.filter(ItemId.isPendingAssignment == False)\
+		.filter(ItemId.isAssigned == False)\
 		.order_by(ItemId.idNumber.desc())\
 		.limit(countRequired)\
 		.all()
@@ -99,10 +100,13 @@ def createImageSheet(fileNames, totalWidthPx, totalHeightPx, arrayWidthPx, array
 def generateItemIdQrCodeSheets(
 		idCount, rows, columns, pageWidth, pageHeight, arrayWidth, arrayHeight, stickerPadding, includeLabels=True):
 	# get a list of IDs
+	session = getDbSession()
 	idList = fetchAvailableItemIds(idCount)
 	fileList = []
 	# generate image of required page(s) based on settings
 	for id in idList:
+		id.isPendingAssignment = True
+		session.add(id)
 		idCard = generateIdQCode(
 			idString=f"{id.idNumber}",
 			label=f"Item ID {id.idNumber}",
@@ -132,6 +136,8 @@ def generateItemIdQrCodeSheets(
 
 	for i in range(len(fileList)):
 		os.remove(fileList[i])
+
+	session.commit()
 
 	return labelSheets
 
