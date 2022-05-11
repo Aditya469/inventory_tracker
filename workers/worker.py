@@ -8,10 +8,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-from dbSchema import Base, StockItem, CheckInOutRecord, ProductType, ItemId
+from dbSchema import Base, StockItem, CheckInOutRecord, ProductType, ItemId, Bin
 
 systemRootDir = "/home/richard/work/DigitME/inventory_tracker"
 dbConnString = f'sqlite:///{systemRootDir}/inventoryDB.sqlite'
+
 
 def onAddStockRequest(ch, method, properties, body):
 	print(" [x] Received %r" % body)
@@ -77,6 +78,18 @@ def onAddStockRequest(ch, method, properties, body):
 			stockItem.quantityRemaining = productType.initialQuantity
 			stockItem.price = productType.expectedPrice
 
+		session.flush()
+		checkInRecord = CheckInOutRecord()
+		checkInRecord.stockItem = stockItem.id
+		checkInRecord.qtyBeforeCheckout = None
+		checkInRecord.checkinTimestamp = func.now()
+		checkInRecord.quantityCheckedIn = productType.initialQuantity
+
+		if 'binIdString' in requestParams:
+			checkInRecord.binId = session.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
+
+		session.add(checkInRecord)
+
 		session.commit()
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -118,7 +131,7 @@ def onCheckInoutRequest(ch, method, properities, body):
 					logging.warning(
 						"Bulk or non-specific stock item checked out without specifying quantity. Assuming all."
 					)
-				checkInOutRecord.quantityCheckedOut = stockItem.quantityRemaining # assumed to be specific items
+				checkInOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
 
 			stockItem.quantityRemaining -= checkInOutRecord.quantityCheckedOut
 			session.add(checkInOutRecord)
@@ -126,11 +139,16 @@ def onCheckInoutRequest(ch, method, properities, body):
 		elif requestParams['requestType'] == 'checkin':
 			checkInOutRecord = session.query(CheckInOutRecord)\
 				.filter(CheckInOutRecord.id == stockItem.id)
-			if checkInOutRecord.quantityCheckedOut == 0:
-				checkInOutRecord.quantityCheckedOut = \
-					checkInOutRecord.qtyBeforeCheckout - float(requestParams['quantityRemaining'])
+
+			checkInOutRecord.quantityCheckedOut = \
+				checkInOutRecord.qtyBeforeCheckout - float(requestParams['quantityRemaining'])
+
 			checkInOutRecord.quantityCheckedIn = float(requestParams['quantityRemaining'])
 			checkInOutRecord.checkinTimestamp = func.now()
+
+			if 'binId' in requestParams:
+				checkInOutRecord.binId = requestParams['binId']
+
 			session.add(checkInOutRecord)
 			stockItem.quantityRemaining += float(requestParams['quantityRemaining'])
 	session.commit()

@@ -77,6 +77,7 @@ class CheckInOutRecord(Base):
 	quantityCheckedOut = Column(Numeric, default=0)
 	checkinTimestamp = Column(DateTime(timezone=True))
 	quantityCheckedIn = Column(Numeric, default=0)
+	binId = Column(Integer, ForeignKey("bins.id"))
 
 
 class Bin(Base):
