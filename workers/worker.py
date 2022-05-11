@@ -138,7 +138,9 @@ def onCheckInoutRequest(ch, method, properities, body):
 
 		elif requestParams['requestType'] == 'checkin':
 			checkInOutRecord = session.query(CheckInOutRecord)\
-				.filter(CheckInOutRecord.id == stockItem.id)
+				.filter(CheckInOutRecord.id == stockItem.id)\
+				.filter(CheckInOutRecord.checkinTimestamp == None)\
+				.order_by(CheckInOutRecord.checkoutTimestamp.desc())
 
 			checkInOutRecord.quantityCheckedOut = \
 				checkInOutRecord.qtyBeforeCheckout - float(requestParams['quantityRemaining'])
