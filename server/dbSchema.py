@@ -33,6 +33,13 @@ class ItemId(Base):
 	isAssigned = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", backref='itemIds', uselist=False)
 
+	def toDict(self):
+		return {
+			"idNumber": self.idNumber,
+			"isPendingAssignment": self.isPendingAssignment,
+			"isAssigned": self.isAssigned
+		}
+
 
 class StockItem(Base):
 	__tablename__ = "stockItem"
@@ -46,6 +53,18 @@ class StockItem(Base):
 	canExpire = Column(Boolean, default=False)
 	price = Column(Numeric)
 
+	def toDict(self):
+		return {
+			"id": self.id,
+			"idNumber": self.idNumber,
+			"productType": self.productType,
+			"addedTimestamp": self.addedTimestamp,
+			"expiryDate": self.expiryDate,
+			"quantityRemaining": self.quantityRemaining,
+			"canExpire": self.canExpire,
+			"price": self.price
+		}
+
 
 class ProductType(Base):
 	__tablename__ = "productTypes"
@@ -56,15 +75,31 @@ class ProductType(Base):
 	tracksAllItemsOfProductType = Column(Boolean, default=False)
 	# descriptors are to allow related stock to be collated,
 	# e.g. different size paint tins
-	productDescriptor1 = Column(Text)
-	productDescriptor2 = Column(Text)
-	productDescriptor3 = Column(Text)
+	productDescriptor1 = Column(Text, default="")
+	productDescriptor2 = Column(Text, default="")
+	productDescriptor3 = Column(Text, default="")
 	addedTimestamp = Column(DateTime, server_default=func.now())
 	initialQuantity = Column(Numeric)
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", backref='productTypes', uselist=False)
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"productName": self.productName,
+			"tracksSpecificItems": self.tracksSpecificItems,
+			"tracksAllItemsOfProductType": self.tracksAllItemsOfProductType,
+			"productDescriptor1": self.productDescriptor1,
+			"productDescriptor2": self.productDescriptor2,
+			"productDescriptor3": self.productDescriptor3,
+			"addedTimestamp": self.addedTimestamp,
+			"initialQuantity": self.initialQuantity,
+			"expectedPrice": self.expectedPrice,
+			"barcode": self.barcode,
+			"canExpire": self.canExpire
+		}
 
 
 class CheckInOutRecord(Base):
@@ -79,6 +114,18 @@ class CheckInOutRecord(Base):
 	quantityCheckedIn = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"))
 
+	def toDict(self):
+		return {
+			"id": self.id,
+			"stockItem": self.stockItem,
+			"qtyBeforeCheckout": self.qtyBeforeCheckout,
+			"checkoutTimestamp": self.checkoutTimestamp,
+			"quantityCheckedOut": self.quantityCheckedOut,
+			"checkinTimestamp": self.checkinTimestamp,
+			"quantityCheckedIn": self.quantityCheckedIn,
+			"binId": self.binId
+		}
+
 
 class Bin(Base):
 	__tablename__ = "bins"
@@ -86,6 +133,13 @@ class Bin(Base):
 	id = Column(Integer, primary_key=True)
 	idString = Column(String)
 	locationName = Column(String)
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"idString": self.idString,
+			"locationName": self.locationName
+		}
 
 
 class User(Base):
@@ -100,4 +154,4 @@ class Setting(Base):
 	__tablename__ = "settings"
 
 	name = Column(String, primary_key=True)
-	value = Column(String, primary_key=True)
+	value = Column(String)

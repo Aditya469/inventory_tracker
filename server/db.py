@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKe
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.sql import func
 
-from .dbSchema import Base, User, ProductType, StockItem, Setting, ItemId
+from dbSchema import Base, User, ProductType, StockItem, Setting, ItemId
 
 
 def initApp(app):

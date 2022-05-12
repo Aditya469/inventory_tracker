@@ -141,5 +141,6 @@ def generateItemIdQrCodeSheets(
 
 	return labelSheets
 
+
 def convertDpiAndMmToPx(length_mm, DPI):
 	return round((DPI * length_mm) / 25.4)
