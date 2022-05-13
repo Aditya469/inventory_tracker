@@ -130,6 +130,7 @@ class CheckInOutRecord(Base):
 	checkinTimestamp = Column(DateTime(timezone=True))
 	quantityCheckedIn = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"))
+	jobId = Column(Integer, ForeignKey())
 
 	def toDict(self):
 		return {
@@ -157,6 +158,21 @@ class Bin(Base):
 			"idString": self.idString,
 			"locationName": self.locationName
 		}
+
+
+class Job(Base):
+	__tablename__ = "jobs"
+
+	id = Column(Integer, primary_key=True)
+	jobName = Column(String)
+	associatedStock = relationship("StockItems", backref='jobs')
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"jobName": self.jobName
+		}
+
 
 
 class User(Base):
