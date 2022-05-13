@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-from dbSchema import Base, StockItem, CheckInOutRecord, ProductType, ItemId, Bin
+from dbSchema import Base, StockItem, CheckInOutRecord, ProductType, ItemId, Bin, VerificationRecord
 
 systemRootDir = "/home/richard/work/DigitME/inventory_tracker"
 dbConnString = f'sqlite:///{systemRootDir}/inventoryDB.sqlite'
@@ -89,6 +89,12 @@ def onAddStockRequest(ch, method, properties, body):
 			checkInRecord.binId = session.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
 
 		session.add(checkInRecord)
+
+		verificationRecord = VerificationRecord()
+		verificationRecord.associatedCheckInRecord = checkInRecord.id
+		verificationRecord.associatedStockItemId = stockItem.id
+		verificationRecord.isVerified = False
+		session.add(verificationRecord)
 
 		session.commit()
 		ch.basic_ack(delivery_tag=method.delivery_tag)

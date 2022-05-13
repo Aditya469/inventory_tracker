@@ -31,7 +31,7 @@ class ItemId(Base):
 	idNumber = Column(Integer, primary_key=True, unique=True)
 	isPendingAssignment = Column(Boolean, default=False)
 	isAssigned = Column(Boolean, default=False)
-	associatedStock = relationship("StockItem", backref='itemIds', uselist=False)
+	associatedStock = relationship("StockItems", backref='itemIds', uselist=False)
 
 	def toDict(self):
 		return {
@@ -42,7 +42,7 @@ class ItemId(Base):
 
 
 class StockItem(Base):
-	__tablename__ = "stockItem"
+	__tablename__ = "stockItems"
 
 	id = Column(Integer, primary_key=True)  # ID in the database rather than QR code ID
 	idNumber = Column(Integer, ForeignKey("itemIds.idNumber"))
@@ -66,6 +66,23 @@ class StockItem(Base):
 		}
 
 
+class VerificationRecord(Base):
+	__tablename__ = "stockVerificationRecords"
+
+	id = Column(Integer, primary_key=True)
+	associatedStockItemId = Column(Integer, ForeignKey("stockItems.id"))
+	isVerified = Column(Boolean, default=False)
+	associatedCheckInRecord = Column(Integer, ForeignKey("checkInOutLog.id"))
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"associatedStockItemId": self.associatedStockItemId,
+			"isVerified": self.isVerified,
+			"checkInRecord": self.checkInRecord
+		}
+
+
 class ProductType(Base):
 	__tablename__ = "productTypes"
 
@@ -83,7 +100,7 @@ class ProductType(Base):
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
-	associatedStock = relationship("StockItem", backref='productTypes', uselist=False)
+	associatedStock = relationship("StockItems", backref='productTypes')
 
 	def toDict(self):
 		return {
@@ -106,7 +123,7 @@ class CheckInOutRecord(Base):
 	__tablename__ = "checkInOutLog"
 
 	id = Column(Integer, primary_key=True)
-	stockItem = Column(Integer, ForeignKey("stockItem.id"))
+	stockItem = Column(Integer, ForeignKey("stockItems.id"))
 	qtyBeforeCheckout = Column(Numeric, default=0)
 	checkoutTimestamp = Column(DateTime(timezone=True))
 	quantityCheckedOut = Column(Numeric, default=0)
