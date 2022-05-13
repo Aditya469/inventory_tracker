@@ -89,7 +89,7 @@ def onAddStockRequest(ch, method, properties, body):
 			checkInRecord.binId = session.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
 
 		session.add(checkInRecord)
-
+		session.flush()
 		verificationRecord = VerificationRecord()
 		verificationRecord.associatedCheckInRecord = checkInRecord.id
 		verificationRecord.associatedStockItemId = stockItem.id

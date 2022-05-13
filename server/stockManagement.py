@@ -6,7 +6,7 @@ import datetime
 from auth import login_required
 from db import getDbSession, Setting
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
-from dbSchema import StockItem
+from dbSchema import StockItem, ProductType
 
 from sqlalchemy import select, delete
 
@@ -21,7 +21,7 @@ def getStockPage():
 
 
 @bp.route('/getIdStickerSheet/<int:idQty>')
-@login_required
+#@login_required
 def getItemStickerSheet(idQty):
     dbSession = getDbSession()
     pageWidth_mm = dbSession.query(Setting.value).filter(Setting.name == "stickerSheetPageWidth_mm").first()[0]
@@ -64,11 +64,42 @@ def getItemStickerSheet(idQty):
 @login_required
 def getStock():
     session = getDbSession()
-    stmt = select(StockItem)
+    stmt = select(
+        StockItem.id,
+        StockItem.idNumber,
+        StockItem.canExpire,
+        StockItem.expiryDate,
+        StockItem.quantityRemaining,
+        StockItem.price,
+        ProductType.productName,
+        ProductType.barcode
+    ).join(ProductType, StockItem.productType == ProductType.id)
 
-    results = session.execute(stmt).scalars().all()
+    # selection criteria...
+    if "searchTerm" in request.args:
+        searchTerm = "%" + request.args.get("searchTerm") + "%"
+        if request.args.get("searchByProductTypeName", type=bool):
+            stmt = stmt.where(ProductType.productName.ilike(searchTerm))
+        if request.args.get("searchByIdCode", type=bool):
+            stmt = stmt.where(StockItem.idNumber.ilike(searchTerm))
 
-    # add selection criteria here
+    if "canExpire" in request.args:
+        if request.args.get("canExpire", type=bool):
+            stmt = stmt.where(StockItem.canExpire == True)
+        else:
+            stmt = stmt.where(StockItem.canExpire == False)
+
+    # ... and ordering
+    if "sortBy" in request.args:
+        if request.args.get("sortby") == "expiryDate":
+            stmt = stmt.order_by(StockItem.expiryDate)
+        elif request.args.get("sortBy") == "productName":
+            stmt = stmt.order_by(ProductType.productName)
+        # etc...
+    else:
+        stmt = stmt.order_by(StockItem.addedTimestamp)
+
+    results = session.execute(stmt).all()
 
     return make_response(jsonify([row.toDict() for row in results]), 200)
 
@@ -149,3 +180,8 @@ def getNewlyAddedStock():
 
 
 @bp.route('/verifyAllNewStock')
+@login_required
+def verifyAllNewStock():
+    session = getDbSession()
+
+    pass

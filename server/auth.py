@@ -5,7 +5,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
-from .db import getDbSession, User
+from db import getDbSession, User
 
 bp = Blueprint('auth', __name__)
 

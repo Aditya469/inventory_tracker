@@ -4,14 +4,14 @@ from PIL import Image, ImageDraw, ImageFont
 from flask import current_app
 import qrcode
 import os
-from .db import getDbSession, ItemId
+from db import getDbSession, ItemId
 
 
 def fetchAvailableItemIds(countRequired):
 	dbSession = getDbSession()
 
 	countToCreate = countRequired - dbSession \
-		.query(ItemId).filter(ItemId.isAssigned == False).filter(ItemId.isAssigned == False).count()
+		.query(ItemId).filter(ItemId.isPendingAssignment == False, ItemId.isAssigned == False).count()
 
 	for i in range(countToCreate):
 		newId = ItemId()

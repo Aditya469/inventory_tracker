@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKe
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.sql import func
 
-from dbSchema import Base, User, ProductType, StockItem, Setting, ItemId
+from dbSchema import Base, User, ProductType, StockItem, Setting, ItemId, Bin
 
 
 def initApp(app):
@@ -37,13 +37,49 @@ def initApp(app):
 		session.add(Setting(name="stickerPadding_mm", value="5"))
 
 		session.add(Setting(name="idCardHeight_mm", value="55"))
-		session.add(Setting(name="idCardHeight_mm", value="85"))
+		session.add(Setting(name="idCardWidth_mm", value="85"))
 		session.add(Setting(name="idCardDpi", value="300"))
 
 		# set up placeholder product
 		session.add(ProductType(
 			productName="undefined product type"
 		))
+
+		# set up some development data for temporary use
+		IDs = []
+		for i in range(6):
+			IDs.append(ItemId())
+			if i == 0 or i == 1:
+				IDs[i].isAssigned = True
+			session.add(IDs[i])
+
+		session.flush()
+
+		productType1 = ProductType(
+			productName="productType1",
+			tracksSpecificItems=True,
+			initialQuantity=10,
+			expectedPrice=100,
+			barcode="prod1Specific",
+			canExpire=True
+		)
+		session.add(productType1)
+		productType2 = ProductType(
+			productName="productType2",
+			tracksAllItemsOfProductType=True,
+			initialQuantity=10,
+			expectedPrice=10,
+			barcode="prod2Bulk",
+			canExpire=False
+		)
+		session.add(productType2)
+
+		Bin1 = Bin(idString = "bin1")
+		Bin2 = Bin(idString = "bin2")
+		session.add(Bin1)
+		session.add(Bin2)
+
+		session.commit()
 
 		session.commit()
 

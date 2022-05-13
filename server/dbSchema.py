@@ -31,7 +31,7 @@ class ItemId(Base):
 	idNumber = Column(Integer, primary_key=True, unique=True)
 	isPendingAssignment = Column(Boolean, default=False)
 	isAssigned = Column(Boolean, default=False)
-	associatedStock = relationship("StockItems", backref='itemIds', uselist=False)
+	associatedStock = relationship("StockItem", backref='itemIds', uselist=False)
 
 	def toDict(self):
 		return {
@@ -52,6 +52,7 @@ class StockItem(Base):
 	quantityRemaining = Column(Numeric, default=0)
 	canExpire = Column(Boolean, default=False)
 	price = Column(Numeric)
+
 
 	def toDict(self):
 		return {
@@ -100,7 +101,7 @@ class ProductType(Base):
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
-	associatedStock = relationship("StockItems", backref='productTypes')
+	associatedStock = relationship("StockItem", backref='productTypes')
 
 	def toDict(self):
 		return {
@@ -130,7 +131,7 @@ class CheckInOutRecord(Base):
 	checkinTimestamp = Column(DateTime(timezone=True))
 	quantityCheckedIn = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"))
-	jobId = Column(Integer, ForeignKey())
+	jobId = Column(Integer, ForeignKey("jobs.id"))
 
 	def toDict(self):
 		return {
@@ -165,7 +166,7 @@ class Job(Base):
 
 	id = Column(Integer, primary_key=True)
 	jobName = Column(String)
-	associatedStock = relationship("StockItems", backref='jobs')
+	associatedStockCheckouts = relationship("CheckInOutRecord", backref='Job')
 
 	def toDict(self):
 		return {
