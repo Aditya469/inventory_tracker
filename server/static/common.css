@@ -10,6 +10,7 @@ body{
 #navBar{
   position: absolute;
   right: 10px;
+  bottom: 5px;
   z-index: 0;
 }
 
@@ -19,16 +20,16 @@ body{
   position: absolute;
   top: 0px;
   left: 0px;
-  height: 30px;
+  height: 90px;
 }
 
 #meatballMenu{
   position: absolute;
-  top: 30px;
+  top: 90px;
   right: 0px;
   padding-left: 10px;
   padding-right: 10px;
-  background-color: #16630e;
+  background-color: #249e16;
   text-align: right;
 }
 
