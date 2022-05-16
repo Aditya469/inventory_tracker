@@ -67,7 +67,7 @@ def getStock():
     stmt = select(
         StockItem.id,
         StockItem.idNumber,
-        StockItem.canExpire,
+        ProductType.canExpire,
         StockItem.expiryDate,
         StockItem.quantityRemaining,
         StockItem.price,
@@ -78,16 +78,33 @@ def getStock():
     # selection criteria...
     if "searchTerm" in request.args:
         searchTerm = "%" + request.args.get("searchTerm") + "%"
-        if request.args.get("searchByProductTypeName", type=bool):
+        if request.args.get("searchByProductTypeName", type=bool, default=False):
             stmt = stmt.where(ProductType.productName.ilike(searchTerm))
-        if request.args.get("searchByIdCode", type=bool):
+        if request.args.get("searchByIdNumber", type=bool, default=False):
             stmt = stmt.where(StockItem.idNumber.ilike(searchTerm))
+        if request.args.get("searchByBarcode", type=bool, default=False):
+            stmt = stmt.where(ProductType.barcode.ilike(searchTerm))
 
     if "canExpire" in request.args:
         if request.args.get("canExpire", type=bool):
-            stmt = stmt.where(StockItem.canExpire == True)
+            stmt = stmt.where(ProductType.canExpire == True)
         else:
-            stmt = stmt.where(StockItem.canExpire == False)
+            stmt = stmt.where(ProductType.canExpire == False)
+
+    if "expiryDateStart" in request.args:
+        expRangeStartDate = datetime.datetime.strptime(request.args.get("expiryDateStart"), "%Y-%m-%d")
+        stmt = stmt.where(StockItem.expiryDate >= expRangeStartDate)
+
+    if "expiryDateEnd" in request.args:
+        expRangeEndDate = datetime.datetime.strptime(request.args.get("expiryDateEnd"), "%Y-%m-%d")\
+            .replace(hour=11, minute=59)
+        stmt = stmt.where(StockItem.expiryDate <= expRangeEndDate)
+
+    if "priceRangeStart" in request.args:
+        stmt.where(StockItem.price >= request.args.get("priceRangeStart"))
+
+    if "priceRangeEnd" in request.args:
+        stmt.where(StockItem.price <= request.args.get("priceRangeEnd"))
 
     # ... and ordering
     if "sortBy" in request.args:
@@ -101,7 +118,19 @@ def getStock():
 
     results = session.execute(stmt).all()
 
-    return make_response(jsonify([row.toDict() for row in results]), 200)
+    stockList = []
+    for row in results:
+        stockList.append({
+            "id": row[0],
+            "idNumber": row[1],
+            "canExpire": row[2],
+            "expiryDate": row[3],
+            "quantityRemaining": row[4],
+            "price": row[5],
+            "productName": row[6],
+            "productBarcode": row[7]
+        })
+    return make_response(jsonify(stockList), 200)
 
 
 @bp.route('/editStockItem', methods=("POST",))

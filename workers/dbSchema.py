@@ -50,7 +50,6 @@ class StockItem(Base):
 	addedTimestamp = Column(DateTime(timezone=True), server_default=func.now())
 	expiryDate = Column(Date, server_default=None)
 	quantityRemaining = Column(Numeric, default=0)
-	canExpire = Column(Boolean, default=False)
 	price = Column(Numeric)
 
 
