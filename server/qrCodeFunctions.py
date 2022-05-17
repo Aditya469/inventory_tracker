@@ -30,7 +30,7 @@ def fetchAvailableItemIds(countRequired):
 	return availableIds
 
 
-def generateIdQCode(idString, label=None, labelFontSize=12, totalWidth=200, totalHeight=100, padding=10):
+def generateIdCard(idString, label=None, labelFontSize=12, totalWidth=200, totalHeight=100, padding=10):
 	qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
 	qr.add_data(idString)
 	qr.make(fit=True)
@@ -107,7 +107,7 @@ def generateItemIdQrCodeSheets(
 	for id in idList:
 		id.isPendingAssignment = True
 		session.add(id)
-		idCard = generateIdQCode(
+		idCard = generateIdCard(
 			idString=f"{id.idNumber}",
 			label=f"Item ID {id.idNumber}",
 			labelFontSize=40,
