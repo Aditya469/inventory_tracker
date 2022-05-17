@@ -24,12 +24,12 @@ def getStockPage():
 #@login_required
 def getItemStickerSheet(idQty):
     dbSession = getDbSession()
-    pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()
-    pageHeight_mm = dbSession.query(Settings.stickerSheetPageHeight_mm).first()
-    stickerAreaWidth_mm = dbSession.query(Settings.stickerSheetStickersWidth_mm).first()
-    stickerAreaHeight_mm = dbSession.query(Settings.stickerSheetStickersHeight_mm).first()
-    stickerPadding_mm = dbSession.query(Settings.stickerPadding_mm).first()
-    stickerSheetDpi = dbSession.query(Settings.stickerSheetDpi).first()
+    pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()[0]
+    pageHeight_mm = dbSession.query(Settings.stickerSheetPageHeight_mm).first()[0]
+    stickerAreaWidth_mm = dbSession.query(Settings.stickerSheetStickersWidth_mm).first()[0]
+    stickerAreaHeight_mm = dbSession.query(Settings.stickerSheetStickersHeight_mm).first()[0]
+    stickerPadding_mm = dbSession.query(Settings.stickerPadding_mm).first()[0]
+    stickerSheetDpi = dbSession.query(Settings.stickerSheetDpi).first()[0]
 
     pageWidthPx = convertDpiAndMmToPx(length_mm=pageWidth_mm, DPI=stickerSheetDpi)
     pageHeightPx = convertDpiAndMmToPx(length_mm=pageHeight_mm, DPI=stickerSheetDpi)
@@ -37,8 +37,8 @@ def getItemStickerSheet(idQty):
     stickerAreaHeightPx = convertDpiAndMmToPx(length_mm=stickerAreaHeight_mm, DPI=stickerSheetDpi)
     stickerPaddingPx = convertDpiAndMmToPx(length_mm=stickerPadding_mm, DPI=stickerSheetDpi)
 
-    stickerRows = dbSession.query(Settings.stickerSheetRows).first()
-    stickerColumns = dbSession.query(Settings.stickerSheetColumns).first()
+    stickerRows = dbSession.query(Settings.stickerSheetRows).first()[0]
+    stickerColumns = dbSession.query(Settings.stickerSheetColumns).first()[0]
 
     # temporary limitation until I find a suitable python pdf library
     if idQty > (stickerRows * stickerColumns):
