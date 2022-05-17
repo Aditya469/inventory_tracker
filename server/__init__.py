@@ -38,4 +38,7 @@ def create_app():
     from . import productManagement
     app.register_blueprint(productManagement.bp)
 
+    from . import jobs
+    app.register_blueprint(jobs.bp)
+
     return app

@@ -102,6 +102,8 @@ class ProductType(Base):
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", backref='productTypes')
+	associatedAssignedStock = relationship("AssignedStock", backref="productTypes")
+
 
 	def toDict(self):
 		return {
@@ -165,7 +167,8 @@ class Job(Base):
 	__tablename__ = "jobs"
 
 	id = Column(Integer, primary_key=True)
-	qrcodeName = Column(String)
+	addedTimestamp = Column(DateTime(timezone=True), server_default=func.now())
+	qrcodePath = Column(String)
 	jobName = Column(String)
 	associatedStockCheckouts = relationship("CheckInOutRecord", backref='Job')
 	associatedAssignedStock = relationship("AssignedStock", backref="Job")
@@ -173,6 +176,8 @@ class Job(Base):
 	def toDict(self):
 		return {
 			"id": self.id,
+			"addedTimestamp": self.addedTimestamp,
+			"qrcodePath": self.qrcodePath,
 			"jobName": self.jobName
 		}
 
@@ -181,7 +186,9 @@ class AssignedStock(Base):
 	__tablename__ = "assignedStock"
 
 	id = Column(Integer, primary_key=True)
-	productId = Column(Integer, ForeignKey("productType.id"))
+	productId = Column(Integer, ForeignKey("productTypes.id"))
+	quantity = Column(Numeric)
+	associatedJob = Column(Integer, ForeignKey("jobs.id"))
 
 
 class User(Base):
@@ -207,6 +214,7 @@ class Settings(Base):
 	idCardHeight_mm = Column(Integer, default=55)
 	idCardWidth_mm = Column(Integer, default=85)
 	idCardDpi = Column(Integer, default=300)
+	idCardPadding_mm = Column(Integer, default=5)
 	displayIdCardName = Column(Boolean, default=True)
 	displayJobIdCardName = Column(Boolean, default=True)
 	idCardFontSize_px = Column(Integer, default=40)
