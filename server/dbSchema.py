@@ -97,6 +97,7 @@ class ProductType(Base):
 	productDescriptor3 = Column(Text, default="")
 	addedTimestamp = Column(DateTime, server_default=func.now())
 	initialQuantity = Column(Numeric)
+	quantityUnit = Column(String)
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
@@ -164,8 +165,10 @@ class Job(Base):
 	__tablename__ = "jobs"
 
 	id = Column(Integer, primary_key=True)
+	qrcodeName = Column(String)
 	jobName = Column(String)
 	associatedStockCheckouts = relationship("CheckInOutRecord", backref='Job')
+	associatedAssignedStock = relationship("AssignedStock", backref="Job")
 
 	def toDict(self):
 		return {
@@ -173,6 +176,12 @@ class Job(Base):
 			"jobName": self.jobName
 		}
 
+
+class AssignedStock(Base):
+	__tablename__ = "assignedStock"
+
+	id = Column(Integer, primary_key=True)
+	productId = Column(Integer, ForeignKey("productType.id"))
 
 
 class User(Base):
@@ -183,8 +192,40 @@ class User(Base):
 	isAdmin = Column(Boolean, default=False)
 
 
-class Setting(Base):
+class Settings(Base):
 	__tablename__ = "settings"
 
-	name = Column(String, primary_key=True)
-	value = Column(String)
+	id = Column(Integer, primary_key=True)
+	stickerSheetPageHeight_mm = Column(Integer, default=297)
+	stickerSheetPageWidth_mm = Column(Integer, default=210)
+	stickerSheetStickersHeight_mm = Column(Integer, default=266)
+	stickerSheetStickersWidth_mm = Column(Integer, default=190)
+	stickerSheetDpi = Column(Integer, default=300)
+	stickerSheetRows = Column(Integer, default=6)
+	stickerSheetColumns = Column(Integer, default=3)
+	stickerPadding_mm = Column(Integer, default=5)
+	idCardHeight_mm = Column(Integer, default=55)
+	idCardWidth_mm = Column(Integer, default=85)
+	idCardDpi = Column(Integer, default=300)
+	displayIdCardName = Column(Boolean, default=True)
+	displayJobIdCardName = Column(Boolean, default=True)
+	idCardFontSize_px = Column(Integer, default=40)
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"stickerSheetPageHeight_mm": self.stickerSheetPageHeight_mm,
+			"stickerSheetPageWidth_mm": self.stickerSheetPageWidth_mm,
+			"stickerSheetStickersHeight_mm": self.stickerSheetStickersHeight_mm,
+			"stickerSheetStickersWidth_mm": self.stickerSheetStickersWidth_mm,
+			"stickerSheetDpi": self.stickerSheetDpi,
+			"stickerSheetRows": self.stickerSheetRows,
+			"stickerSheetColumns": self.stickerSheetColumns,
+			"stickerPadding_mm": self.stickerPadding_mm,
+			"idCardHeight_mm": self.idCardHeight_mm,
+			"idCardWidth_mm": self.idCardWidth_mm,
+			"idCardDpi": self.idCardDpi,
+			"displayIdCardName": self.displayIdCardName,
+			"displayJobIdCardName": self.displayJobIdCardName,
+			"idCardFontSize_px": self.idCardFontSize_px
+		}

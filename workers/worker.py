@@ -60,9 +60,6 @@ def onAddStockRequest(ch, method, properties, body):
 		if 'expiryDate' in requestParams:
 			stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
 
-		if 'canExpire' in requestParams:
-			stockItem.canExpire = requestParams['canExpire'] == "True"
-
 		if 'barcode' not in requestParams \
 				or session.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).count() == 0:
 			stockItem.productType = session\

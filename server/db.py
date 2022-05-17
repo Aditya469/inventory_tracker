@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKe
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.sql import func
 
-from dbSchema import Base, User, ProductType, StockItem, Setting, ItemId, Bin
+from dbSchema import Base, User, ProductType, StockItem, Settings, ItemId, Bin
 
 
 def initApp(app):
@@ -25,20 +25,7 @@ def initApp(app):
 	if res == 0:
 		adminUser = User(username='admin', passwordHash=generate_password_hash('admin'), isAdmin=True)
 		session.add(adminUser)
-
-		# set up default settings
-		session.add(Setting(name="stickerSheetPageHeight_mm", value="297"))
-		session.add(Setting(name="stickerSheetPageWidth_mm", value="210"))
-		session.add(Setting(name="stickerSheetStickersHeight_mm", value="266"))
-		session.add(Setting(name="stickerSheetStickersWidth_mm", value="190"))
-		session.add(Setting(name="stickerSheetDpi", value="300"))
-		session.add(Setting(name="stickerSheetRows", value="6"))
-		session.add(Setting(name="stickerSheetColumns", value="3"))
-		session.add(Setting(name="stickerPadding_mm", value="5"))
-
-		session.add(Setting(name="idCardHeight_mm", value="55"))
-		session.add(Setting(name="idCardWidth_mm", value="85"))
-		session.add(Setting(name="idCardDpi", value="300"))
+		session.add(Settings())  # add a row to settings with the defaults from the DB schema
 
 		# set up placeholder product
 		session.add(ProductType(
