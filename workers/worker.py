@@ -125,8 +125,9 @@ def onCheckInoutRequest(ch, method, properities, body):
 
 		elif requestParams['requestType'] == 'checkout':
 			logging.info("Processing checkout request")
-			if stockItem.isCheckedIn is False and session.query(ProductType.tracksSpecificItems)\
-				.filter(ProductType.id == stockItem.productType).first()[0] is True:
+			isSpecificItem = session.query(ProductType.tracksSpecificItems)\
+				.filter(ProductType.id == stockItem.productType).first()[0]
+			if stockItem.isCheckedIn is False and isSpecificItem:
 				logging.error("Attempting to check out specific item that is already checked out")
 				ch.basic_ack(delivery_tag=method.delivery_tag)
 				return
@@ -153,7 +154,8 @@ def onCheckInoutRequest(ch, method, properities, body):
 			else:
 				checkOutRecord.jobId = None
 
-			stockItem.isCheckedIn = False
+			if isSpecificItem:
+				stockItem.isCheckedIn = False
 
 		# process check-in request
 		elif requestParams['requestType'] == 'checkin':
