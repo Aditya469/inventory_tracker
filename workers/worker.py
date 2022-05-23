@@ -1,3 +1,4 @@
+import decimal
 import json
 import logging
 import os
@@ -8,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-from dbSchema import Base, StockItem, CheckInOutRecord, ProductType, ItemId, Bin, VerificationRecord
+from dbSchema import Base, StockItem, CheckInRecord, CheckOutRecord, ProductType, ItemId, Bin, VerificationRecord, Job
 
 systemRootDir = "/home/richard/work/DigitME/inventory_tracker"
 dbConnString = f'sqlite:///{systemRootDir}/inventoryDB.sqlite'
@@ -19,7 +20,7 @@ def onAddStockRequest(ch, method, properties, body):
 	logging.info("Processing request to add item")
 	# check barcode number
 	# create stock item
-	engine = create_engine(dbConnString, echo=True)  # temporary for dev use
+	engine = create_engine(dbConnString, echo=False)  # temporary for dev use
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine, future=True)
@@ -56,6 +57,7 @@ def onAddStockRequest(ch, method, properties, body):
 		itemId.isAssigned = True
 		stockItem.idNumber = requestParams['idNumber']
 		stockItem.addedTimestamp = func.now()
+		stockItem.isCheckedIn = True
 
 		if 'expiryDate' in requestParams:
 			stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
@@ -76,10 +78,10 @@ def onAddStockRequest(ch, method, properties, body):
 			stockItem.price = productType.expectedPrice
 
 		session.flush()
-		checkInRecord = CheckInOutRecord()
+		checkInRecord = CheckInRecord()
 		checkInRecord.stockItem = stockItem.id
 		checkInRecord.qtyBeforeCheckout = None
-		checkInRecord.checkinTimestamp = func.now()
+		checkInRecord.checkInTimestamp = func.now()
 		checkInRecord.quantityCheckedIn = productType.initialQuantity
 
 		if 'binIdString' in requestParams:
@@ -99,7 +101,7 @@ def onAddStockRequest(ch, method, properties, body):
 
 def onCheckInoutRequest(ch, method, properities, body):
 	print(" [x] Received %r" % body)
-	engine = create_engine(dbConnString, echo=True)  # temporary for dev use
+	engine = create_engine(dbConnString, echo=False)  # temporary for dev use
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine, future=True)
@@ -107,14 +109,14 @@ def onCheckInoutRequest(ch, method, properities, body):
 	requestParams = json.loads(body)
 
 	if 'stockIdNumber' not in requestParams:
-		logging.error("Failed to process checkInOutRequest. Stock ID number not provided")
+		logging.error("Failed to process check In/Out Request. Stock ID number not provided")
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 		return
 	else:
 		logging.info(f"Processing request for stock item with ID number {requestParams['stockIdNumber']}")
 
 		stockItem = session.query(StockItem)\
-			.filter_by(StockItem.idNumber == int(requestParams['stockIdNumber']))\
+			.filter(StockItem.idNumber == int(requestParams['stockIdNumber']))\
 			.limit(1)\
 			.first()
 
@@ -122,40 +124,64 @@ def onCheckInoutRequest(ch, method, properities, body):
 			logging.error(f"Stock Item {requestParams['stockIdNumber']} does not exist in the database")
 
 		elif requestParams['requestType'] == 'checkout':
-			checkInOutRecord = CheckInOutRecord()
-			checkInOutRecord.stockItem = stockItem.id
-			checkInOutRecord.checkoutTimestamp = func.now()
-			checkInOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
+			logging.info("Processing checkout request")
+			if stockItem.isCheckedIn is False and session.query(ProductType.tracksSpecificItems)\
+				.filter(ProductType.id == stockItem.productType).first()[0] is True:
+				logging.error("Attempting to check out specific item that is already checked out")
+				ch.basic_ack(delivery_tag=method.delivery_tag)
+				return
 
-			if 'quantityCheckedOut' in requestParams['quantityCheckedOut']:
-				checkInOutRecord.quantityCheckedOut = float(requestParams['quantityCheckedOut'])
+			checkOutRecord = CheckOutRecord()
+			session.add(checkOutRecord)
+			checkOutRecord.stockItem = stockItem.id
+			checkOutRecord.checkOutTimestamp = func.now()
+			checkOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
+
+			if 'quantityCheckedOut' in requestParams:
+				checkOutRecord.quantityCheckedOut = decimal.Decimal(requestParams['quantityCheckedOut'])
 			else:
-				if session.query(ProductType.tracksSpecificItems).filter(stockItem.productType).limit(1).first() is False:
+				if session.query(ProductType.tracksSpecificItems).filter(ProductType.id == stockItem.productType).first()[0] is False:
 					logging.warning(
 						"Bulk or non-specific stock item checked out without specifying quantity. Assuming all."
 					)
-				checkInOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
+				checkOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
 
-			stockItem.quantityRemaining -= checkInOutRecord.quantityCheckedOut
-			session.add(checkInOutRecord)
+			stockItem.quantityRemaining -= checkOutRecord.quantityCheckedOut
 
+			if "jobId" in requestParams:
+				checkOutRecord.jobId = requestParams['jobId']
+			else:
+				checkOutRecord.jobId = None
+
+			stockItem.isCheckedIn = False
+
+		# process check-in request
 		elif requestParams['requestType'] == 'checkin':
-			checkInOutRecord = session.query(CheckInOutRecord)\
-				.filter(CheckInOutRecord.id == stockItem.id)\
-				.filter(CheckInOutRecord.checkinTimestamp == None)\
-				.order_by(CheckInOutRecord.checkoutTimestamp.desc())
+			if stockItem.isCheckedIn is True and session.query(ProductType.tracksSpecificItems)\
+				.filter(ProductType.id == stockItem.productType).first()[0] is True:
+				logging.error("Attempting to check in specific item that is already checked in")
+				ch.basic_ack(delivery_tag=method.delivery_tag)
+				return
 
-			checkInOutRecord.quantityCheckedOut = \
-				checkInOutRecord.qtyBeforeCheckout - float(requestParams['quantityRemaining'])
+			if "quantityRemaining" not in requestParams:
+				logging.error("Failed to check in stock item. No quantity provided")
+				ch.basic_ack(delivery_tag=method.delivery_tag)
+				return
 
-			checkInOutRecord.quantityCheckedIn = float(requestParams['quantityRemaining'])
-			checkInOutRecord.checkinTimestamp = func.now()
+			checkInRecord = CheckInRecord()
+			session.add(checkInRecord)
+			checkInRecord.quantityCheckedIn = decimal.Decimal(requestParams['quantityRemaining'])
+			checkInRecord.checkInTimestamp = func.now()
+			checkInRecord.stockItem = stockItem.id
+
+			if "jobId" in requestParams:
+				checkInRecord.jobId = requestParams['jobId']
 
 			if 'binId' in requestParams:
-				checkInOutRecord.binId = requestParams['binId']
+				checkInRecord.binId = requestParams['binId']
 
-			session.add(checkInOutRecord)
-			stockItem.quantityRemaining += float(requestParams['quantityRemaining'])
+			stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityRemaining'])
+			stockItem.isCheckedIn = True
 	session.commit()
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -167,6 +193,8 @@ def main():
 	logging.info("Worker starting")
 	connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitMqHost))
 	logging.info(f"Connected to rabbitMQ node at {rabbitMqHost}")
+	logger = logging.getLogger("pika")
+	logger.setLevel(logging.WARNING)
 
 	channel = connection.channel()
 	channel.queue_declare(queue='addStockRequests')

@@ -51,6 +51,7 @@ class StockItem(Base):
 	expiryDate = Column(Date, server_default=None)
 	quantityRemaining = Column(Numeric, default=0)
 	price = Column(Numeric)
+	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
 
 
 	def toDict(self):
@@ -62,7 +63,8 @@ class StockItem(Base):
 			"expiryDate": self.expiryDate,
 			"quantityRemaining": self.quantityRemaining,
 			"canExpire": self.canExpire,
-			"price": self.price
+			"price": self.price,
+			"isCheckedIn": self.isCheckedIn
 		}
 
 
@@ -72,7 +74,7 @@ class VerificationRecord(Base):
 	id = Column(Integer, primary_key=True)
 	associatedStockItemId = Column(Integer, ForeignKey("stockItems.id"))
 	isVerified = Column(Boolean, default=False)
-	associatedCheckInRecord = Column(Integer, ForeignKey("checkInOutLog.id"))
+	associatedCheckInRecord = Column(Integer, ForeignKey("checkInRecords.id"))
 
 	def toDict(self):
 		return {
@@ -122,15 +124,12 @@ class ProductType(Base):
 		}
 
 
-class CheckInOutRecord(Base):
-	__tablename__ = "checkInOutLog"
+class CheckInRecord(Base):
+	__tablename__ = "checkInRecords"
 
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
-	qtyBeforeCheckout = Column(Numeric, default=0)
-	checkoutTimestamp = Column(DateTime(timezone=True))
-	quantityCheckedOut = Column(Numeric, default=0)
-	checkinTimestamp = Column(DateTime(timezone=True))
+	checkInTimestamp = Column(DateTime(timezone=True), server_default=func.now())
 	quantityCheckedIn = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
@@ -139,12 +138,31 @@ class CheckInOutRecord(Base):
 		return {
 			"id": self.id,
 			"stockItem": self.stockItem,
-			"qtyBeforeCheckout": self.qtyBeforeCheckout,
-			"checkoutTimestamp": self.checkoutTimestamp,
-			"quantityCheckedOut": self.quantityCheckedOut,
 			"checkinTimestamp": self.checkinTimestamp,
 			"quantityCheckedIn": self.quantityCheckedIn,
-			"binId": self.binId
+			"binId": self.binId,
+			"jobId": self.jobId
+		}
+
+
+class CheckOutRecord(Base):
+	__tablename__ = "checkOutRecords"
+
+	id = Column(Integer, primary_key=True)
+	stockItem = Column(Integer, ForeignKey("stockItems.id"))
+	checkOutTimestamp = Column(DateTime(timezone=True), server_default=func.now())
+	quantityCheckedOut = Column(Numeric)
+	binId = Column(Integer, ForeignKey("bins.id"))
+	jobId = Column(Integer, ForeignKey("jobs.id"))
+
+	def toDict(self):
+		return{
+			"id": self.id,
+			"stockItem": self.stockItem,
+			"checkOutTimestamp": self.checkOutTimestamp,
+			"quantityCheckedOut": self.quantityCheckedOut,
+			"binId": self.binId,
+			"jobId": self.jobId
 		}
 
 
@@ -170,7 +188,8 @@ class Job(Base):
 	addedTimestamp = Column(DateTime(timezone=True), server_default=func.now())
 	qrcodePath = Column(String)
 	jobName = Column(String)
-	associatedStockCheckouts = relationship("CheckInOutRecord", backref='Job')
+	associatedStockCheckins = relationship("CheckInRecord", backref='Job')
+	associatedStockCheckouts = relationship("CheckOutRecord", backref='Job')
 	associatedAssignedStock = relationship("AssignedStock", backref="Job")
 
 	def toDict(self):
