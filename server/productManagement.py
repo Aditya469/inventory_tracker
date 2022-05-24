@@ -27,14 +27,15 @@ def getProducts():
 	stmt = select(ProductType).where(ProductType.productName != "undefined product type")
 
 	if "searchTerm" in request.args:
-		searchStr = "%" + request.args.get('searchTerm') + "%"
+		searchTerm = "%" + request.args.get('searchTerm') + "%"
 
 		stmt = stmt.where(
 			or_(
-				ProductType.productName.like(searchStr),
-				ProductType.productDescriptor1.like(searchStr),
-				ProductType.productDescriptor2.like(searchStr),
-				ProductType.productDescriptor3.like(searchStr)
+				ProductType.productName.like(searchTerm),
+				ProductType.productDescriptor1.like(searchTerm),
+				ProductType.productDescriptor2.like(searchTerm),
+				ProductType.productDescriptor3.like(searchTerm),
+				ProductType.barcode.ilike(searchTerm)
 			)
 		)
 
