@@ -85,8 +85,8 @@ def createJob():
 def getJobs():
 	session = getDbSession()
 	stmt = select(Job)
-	if "searchPhrase" in request.args:
-		searchTerm = "%" + request.args.get("searchPhrase") + "%"
+	if "searchTerm" in request.args:
+		searchTerm = "%" + request.args.get("searchTerm") + "%"
 		stmt = stmt.where(Job.jobName.ilike(searchTerm))
 
 	if request.args.get("orderByName", type=bool, default=False):
