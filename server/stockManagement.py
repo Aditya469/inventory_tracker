@@ -21,7 +21,7 @@ def getStockPage():
 
 
 @bp.route('/getIdStickerSheet/<int:idQty>')
-#@login_required
+#@login_required # TODO: re-enable login requirement
 def getItemStickerSheet(idQty):
     dbSession = getDbSession()
     pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()[0]
@@ -132,6 +132,17 @@ def getStock():
     return make_response(jsonify(stockList), 200)
 
 
+@bp.route('/getStock/<int:stockId>')
+@login_required
+def getStockItemById(stockId):
+    session = getDbSession()
+    stockItem = session.query(StockItem).filter(StockItem.id == stockId).scalar()
+    if stockItem:
+        return make_response(jsonify(stockItem.toDict()), 200)
+    else:
+        return make_response("No such item", 404)
+
+
 @bp.route('/getStockOverview')
 @login_required
 def getStockOverview():
@@ -145,7 +156,6 @@ def getStockOverview():
         stockList = getStockNearExpiry()
     elif overviewType == "expired":
         stockList = getExpiredStock()
-
 
     return make_response(jsonify(stockList), 200)
 

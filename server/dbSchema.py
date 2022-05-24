@@ -53,7 +53,6 @@ class StockItem(Base):
 	price = Column(Numeric)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
 
-
 	def toDict(self):
 		return {
 			"id": self.id,
@@ -62,7 +61,6 @@ class StockItem(Base):
 			"addedTimestamp": self.addedTimestamp,
 			"expiryDate": self.expiryDate,
 			"quantityRemaining": self.quantityRemaining,
-			"canExpire": self.canExpire,
 			"price": self.price,
 			"isCheckedIn": self.isCheckedIn
 		}
@@ -208,6 +206,14 @@ class AssignedStock(Base):
 	productId = Column(Integer, ForeignKey("productTypes.id"))
 	quantity = Column(Numeric)
 	associatedJob = Column(Integer, ForeignKey("jobs.id"))
+
+	def toDict(self):
+		return{
+			"id": self.id,
+			"productId": self.productId,
+			"quantity": self.quantity,
+			"associatedJob": self.associatedJob
+		}
 
 
 class User(Base):
