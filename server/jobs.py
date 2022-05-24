@@ -96,7 +96,7 @@ def getJobs():
 	else:
 		stmt = stmt.order_by(Job.jobName.asc())
 
-	jobs = session.execute(stmt)
-	jobList = [job.toDict for job in jobs]
+	jobs = session.execute(stmt).scalars().all()
+	jobList = [job.toDict() for job in jobs]
 	session.close()
 	return make_response(jsonify(jobList),  200)
