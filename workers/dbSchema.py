@@ -52,7 +52,7 @@ class StockItem(Base):
 	quantityRemaining = Column(Numeric, default=0)
 	price = Column(Numeric)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
-
+	associatedProduct = relationship("ProductType", back_populates="associatedStock")
 
 	def toDict(self):
 		return {
@@ -62,7 +62,6 @@ class StockItem(Base):
 			"addedTimestamp": self.addedTimestamp,
 			"expiryDate": self.expiryDate,
 			"quantityRemaining": self.quantityRemaining,
-			"canExpire": self.canExpire,
 			"price": self.price,
 			"isCheckedIn": self.isCheckedIn
 		}
@@ -103,7 +102,7 @@ class ProductType(Base):
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
-	associatedStock = relationship("StockItem", backref='productTypes')
+	associatedStock = relationship("StockItem", back_populates='associatedProduct')
 	associatedAssignedStock = relationship("AssignedStock", backref="productTypes")
 
 
@@ -133,6 +132,7 @@ class CheckInRecord(Base):
 	quantityCheckedIn = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
+	associatedStockItem = relationship("StockItem", backref="checkInRecords")
 
 	def toDict(self):
 		return {
@@ -154,6 +154,7 @@ class CheckOutRecord(Base):
 	quantityCheckedOut = Column(Numeric)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
+	associatedStockItem = relationship("StockItem", backref="checkOutRecords")
 
 	def toDict(self):
 		return{
@@ -208,6 +209,15 @@ class AssignedStock(Base):
 	productId = Column(Integer, ForeignKey("productTypes.id"))
 	quantity = Column(Numeric)
 	associatedJob = Column(Integer, ForeignKey("jobs.id"))
+	associatedProduct = relationship("ProductType", backref="AssignedStock")
+
+	def toDict(self):
+		return{
+			"id": self.id,
+			"productId": self.productId,
+			"quantity": self.quantity,
+			"associatedJob": self.associatedJob
+		}
 
 
 class User(Base):
