@@ -236,8 +236,8 @@ def deleteAssignedStock():
 		idList = request.form['assignedItemList']
 
 	session = getDbSession()
-	for id in idList:
-		session.query(AssignedStock).filter(AssignedStock.id == id).scalar().delete()
+	for itemId in idList:
+		session.query(AssignedStock).filter(AssignedStock.id == itemId).scalar().delete()
 
 	return make_response("Items deleted", 200)
 
