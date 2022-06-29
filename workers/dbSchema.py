@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKey, Integer, Sequence, String, \
-	Text, inspect
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, \
+	Text
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 Base = declarative_base()

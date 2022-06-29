@@ -99,7 +99,7 @@ def onAddStockRequest(ch, method, properties, body):
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-def onCheckInoutRequest(ch, method, properities, body):
+def onCheckInRequest(ch, method, properities, body):
 	print(" [x] Received %r" % body)
 	engine = create_engine(dbConnString, echo=False)  # temporary for dev use
 	Base.metadata.create_all(engine)
@@ -109,84 +109,108 @@ def onCheckInoutRequest(ch, method, properities, body):
 	requestParams = json.loads(body)
 
 	if 'stockIdNumber' not in requestParams:
-		logging.error("Failed to process check In/Out Request. Stock ID number not provided")
+		logging.error("Failed to process check In Request. Stock ID number not provided")
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 		return
-	else:
-		logging.info(f"Processing request for stock item with ID number {requestParams['stockIdNumber']}")
+	logging.info(f"Processing check in request for stock item with ID number {requestParams['stockIdNumber']}")
 
-		stockItem = session.query(StockItem)\
-			.filter(StockItem.idNumber == int(requestParams['stockIdNumber']))\
-			.limit(1)\
-			.first()
+	stockItem = session.query(StockItem)\
+		.filter(StockItem.idNumber == int(requestParams['stockIdNumber']))\
+		.limit(1)\
+		.first()
 
-		if stockItem is None:
-			logging.error(f"Stock Item {requestParams['stockIdNumber']} does not exist in the database")
+	if stockItem is None:
+		logging.error(f"Stock Item {requestParams['stockIdNumber']} does not exist in the database")
 
-		elif requestParams['requestType'] == 'checkout':
-			logging.info("Processing checkout request")
-			isSpecificItem = session.query(ProductType.tracksSpecificItems)\
-				.filter(ProductType.id == stockItem.productType).first()[0]
-			if stockItem.isCheckedIn is False and isSpecificItem:
-				logging.error("Attempting to check out specific item that is already checked out")
-				ch.basic_ack(delivery_tag=method.delivery_tag)
-				return
+	if stockItem.isCheckedIn is True and session.query(ProductType.tracksSpecificItems)\
+		.filter(ProductType.id == stockItem.productType).first()[0] is True:
+		logging.error("Attempting to check in specific item that is already checked in")
+		ch.basic_ack(delivery_tag=method.delivery_tag)
+		return
 
-			checkOutRecord = CheckOutRecord()
-			session.add(checkOutRecord)
-			checkOutRecord.stockItem = stockItem.id
-			checkOutRecord.checkOutTimestamp = func.now()
-			checkOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
+	if "quantityCheckingIn" not in requestParams:
+		logging.error("Failed to check in stock item. No quantity provided")
+		ch.basic_ack(delivery_tag=method.delivery_tag)
+		return
 
-			if 'quantityCheckedOut' in requestParams:
-				checkOutRecord.quantityCheckedOut = decimal.Decimal(requestParams['quantityCheckedOut'])
-			else:
-				if session.query(ProductType.tracksSpecificItems).filter(ProductType.id == stockItem.productType).first()[0] is False:
-					logging.warning(
-						"Bulk or non-specific stock item checked out without specifying quantity. Assuming all."
-					)
-				checkOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
+	checkInRecord = CheckInRecord()
+	session.add(checkInRecord)
+	checkInRecord.quantityCheckedIn = decimal.Decimal(requestParams['quantityCheckingIn'])
+	checkInRecord.checkInTimestamp = func.now()
+	checkInRecord.stockItem = stockItem.id
 
-			stockItem.quantityRemaining -= checkOutRecord.quantityCheckedOut
+	if "jobId" in requestParams:
+		checkInRecord.jobId = requestParams['jobId']
 
-			if "jobId" in requestParams:
-				checkOutRecord.jobId = requestParams['jobId']
-			else:
-				checkOutRecord.jobId = None
+	if 'binId' in requestParams:
+		checkInRecord.binId = requestParams['binId']
 
-			if isSpecificItem:
-				stockItem.isCheckedIn = False
-
-		# process check-in request
-		elif requestParams['requestType'] == 'checkin':
-			if stockItem.isCheckedIn is True and session.query(ProductType.tracksSpecificItems)\
-				.filter(ProductType.id == stockItem.productType).first()[0] is True:
-				logging.error("Attempting to check in specific item that is already checked in")
-				ch.basic_ack(delivery_tag=method.delivery_tag)
-				return
-
-			if "quantityRemaining" not in requestParams:
-				logging.error("Failed to check in stock item. No quantity provided")
-				ch.basic_ack(delivery_tag=method.delivery_tag)
-				return
-
-			checkInRecord = CheckInRecord()
-			session.add(checkInRecord)
-			checkInRecord.quantityCheckedIn = decimal.Decimal(requestParams['quantityRemaining'])
-			checkInRecord.checkInTimestamp = func.now()
-			checkInRecord.stockItem = stockItem.id
-
-			if "jobId" in requestParams:
-				checkInRecord.jobId = requestParams['jobId']
-
-			if 'binId' in requestParams:
-				checkInRecord.binId = requestParams['binId']
-
-			stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityRemaining'])
-			stockItem.isCheckedIn = True
+	stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityCheckingIn'])
+	stockItem.isCheckedIn = True
 	session.commit()
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
+
+def onCheckOutRequest(ch, method, properities, body):
+	print(" [x] Received %r" % body)
+	engine = create_engine(dbConnString, echo=False)  # temporary for dev use
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine, future=True)
+	session = Session()
+	requestParams = json.loads(body)
+
+	if 'stockIdNumber' not in requestParams:
+		logging.error("Failed to process check out Request. Stock ID number not provided")
+		ch.basic_ack(delivery_tag=method.delivery_tag)
+		return
+
+	logging.info(f"Processing check out request for stock item with ID number {requestParams['stockIdNumber']}")
+
+	stockItem = session.query(StockItem)\
+		.filter(StockItem.idNumber == int(requestParams['stockIdNumber']))\
+		.limit(1)\
+		.first()
+
+	if stockItem is None:
+		logging.error(f"Stock Item {requestParams['stockIdNumber']} does not exist in the database")
+		ch.basic_ack(delivery_tag=method.delivery_tag)
+		return
+
+	isSpecificItem = session.query(ProductType.tracksSpecificItems)\
+		.filter(ProductType.id == stockItem.productType).first()[0]
+	if stockItem.isCheckedIn is False and isSpecificItem:
+		logging.error("Attempting to check out specific item that is already checked out")
+		ch.basic_ack(delivery_tag=method.delivery_tag)
+		return
+
+	checkOutRecord = CheckOutRecord()
+	session.add(checkOutRecord)
+	checkOutRecord.stockItem = stockItem.id
+	checkOutRecord.checkOutTimestamp = func.now()
+	checkOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
+
+	if 'quantityCheckedOut' in requestParams:
+		checkOutRecord.quantityCheckedOut = decimal.Decimal(requestParams['quantityCheckedOut'])
+	else:
+		if session.query(ProductType.tracksSpecificItems).filter(ProductType.id == stockItem.productType).first()[0] is False:
+			logging.warning(
+				"Bulk or non-specific stock item checked out without specifying quantity. Assuming all."
+			)
+		checkOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
+
+	stockItem.quantityRemaining -= checkOutRecord.quantityCheckedOut
+
+	if "jobId" in requestParams:
+		checkOutRecord.jobId = requestParams['jobId']
+	else:
+		checkOutRecord.jobId = None
+
+	if isSpecificItem:
+		stockItem.isCheckedIn = False
+
+	session.commit()
+	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def main():
 	rabbitMqHost = 'localhost'
@@ -200,10 +224,12 @@ def main():
 
 	channel = connection.channel()
 	channel.queue_declare(queue='addStockRequests')
-	channel.queue_declare(queue='checkInOutRequests')
+	channel.queue_declare(queue='checkInRequests')
+	channel.queue_declare(queue='checkOutRequests')
 
 	channel.basic_consume(queue='addStockRequests', on_message_callback=onAddStockRequest)
-	channel.basic_consume(queue='checkInOutRequests', on_message_callback=onCheckInoutRequest)
+	channel.basic_consume(queue='checkInRequests', on_message_callback=onCheckInRequest)
+	channel.basic_consume(queue='checkOutRequests', on_message_callback=onCheckOutRequest)
 	logging.info("Waiting for messages")
 	print(' [*] Waiting for messages. To exit press CTRL+C')
 	channel.start_consuming()
