@@ -21,7 +21,7 @@ def getStockPage():
 
 
 @bp.route('/getIdStickerSheet/<int:idQty>')
-#@login_required # TODO: re-enable login requirement
+@login_required
 def getItemStickerSheet(idQty):
     dbSession = getDbSession()
     pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()[0]
@@ -174,11 +174,9 @@ def getStockOverviewTotals():
         ProductType.productDescriptor1,
         ProductType.productDescriptor2,
         ProductType.productDescriptor3,
-        ProductType.addedTimestamp,
-        func.sum(StockItem.quantityRemaining),
-        ProductType.barcode) \
-        .filter(StockItem.productType == ProductType.id) \
-        .group_by(StockItem.productType) \
+        func.sum(StockItem.quantityRemaining)) \
+        .join(StockItem, StockItem.productType == ProductType.id) \
+        .group_by(StockItem.productType)\
         .order_by(ProductType.productName.asc())
 
     if searchTerm:
@@ -202,8 +200,7 @@ def getStockOverviewTotals():
             "descriptor1": row[3],
             "descriptor2": row[4],
             "descriptor3": row[5],
-            "addedTimestamp": row[6],
-            "stockAmount": row[7]
+            "stockAmount": row[6]
         }
         for row in result
     ]
@@ -229,7 +226,8 @@ def getAvailableStockTotals():
                 ProductType.productDescriptor3.ilike(searchTerm),
                 ProductType.barcode.ilike(searchTerm)
             )
-        )\
+        ) \
+        .filter(ProductType.associatedStock != None)\
         .all()
 
     productList = [
@@ -266,9 +264,9 @@ def getAvailableStockTotals():
     # then update the product list
     for product in productList:
         if product['productId'] in stockDict:
-            product['stockAvailable'] = stockDict[product['productId']]
+            product['stockAmount'] = stockDict[product['productId']]
         else:
-            product['stockAvailable'] = None
+            product['stockAmount'] = None
 
     return productList
 
@@ -283,6 +281,7 @@ def getStockNearExpiry():
     # get how close to expiry an item of stock needs to be to be counted
     dayCountLimit = request.args.get("dayCountLimit", type=int, default=10)
     maxExpiryDate = datetime.date.today() + datetime.timedelta(days=dayCountLimit)
+    currentDate = datetime.date.today()
 
     query = session.query(
         ProductType.id,
@@ -295,9 +294,11 @@ def getStockNearExpiry():
         func.sum(StockItem.quantityRemaining),
         ProductType.barcode) \
         .filter(StockItem.productType == ProductType.id) \
+        .filter(ProductType.canExpire)\
         .group_by(StockItem.productType) \
         .order_by(ProductType.productName.asc()) \
-        .filter(StockItem.expiryDate <= maxExpiryDate)
+        .filter(StockItem.expiryDate <= maxExpiryDate)\
+        .filter(StockItem.expiryDate > currentDate)
 
     if searchTerm:
         query = query.where(
@@ -349,7 +350,8 @@ def getExpiredStock():
         .filter(StockItem.productType == ProductType.id) \
         .group_by(StockItem.productType) \
         .order_by(ProductType.productName.asc()) \
-        .filter(StockItem.expiryDate <= datetime.date.today())
+        .filter(StockItem.expiryDate <= datetime.date.today()) \
+        .filter(ProductType.canExpire)
 
     if searchTerm:
         query = query.where(

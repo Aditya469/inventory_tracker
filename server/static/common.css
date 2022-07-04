@@ -2,6 +2,11 @@ body{
     font-family: sans-serif;
 }
 
+#page{
+  position: absolute;
+  top: 90px;
+}
+
 #logo{
   position: relative;
   z-index: 1;

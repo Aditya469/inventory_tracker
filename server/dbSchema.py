@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKey, Integer, Sequence, String, \
-	Text, inspect
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, \
+	Text
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 Base = declarative_base()
@@ -20,7 +20,7 @@ class Numeric(types.TypeDecorator):
 		return str(value)
 
 	def process_result_value(self, value, dialect):
-		if value != "None":
+		if value != "None" and value != None:
 			return D(value)
 		return None
 #############################################################`

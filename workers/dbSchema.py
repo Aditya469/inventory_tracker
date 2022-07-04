@@ -20,7 +20,7 @@ class Numeric(types.TypeDecorator):
 		return str(value)
 
 	def process_result_value(self, value, dialect):
-		if value != "None":
+		if value != "None" and value != None:
 			return D(value)
 		return None
 #############################################################`

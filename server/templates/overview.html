@@ -5,9 +5,63 @@
 {% endblock %}
 
 {% block additionalHeadMaterial %}
-	<script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type=text/javascript src="{{ url_for('scripts.getFile', filename='overview.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-
+<div id="contentContainer" class="container mt-2">
+	<div class="row row-cols-sm-1 row-cols-md-2	">
+		<div id="currentJobsContainer" class="col col-md-5 border">
+			<h1>Jobs</h1>
+			<div id="jobsSearchControls">
+				<label id="jobSearchBarLabel" for="jobSearchBar">Search Term</label>
+				<input id="jobSearchBar" placeholder="start typing...">
+			</div>
+			<div id="jobsTableContainer">
+			</div>
+		</div>
+		<div id="stockDisplayContainer" class="col col-md-7 border">
+			<h1>Stock</h1>
+			<div id="stockSearchControls pb-1">
+				<label id="stockSearchBarLabel" for="stockSearchBar">Search Term</label>
+				<input id="stockSearchBar" placeholder="start typing...">
+			</div>
+			<br>
+			<div id="stockTableTabsContainer">
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<a class="nav-link active" href="#totalStockPanel" data-bs-toggle="tab">Total Stock</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#availableStockPanel" data-bs-toggle="tab">Unassigned Stock</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#oldStockPanel" data-bs-toggle="tab">Near Expiry</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#expiredStockPanel" data-bs-toggle="tab">Expired</a>
+					</li>
+				</ul>
+				<div id="stockOverviewTableContainer" class="tab-content overflow-auto">
+					<div class="tab-pane fade show active" id="availableStockPanel">
+						<div id="availableStockTableContainer"></div>
+					</div>
+					<div class="tab-pane fade" id="totalStockPanel">
+						<div id="totalStockTableContainer"></div>
+					</div>
+					<div class="tab-pane fade" id="oldStockPanel">
+						<div>
+							<label id="stockDaysNearExpiryLabel" for="stockDaysNearExpiry">Show stock expiring in this many days</label>
+							<input id="stockDaysNearExpiry" type="number" size="2">
+						</div>
+						<div id="oldStockTableContainer"></div>
+					</div>
+					<div class="tab-pane fade" id="expiredStockPanel">
+						<div id="expiredStockTableContainer"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
