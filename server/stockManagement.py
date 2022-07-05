@@ -6,9 +6,9 @@ import datetime
 from auth import login_required
 from db import getDbSession, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
-from dbSchema import StockItem, ProductType, AssignedStock
+from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord
 
-from sqlalchemy import select, delete, func, or_
+from sqlalchemy import select, delete, func, or_, update
 
 bp = Blueprint('stockManagement', __name__)
 
@@ -448,19 +448,46 @@ def deleteMultipleStockItems():
 def getNewlyAddedStock():
     session = getDbSession()
     # TODO: implement this using verificationRecords to pull in bulk stock
-    # stockItemsList = session.query(StockItem)\
-    #     .filter(StockItem.isVerified == False)\
-    #     .order(StockItem.productType.asc())\
-    #     .scalars()\
-    #     .all()
-    #
-    # stockList = [stockItem.toDict() for stockItem in stockItemsList]
-    # return make_response(jsonify(stockList), 200)
+    # newly added stock list includes product name, stock item id number, quantity added.
+    # as always, a text search is available.
+    if "searchTerm" in request.args:
+        searchTerm = "%" + request.args.get("searchTerm") + "%"
+    else:
+        searchTerm = "%"
+
+    unverifiedRecords = session.query(
+            VerificationRecord.id,
+            StockItem.id,
+            StockItem.productType,
+            ProductType.productName,
+            CheckInRecord.id,
+            CheckInRecord.quantityCheckedIn
+        )\
+        .filter(VerificationRecord.isVerified == False)\
+        .filter(ProductType.productName.ilike(searchTerm))\
+        .join(StockItem, StockItem.id == VerificationRecord.associatedStockItemId) \
+        .join(ProductType, ProductType.id == StockItem.productType) \
+        .join(CheckInRecord, CheckInRecord.id == VerificationRecord.associatedCheckInRecord)\
+        .all()
+
+    results = []
+    for row in unverifiedRecords:
+        results.append({
+            "verificationRecordId": row[0],
+            "stockItemId": row[1],
+            "productName": row[3],
+            "checkInRecordId": row[4],
+            "quantityCheckedIn": row[5]
+        })
+
+    return make_response(jsonify(results), 200)
 
 
 @bp.route('/verifyAllNewStock')
 @login_required
 def verifyAllNewStock():
     session = getDbSession()
+    session.execute(update(VerificationRecord).where(VerificationRecord.isVerified==False).values(isVerified=True))
+    session.commit()
 
-    pass
+    return make_response("done", 200)
