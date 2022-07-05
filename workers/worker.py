@@ -45,8 +45,8 @@ def onAddStockRequest(ch, method, properties, body):
 		session.add(stockItem)
 		stockItem.quantityRemaining += productType.initialQuantity
 		session.commit()
-		ch.basic_ack(delivery_tag=method.delivery_tag)
-		return
+		# ch.basic_ack(delivery_tag=method.delivery_tag)
+		# return
 
 	else:
 		stockItem = StockItem()
@@ -62,12 +62,18 @@ def onAddStockRequest(ch, method, properties, body):
 		if 'expiryDate' in requestParams:
 			stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
 
+		if 'quantityCheckingIn' in requestParams:
+			productQuantity = decimal.Decimal(requestParams['quantityCheckingIn'])
+
 		if 'barcode' not in requestParams \
-				or session.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).count() == 0:
-			stockItem.productType = session\
-				.query(ProductType.id)\
+				or (session.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).count() == 0):
+			productType = session\
+				.query(ProductType)\
 				.filter(ProductType.productName == "undefined product type")\
 				.first()
+			stockItem.productType = productType.id
+			stockItem.quantityRemaining = productType.initialQuantity
+			stockItem.price = productType.expectedPrice
 		else:
 			productType = session\
 				.query(ProductType)\
@@ -77,26 +83,26 @@ def onAddStockRequest(ch, method, properties, body):
 			stockItem.quantityRemaining = productType.initialQuantity
 			stockItem.price = productType.expectedPrice
 
-		session.flush()
-		checkInRecord = CheckInRecord()
-		checkInRecord.stockItem = stockItem.id
-		checkInRecord.qtyBeforeCheckout = None
-		checkInRecord.checkInTimestamp = func.now()
-		checkInRecord.quantityCheckedIn = productType.initialQuantity
+	session.flush()
+	checkInRecord = CheckInRecord()
+	checkInRecord.stockItem = stockItem.id
+	checkInRecord.qtyBeforeCheckout = None
+	checkInRecord.checkInTimestamp = func.now()
+	checkInRecord.quantityCheckedIn = productType.initialQuantity
 
-		if 'binIdString' in requestParams:
-			checkInRecord.binId = session.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
+	if 'binIdString' in requestParams:
+		checkInRecord.binId = session.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
 
-		session.add(checkInRecord)
-		session.flush()
-		verificationRecord = VerificationRecord()
-		verificationRecord.associatedCheckInRecord = checkInRecord.id
-		verificationRecord.associatedStockItemId = stockItem.id
-		verificationRecord.isVerified = False
-		session.add(verificationRecord)
+	session.add(checkInRecord)
+	session.flush()
+	verificationRecord = VerificationRecord()
+	verificationRecord.associatedCheckInRecord = checkInRecord.id
+	verificationRecord.associatedStockItemId = stockItem.id
+	verificationRecord.isVerified = False
+	session.add(verificationRecord)
 
-		session.commit()
-		ch.basic_ack(delivery_tag=method.delivery_tag)
+	session.commit()
+	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def onCheckInRequest(ch, method, properities, body):
