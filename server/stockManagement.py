@@ -455,7 +455,7 @@ def getNewlyAddedStock():
     else:
         searchTerm = "%"
 
-    unverifiedRecords = session.query(
+    query = session.query(
             VerificationRecord.id,
             StockItem.id,
             StockItem.productType,
@@ -468,7 +468,13 @@ def getNewlyAddedStock():
         .join(StockItem, StockItem.id == VerificationRecord.associatedStockItemId) \
         .join(ProductType, ProductType.id == StockItem.productType) \
         .join(CheckInRecord, CheckInRecord.id == VerificationRecord.associatedCheckInRecord)\
-        .all()
+
+    if request.args.get("onlyShowUnknownProducts", type=bool, default=False):
+        placeholderProduct = \
+            session.query(ProductType).filter(ProductType.productName == "undefined product type").first()
+        query.filter(StockItem.productType == placeholderProduct.id)
+
+    unverifiedRecords = query.all()
 
     results = []
     for row in unverifiedRecords:
