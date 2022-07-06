@@ -497,3 +497,37 @@ def verifyAllNewStock():
     session.commit()
 
     return make_response("done", 200)
+
+
+def updateNewStockWithNewProduct(newProductType):
+    # if a new stock item has been added, and the barcode is not known
+    # it will have been assigned a placeholder product. The actual barcode
+    # is recorded in the verification record.
+    # If a new product is added with a matching barcode, the new stock will
+    # but updated here to match.
+    session = getDbSession()
+
+    placeholderProduct = session.query(ProductType)\
+        .filter(ProductType.productName == "undefined product type")\
+        .one()
+
+    stockItems = session.query(StockItem)\
+        .join(VerificationRecord, StockItem.id == VerificationRecord.associatedStockItemId)\
+        .filter(VerificationRecord.itemBarcode == newProductType.barcode)\
+        .filter(StockItem.productType == placeholderProduct.id)\
+        .all()
+
+    for stockItem in stockItems:
+        stockItem.productType == newProductType.id
+        stockItem.quantityRemaining += newProductType.initialQuantity
+        stockItem.price = newProductType.expectedPrice
+
+    checkinRecords = session.query(CheckInRecord)\
+        .join(VerificationRecord, CheckInRecord.id == VerificationRecord.associatedCheckInRecord)\
+        .filter(VerificationRecord.itemBarcode == newProductType.barcode)\
+        .all()
+
+    for checkinRecord in checkinRecords:
+        checkinRecord.quantityCheckedIn = newProductType.initialQuantity
+
+    session.commit()

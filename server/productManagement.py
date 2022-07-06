@@ -1,10 +1,9 @@
-from unittest.mock import _patch_dict
-
 from flask import (
 	Blueprint, render_template, request, make_response, jsonify
 )
 from werkzeug.utils import secure_filename
 
+from stockManagement import updateNewStockWithNewProduct
 from .auth import login_required
 from dbSchema import ProductType
 from db import getDbSession
@@ -13,11 +12,10 @@ from sqlalchemy import select, or_
 bp = Blueprint('productManagement', __name__)
 
 
-@bp.route('/productManagement')
+@bp.route('/productsAndNewStock')
 @login_required
 def getProductManagementPage():
-
-	return render_template("productManagement.html")
+	return render_template("productsAndNewStock.html")
 
 
 @bp.route('/getProducts')
@@ -56,6 +54,7 @@ def addNewProductType():
 	errorState, product = updateProductFromRequestForm(session, newProduct)
 	if errorState is None:
 		session.commit()
+		updateNewStockWithNewProduct()
 		return make_response("New product added", 200)
 	else:
 		return make_response(errorState, 400)

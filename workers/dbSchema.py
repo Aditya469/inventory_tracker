@@ -73,6 +73,7 @@ class VerificationRecord(Base):
 	id = Column(Integer, primary_key=True)
 	associatedStockItemId = Column(Integer, ForeignKey("stockItems.id"))
 	isVerified = Column(Boolean, default=False)
+	itemBarcode = Column(String)
 	associatedCheckInRecord = Column(Integer, ForeignKey("checkInRecords.id"))
 
 	def toDict(self):

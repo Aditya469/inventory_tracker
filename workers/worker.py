@@ -99,6 +99,8 @@ def onAddStockRequest(ch, method, properties, body):
 	verificationRecord.associatedCheckInRecord = checkInRecord.id
 	verificationRecord.associatedStockItemId = stockItem.id
 	verificationRecord.isVerified = False
+	if "barcode" in requestParams:
+		verificationRecord.itemBarcode = requestParams['barcode']
 	session.add(verificationRecord)
 
 	session.commit()
