@@ -47,7 +47,7 @@ function updateProductsTable(){
 }
 
 function updateNewStockTable(){
-    var searchTerm = $("#productsSearchBar").val();
+    var searchTerm = $("#stockSearchBar").val();
     var onlyShowUnknownProducts = $("onlyShowUnknownProductsCheckbox").is(":checked");
 
     $.ajax({

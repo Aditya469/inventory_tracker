@@ -16,7 +16,7 @@
 			<div id="productControls" class="row">
 				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12"/>
 				<label id="productsBarLabel" for="productsSearchBar" class="col col-3">Search Term</label>
-				<input id="productsSearchBar" placeholder="start typing..." class="col col-9">
+				<input id="productsSearchBar" placeholder="start typing..." class="col col-9" oninput="updateProductsTable()">
 			</div>
 			<div id="productsTableContainer">
 			</div>
@@ -25,7 +25,7 @@
 			<h1>Newly Added Stock</h1>
 			<div id="stockSearchControls" class="pb-1 row">
 				<label id="stockSearchBarLabel" for="stockSearchBar" class="col col-3">Search Term</label>
-				<input id="stockSearchBar" placeholder="start typing..." class="col col-9">
+				<input id="stockSearchBar" placeholder="start typing..." class="col col-9" oninput="updateNewStockTable()">
 				<div class="col col-12">
 					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" onclick="updateNewStockTable()">
 					<label for="onlyShowUnknownProductsCheckbox">Only show stock with unknown product types</label>

@@ -41,7 +41,7 @@ function updateJobsTable(){
 
 function updateStockTables(){
     // note that this updates all 4 stock tables at the same time
-    var searchTerm = $("#jobSearchBar").val();
+    var searchTerm = $("#stockSearchBar").val();
 
     // make a bunch of ajax requests and bring all the tables up to date
     $.ajax({
