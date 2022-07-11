@@ -1,3 +1,5 @@
+import json
+
 from flask import (
     Blueprint, current_app, make_response, render_template, send_file, jsonify, request
 )
@@ -460,6 +462,7 @@ def getNewlyAddedStock():
             StockItem.id,
             StockItem.productType,
             ProductType.productName,
+            ProductType.quantityUnit,
             CheckInRecord.id,
             CheckInRecord.quantityCheckedIn
         )\
@@ -469,10 +472,10 @@ def getNewlyAddedStock():
         .join(ProductType, ProductType.id == StockItem.productType) \
         .join(CheckInRecord, CheckInRecord.id == VerificationRecord.associatedCheckInRecord)\
 
-    if request.args.get("onlyShowUnknownProducts", type=bool, default=False):
+    if request.args.get("onlyShowUnknownProducts", default="false") == "true":
         placeholderProduct = \
             session.query(ProductType).filter(ProductType.productName == "undefined product type").first()
-        query.filter(StockItem.productType == placeholderProduct.id)
+        query = query.filter(StockItem.productType == placeholderProduct.id)
 
     unverifiedRecords = query.all()
 
@@ -482,14 +485,15 @@ def getNewlyAddedStock():
             "verificationRecordId": row[0],
             "stockItemId": row[1],
             "productName": row[3],
-            "checkInRecordId": row[4],
-            "quantityCheckedIn": row[5]
+            "productQuantityUnit": row[4],
+            "checkInRecordId": row[5],
+            "quantityCheckedIn": row[6]
         })
 
     return make_response(jsonify(results), 200)
 
 
-@bp.route('/verifyAllNewStock')
+@bp.route('/verifyAllNewStock', methods=("POST",))
 @login_required
 def verifyAllNewStock():
     session = getDbSession()
@@ -531,3 +535,31 @@ def updateNewStockWithNewProduct(newProductType):
         checkinRecord.quantityCheckedIn = newProductType.initialQuantity
 
     session.commit()
+
+
+@bp.route('/deleteNewlyAddedStock', methods=("POST",))
+def deleteNewlyAddedStock():
+    verificationRecordIdList = request.json
+
+    session = getDbSession()
+
+    verificationRecords = session.query(VerificationRecord)\
+        .filter(VerificationRecord.id.in_(verificationRecordIdList))\
+        .all()
+
+    # loop through records to be deleted. If a stock item is a bulk product, remove the amount
+    # that was checked in
+    for verificationRecord in verificationRecords:
+        stockItem = session.query(StockItem).filter(StockItem.id == verificationRecord.associatedStockItemId).first()
+        checkinRecord = session.query(CheckInRecord)\
+            .filter(CheckInRecord.id == verificationRecord.associatedCheckInRecord).first()
+        productType = session.query(ProductType).filter(ProductType.id == StockItem.productType).first()
+        if productType.tracksAllItemsOfProductType:
+            stockItem.quantityRemaining -= checkinRecord.quantityCheckedIn
+        session.delete(stockItem)
+        session.delete(checkinRecord)
+        session.delete(verificationRecord)
+
+    session.commit()
+
+    return make_response("WIP", 200)

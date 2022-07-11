@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block additionalHeadMaterial %}
+<script type=text/javascript src="{{ url_for('scripts.getFile', filename='productManagement.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="contentContainer" class="container mt-2">
+	<div class="row row-cols-md-1 row-cols-lg-2	">
+		<div id="productsContainer" class="col col-md-12 col-lg-6 border overflow-auto">
+			<h1>Known Products</h1>
+			<div id="productControls" class="row">
+				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12"/>
+				<label id="productsBarLabel" for="productsSearchBar" class="col col-3">Search Term</label>
+				<input id="productsSearchBar" placeholder="start typing..." class="col col-9">
+			</div>
+			<div id="productsTableContainer">
+			</div>
+		</div>
+		<div id="newStockDisplayContainer" class="col col-md-12 col-lg-6 border">
+			<h1>Newly Added Stock</h1>
+			<div id="stockSearchControls" class="pb-1 row">
+				<label id="stockSearchBarLabel" for="stockSearchBar" class="col col-3">Search Term</label>
+				<input id="stockSearchBar" placeholder="start typing..." class="col col-9">
+				<div class="col col-12">
+					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" onclick="updateNewStockTable()">
+					<label for="onlyShowUnknownProductsCheckbox">Only show stock with unknown product types</label>
+				</div>
+				<div class="col col-3">
+					<input id="selectAllCheckbox" type="checkbox" onclick="onSelectAllCheckboxClicked()">
+					<label for="selectAllCheckbox">Select all</label>
+				</div>
+				<input type="button" id="deleteSelectedNewStockButton" value="Delete selected items" class="col col-4" disabled onclick="deleteSelectedNewStockItems()">
+				<input id="verifyAllButton" onclick="verifyAllNewStock()" class="col col-4 offset-1" value="Verify All New Stock" type="button"/>
+			</div>
+			<div id="stockOverviewTableContainer" class="overflow-auto">
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

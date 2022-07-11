@@ -15,7 +15,7 @@ bp = Blueprint('productManagement', __name__)
 @bp.route('/productsAndNewStock')
 @login_required
 def getProductManagementPage():
-	return render_template("productsAndNewStock.html")
+	return render_template("productManagement.html")
 
 
 @bp.route('/getProducts')

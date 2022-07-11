@@ -24,7 +24,7 @@
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				<div class="navbar-nav">
 					<a class="nav-item nav-link m-2" href="{{ url_for('overview.getOverview') }}">Overview Page</a>
-					<a class="nav-item nav-link m-2" href="#">Barcodes and New Stock</a>
+					<a class="nav-item nav-link m-2" href="{{ url_for('productManagement.getProductManagementPage') }}">Products and New Stock</a>
 					<a class="nav-item nav-link m-2" href="#">Stock Management</a>
 					<a class="nav-item nav-link m-2" href="#">Add New Job</a>
 				</div>
@@ -43,7 +43,7 @@
 			{% endif %}
 		</div>
 	</nav>
-	<section id="pageContaienr" class="container-fluid">
+	<section id="pageContainer" class="container-fluid">
 		{% for message in get_flashed_messages() %}
 			<div class="flash">{{ message }}</div>
 		{% endfor %}
