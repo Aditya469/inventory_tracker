@@ -27,10 +27,10 @@ function updateProductsTable(){
             for(var i = 0; i < responseData.length; i++){
                 tr = $("<tr>");
                 tr.data("productId", responseData[i].id);
-                tr.click(function(){ openProductEditPanel($(this).data("productId")); });
+                tr.click(function(){ openProductDetailsPanel($(this).data("productId")); });
                 tr.append($("<td>" + responseData[i].productName + "</td>"));
                 tr.append($("<td>" + responseData[i].barcode + "</td>"));
-                if(responseData[i].tracksSpecificItems)
+                if(responseData[i].tracksAllItemsOfProductType)
                     tr.append($("<td>Yes</td>"));
                 else
                     tr.append($("<td>No</td>"));
@@ -83,7 +83,7 @@ function updateNewStockTable(){
                 tr.append(
                     $(
                         "<td>" +
-                        responseData[i].quantityCheckedIn +
+                        responseData[i].quantityCheckedIn + " " +
                         (responseData[i].productQuantityUnit ? responseData[i].productQuantityUnit : "") +
                         "</td>"
                     )
@@ -127,8 +127,8 @@ function onSelectAllCheckboxClicked(){
 }
 
 function deleteSelectedNewStockItems(){
-    selectedCheckboxes = $(".newStockSelectCheckbox:checked");
-    idList = [];
+    var selectedCheckboxes = $(".newStockSelectCheckbox:checked");
+    var idList = [];
     for(var i = 0; i < selectedCheckboxes.length; i++){
         var id = $(selectedCheckboxes[i]).data("verificationRecordId");
         console.log("Add verification record " + id + "to the list to delete");
@@ -144,7 +144,6 @@ function deleteSelectedNewStockItems(){
         processData: false,
         contentType: "application/json",
         cache: false,
-
         success: function(){
             updateNewStockTable();
         },
@@ -165,4 +164,141 @@ function verifyAllNewStock(){
             alert(textStatus);
         }
     });
+}
+
+function openProductDetailsPanel(prodId){
+    $("#greyout").prop("hidden", false);
+    $("#editProductPanel").prop("hidden", false);
+    if(prodId != -1){
+        $("#addedTimestampLabel").prop("hidden", false);
+        $("#addedTimestamp").prop("hidden", false);
+        var getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
+        $.ajax({
+            url: getDataUrl,
+            type: "GET",
+            success: function(responseData){
+                console.log(responseData);
+                $("#productId").val(responseData.id);
+                $("#productName").val(responseData.productName);
+                $("#barcode").val(responseData.barcode);
+                if(responseData.tracksSpecificItems){
+                    //$("#bulkSelector").prop("checked", false);
+                    $("#specificItemSelector").prop("checked", true);
+                }
+                else{
+                    $("#bulkSelector").prop("checked", true);
+                    //$("#specificItemSelector").prop("checked", false);
+                }
+                $("#descriptor1").val(responseData.productDescriptor1 ? responseData.productDescriptor1 : "");
+                $("#descriptor2").val(responseData.productDescriptor2 ? responseData.productDescriptor2 : "");
+                $("#descriptor3").val(responseData.productDescriptor3 ? responseData.productDescriptor3 : "");
+                $("#initialQuantity").val(responseData.initialQuantity);
+                $("#quantityUnit").val(responseData.quantityUnit ? responseData.quantityUnit : "");
+                if(responseData.canExpire)
+                    $("#canExpire").prop("checked", true);
+                else
+                    $("#canExpire").prop("checked", false);
+                $("#addedTimestamp").html(responseData.addedTimestamp);
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert(textStatus);
+            }
+        });
+    }
+}
+
+function saveProductDetails(){
+    var productName = $("#productName").val();
+    var productBarcode = $("#barcode").val();
+    var bulkSpecSelection = "";
+    if($("#bulkSelector").is(":checked"))
+        bulkSpecSelection = "bulk";
+    else if($("#specificItemSelector").is(":checked"))
+        bulkSpecSelection = "specific";
+    var initialQuantity = $("#initialQuantity").val();
+
+    var dataValid = true;
+
+    if(productName == ""){
+        $("#productName").addClass("is-invalid")
+        dataValid = false;
+    }
+    if(productBarcode == ""){
+        $("#barcode").addClass("is-invalid");
+        dataValid = false;
+    }
+    if(initialQuantity == ""){
+        $("#initialQuantity").addClass("is-invalid");
+        dataValid = false;
+    }
+
+    if(!dataValid){
+        $("#saveProductFeedbackSpan").html("Please fill in all required fields");
+        return;
+    }
+
+    var fd = new FormData();
+    fd.append("id", $("#productId").val());
+    fd.append("productName", productName);
+    fd.append("barcode", productBarcode);
+    fd.append("itemTrackingType", "bulk");
+    fd.append("productDescriptor1", $("#descriptor1").val());
+    fd.append("productDescriptor2", $("#descriptor2").val());
+    fd.append("productDescriptor3", $("#descriptor3").val());
+    fd.append("initialQuantity", initialQuantity);
+    fd.append("expectedPrice", $("#expectedPrice").val());
+    if($("#canExpire").is(":checked"))
+        fd.append("canExpire", "true");
+    else
+        fd.append("canExpire", "false");
+
+    if($("#productId").val() == "")
+        var url = "{{ url_for('productManagement.addNewProductType') }}";
+    else
+        var url = "{{ url_for('productManagement.updateProductType') }}";
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: fd,
+        contentType: false,
+        processData: false,
+        success: function(response){
+            $("#saveProductFeedbackSpan").html(response);
+            setTimeout(function(){$("#saveProductFeedbackSpan").empty();}, 3000);
+            updateProductsTable();
+            updateNewStockTable();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            $("#saveProductFeedbackSpan").html(textStatus);
+        }
+    });
+}
+
+function deleteProduct(){
+    if(confirm("Delete this product?")){
+        var productId = $("#productId").val();
+        var fd = new FormData();
+        fd.append("id", productId);
+        $.ajax({
+            url: "{{ url_for('productManagement.deleteProductType') }}",
+            type: "POST",
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(response){
+                closeProductDetailsPanel();
+                updateProductsTable();
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                $("#saveProductFeedbackSpan").html(textStatus);
+            }
+        });
+    }
+}
+
+function closeProductDetailsPanel(){
+    $(".editProductPanelInput").val("").removeClass("is-invalid");
+    $("#greyout").prop("hidden", true);
+    $("#editProductPanel").prop("hidden", true);
 }

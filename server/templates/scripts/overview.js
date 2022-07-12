@@ -111,7 +111,7 @@ function generateOverviewStockTable(stockData)
     for(i=0; i<stockData.length; i++){
         tr = $("<tr>");
         tr.append($("<td>" + stockData[i].productName + "</td>"));
-        tr.append($("<td>" + stockData[i].stockAmount + "</td>"));
+        tr.append($("<td>" + stockData[i].stockAmount + " " + stockData[i]. + "</td>"));
         if(stockData[i].isBulk)
             tr.append($("<td>Yes</td>"));
         else

@@ -118,6 +118,7 @@ class ProductType(Base):
 			"productDescriptor3": self.productDescriptor3,
 			"addedTimestamp": self.addedTimestamp,
 			"initialQuantity": self.initialQuantity,
+			"quantityUnit": self.quantityUnit,
 			"expectedPrice": self.expectedPrice,
 			"barcode": self.barcode,
 			"canExpire": self.canExpire

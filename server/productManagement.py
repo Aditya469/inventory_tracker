@@ -8,6 +8,7 @@ from .auth import login_required
 from dbSchema import ProductType
 from db import getDbSession
 from sqlalchemy import select, or_
+import decimal
 
 bp = Blueprint('productManagement', __name__)
 
@@ -45,6 +46,15 @@ def getProducts():
 	return make_response(jsonify(productList), 200)
 
 
+@bp.route('/getProduct/<productId>')
+@login_required
+def getProduct(productId):
+	session = getDbSession()
+	product = session.query(ProductType).filter(ProductType.id == productId).first()
+
+	return make_response(jsonify(product.toDict()), 200)
+
+
 @bp.route('/addProduct', methods=('POST',))
 @login_required
 def addNewProductType():
@@ -54,7 +64,7 @@ def addNewProductType():
 	errorState, product = updateProductFromRequestForm(session, newProduct)
 	if errorState is None:
 		session.commit()
-		updateNewStockWithNewProduct()
+		updateNewStockWithNewProduct(product)
 		return make_response("New product added", 200)
 	else:
 		return make_response(errorState, 400)
@@ -72,6 +82,7 @@ def updateProductType():
 	errorState, product = updateProductFromRequestForm(session, product)
 	if errorState is None:
 		session.commit()
+		updateNewStockWithNewProduct(product)
 		return make_response("Product details updated", 200)
 	else:
 		return make_response(errorState, 400)
@@ -86,6 +97,7 @@ def deleteProductType():
 	session = getDbSession()
 	productType = session.get(ProductType, request.form['id'])
 	session.delete(productType)
+	session.commit()
 
 	return make_response("Product deleted", 200)
 
@@ -113,7 +125,7 @@ def updateProductFromRequestForm(session, product):
 		product.tracksSpecificItems = False
 		product.tracksAllItemsOfProductType = True
 
-	product.initialQuantity = request.form["initialQuantity"]
+	product.initialQuantity = decimal.Decimal(request.form["initialQuantity"])
 	product.barcode = request.form["barcode"]
 	if "productDescriptor1" in request.form:
 		product.productDescriptor1 = request.form["productDescriptor1"]
@@ -121,10 +133,10 @@ def updateProductFromRequestForm(session, product):
 		product.productDescriptor2 = request.form["productDescriptor2"]
 	if "productDescriptor3" in request.form:
 		product.productDescriptor3 = request.form["productDescriptor3"]
-	if "expectedPrice" in request.form:
-		product.expectedPrice = request.form["expectedPrice"]
+	if "expectedPrice" in request.form and request.form['expectedPrice'] != "":
+		product.expectedPrice = decimal.Decimal(request.form["expectedPrice"])
 
-	if "canExpire" in request.form and request.form["canExpire"] == "True":
+	if "canExpire" in request.form and request.form["canExpire"] == "true":
 		product.canExpire = True
 
 	return None, product

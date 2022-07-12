@@ -6,6 +6,7 @@
 
 {% block additionalHeadMaterial %}
 <script type=text/javascript src="{{ url_for('scripts.getFile', filename='productManagement.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='productManagement.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -14,7 +15,7 @@
 		<div id="productsContainer" class="col col-md-12 col-lg-6 border overflow-auto">
 			<h1>Known Products</h1>
 			<div id="productControls" class="row">
-				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12"/>
+				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12" onclick="openProductDetailsPanel(-1)"/>
 				<label id="productsBarLabel" for="productsSearchBar" class="col col-3">Search Term</label>
 				<input id="productsSearchBar" placeholder="start typing..." class="col col-9" oninput="updateProductsTable()">
 			</div>
@@ -42,5 +43,69 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div id="greyout" hidden class="position-fixed top-0 start-0 vw-100 vh-100"></div>
+<div id="editProductPanel" hidden class="container w-75 h-75 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+	<nav id="nav" class="navbar bg-light navbar-light w-100">
+		<h1>Product Details</h1>
+		<input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closeProductDetailsPanel()"/>
+	</nav>
+	<form class="row needs-validation" novalidate>
+		<input id="productId" type="hidden" class="editProductPanelInput">
+		<div class="col col-md-6">
+			<label for="productName">Product Name:</label>
+			<input class="form-control editProductPanelInput" id="productName" type="text" required/>
+		</div>
+		<div class="col col-md-6">
+		<label for="barcode">Product Barcode:</label>
+		<input class="form-control editProductPanelInput" id="barcode" required/>
+		</div>
+		<div class="col col-md-12 mt-2 mb-2">
+			<span>Bulk Product?:  </span>
+			<label for="bulkSelector">Bulk</label>
+			<input id="bulkSelector" type="radio" name="bulkSelectorRadio" value="bulk">
+			<label for="specificItemSelector">Specific Item</label>
+			<input id="specificItemSelector" type="radio" name="bulkSelectorRadio" checked value="specificItem">
+		</div>
+		<div class="col col-md-4">
+			<label for="descriptor1">Product Descriptor 1:</label>
+			<input class="form-control editProductPanelInput" id="descriptor1" type="text"/>
+		</div>
+		<div class="col col-md-4">
+			<label for="descriptor2">Product Descriptor 2:</label>
+			<input class="form-control editProductPanelInput" id="descriptor2" type="text"/>
+		</div>
+		<div class="col col-md-4">
+			<label for="descriptor3">Product Descriptor 3:</label>
+			<input class="form-control editProductPanelInput" id="descriptor3" type="text"/>
+		</div>
+		<div class="col col-md-3">
+			<label for="initialQuantity">Initial Pack Quantity:</label>
+			<input class="form-control editProductPanelInput" id="initialQuantity" type="number" required>
+		</div>
+		<div class="col col-md-3">
+			<label for="quantityUnit">Quantity Unit:</label>
+			<input class="form-control editProductPanelInput" id="quantityUnit" type="text"/>
+		</div>
+		<div class="col col-md-3">
+			<label for="expectedPrice">Expected Price (£.pp)</label>
+			<input class="form-control editProductPanelInput" id="expectedPrice" type="number"/>
+		</div>
+		<div class="col col-md-3">
+			<label class="col col-12" for="canExpire">Can Expire?</label>
+			<input class="editProductPanelInput" id="canExpire" type="checkbox" />
+		</div>
+		<div class="col col-md-12">
+			<label for="addedTimestamp"  id="addedTimestampLabel" hidden>Added:</label>
+			<span class="editProductPanelInput" id="addedTimestamp" hidden></span>
+		</div>
+		<div class="col col-md-12 p-4	">
+			<div class="row">
+				<input class="col col-md-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteProduct()" value="Delete This Product">
+				<input class="col col-md-3 offset-md-6 btn btn-primary" id="saveButton" type="button" onclick="saveProductDetails()" value="Save">
+			</div>
+		</div>
+		<span class="col col-md-3 offset-md-9" id="saveProductFeedbackSpan"></span>
+	</form>
 </div>
 {% endblock %}
