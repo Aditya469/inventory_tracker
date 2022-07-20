@@ -116,9 +116,9 @@ function generateOverviewStockTable(stockData)
             tr.append($("<td>Yes</td>"));
         else
             tr.append($("<td>No</td>"));
-        tr.append($("<td>" + stockData[i].descriptor1 + "</td>"));
-        tr.append($("<td>" + stockData[i].descriptor2 + "</td>"));
-        tr.append($("<td>" + stockData[i].descriptor3 + "</td>"));
+        tr.append($("<td>" + (stockData[i].descriptor1 ? stockData[i].descriptor1 : "") + "</td>"));
+        tr.append($("<td>" + (stockData[i].descriptor2 ? stockData[i].descriptor2 : "") + "</td>"));
+        tr.append($("<td>" + (stockData[i].descriptor3 ? stockData[i].descriptor3 : "") + "</td>"));
         tbody.append(tr);
     }
     table.append(tbody);
