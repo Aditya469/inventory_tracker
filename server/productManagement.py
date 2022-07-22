@@ -125,6 +125,9 @@ def updateProductFromRequestForm(session, product):
 		product.tracksSpecificItems = False
 		product.tracksAllItemsOfProductType = True
 
+	if "quantityUnit" in request.form:
+		product.quantityUnit = request.form["quantityUnit"]
+
 	product.initialQuantity = decimal.Decimal(request.form["initialQuantity"])
 	product.barcode = request.form["barcode"]
 	if "productDescriptor1" in request.form:

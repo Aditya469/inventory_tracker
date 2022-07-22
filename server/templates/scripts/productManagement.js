@@ -198,6 +198,7 @@ function openProductDetailsPanel(prodId){
                     $("#canExpire").prop("checked", true);
                 else
                     $("#canExpire").prop("checked", false);
+                $("#expectedPrice").val(responseData.expectedPrice);
                 $("#addedTimestamp").html(responseData.addedTimestamp);
             },
             error: function(jqXHR, textStatus, errorThrown){
@@ -241,12 +242,13 @@ function saveProductDetails(){
     fd.append("id", $("#productId").val());
     fd.append("productName", productName);
     fd.append("barcode", productBarcode);
-    fd.append("itemTrackingType", "bulk");
+    fd.append("itemTrackingType", bulkSpecSelection);
     fd.append("productDescriptor1", $("#descriptor1").val());
     fd.append("productDescriptor2", $("#descriptor2").val());
     fd.append("productDescriptor3", $("#descriptor3").val());
     fd.append("initialQuantity", initialQuantity);
     fd.append("expectedPrice", $("#expectedPrice").val());
+    fd.append("quantityUnit", ($("#quantityUnit").val() ? $("#quantityUnit").val() : ""));
     if($("#canExpire").is(":checked"))
         fd.append("canExpire", "true");
     else
