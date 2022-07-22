@@ -12,3 +12,12 @@ form{
   display: grid;
   row-gap: 5px;
 }
+
+#navBarContainer{
+  height: 90px;
+  position: fixed;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+  background: darkgreen;
+}
