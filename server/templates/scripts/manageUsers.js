@@ -10,7 +10,7 @@ $(document).ready(function(){
 });
 
 function updateUsersTable(responseData){
-    var table = $("<table>");
+    var table = $("<table class='table'>");
     var header = $("<thead>");
     var headerRow = $("<tr class='header'>");
     headerRow.append($("<th>Username</th>"));
@@ -29,13 +29,13 @@ function updateUsersTable(responseData){
         else
             row.append($("<td>No</td>"));
 
-        var resetPasswordBtn = $("<input>");
+        var resetPasswordBtn = $("<input class='button'>");
         resetPasswordBtn.attr("type","button");
         resetPasswordBtn.attr("value","Reset Password");
         resetPasswordBtn.attr("onclick","resetPassword(\"" + responseData[i]['username'] + "\")");
         row.append($("<td>").append(resetPasswordBtn));
 
-        var deleteUserBtn = $("<input>");
+        var deleteUserBtn = $("<input class='button'>");
         deleteUserBtn.attr("type","button");
         deleteUserBtn.attr("value","Delete User");
         deleteUserBtn.attr("onclick","deleteUser(\"" + responseData[i]['username'] + "\")");
