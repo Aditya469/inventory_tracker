@@ -118,6 +118,7 @@ class ProductType(Base):
 			"productDescriptor3": self.productDescriptor3,
 			"addedTimestamp": self.addedTimestamp,
 			"initialQuantity": self.initialQuantity,
+			"quantityUnit": self.quantityUnit,
 			"expectedPrice": self.expectedPrice,
 			"barcode": self.barcode,
 			"canExpire": self.canExpire
@@ -131,7 +132,7 @@ class CheckInRecord(Base):
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
 	checkInTimestamp = Column(DateTime(timezone=True), server_default=func.now())
 	quantityCheckedIn = Column(Numeric, default=0)
-	binId = Column(Integer, ForeignKey("bins.id"))
+	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	associatedStockItem = relationship("StockItem", backref="checkInRecords")
 

@@ -29,10 +29,17 @@ def initApp(app):
 
 		# set up placeholder product
 		session.add(ProductType(
+			id=-1,
 			productName="undefined product type",
 			tracksSpecificItems=False,
 			tracksAllItemsOfProductType=False,
 			initialQuantity=0
+		))
+
+		# set up an undefined bin location
+		session.add(Bin(
+			id=-1,
+			locationName = "undefined location"
 		))
 
 		session.commit()

@@ -1,3 +1,4 @@
+import decimal
 import json
 
 from flask import (
@@ -8,9 +9,9 @@ import datetime
 from auth import login_required
 from db import getDbSession, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
-from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord
+from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin
 
-from sqlalchemy import select, delete, func, or_, update
+from sqlalchemy import select, delete, func, or_, update, and_
 
 bp = Blueprint('stockManagement', __name__)
 
@@ -73,46 +74,62 @@ def getStock():
         StockItem.quantityRemaining,
         StockItem.price,
         ProductType.productName,
-        ProductType.barcode
+        ProductType.barcode,
+        ProductType.quantityUnit
     ).join(ProductType, StockItem.productType == ProductType.id)
 
     # selection criteria...
     if "searchTerm" in request.args:
         searchTerm = "%" + request.args.get("searchTerm") + "%"
-        if request.args.get("searchByProductTypeName", type=bool, default=False):
+        if request.args.get("searchByProductTypeName", default="false") == "true":
             stmt = stmt.where(ProductType.productName.ilike(searchTerm))
-        if request.args.get("searchByIdNumber", type=bool, default=False):
+        if request.args.get("searchByIdNumber", default="false") == "true":
             stmt = stmt.where(StockItem.idNumber.ilike(searchTerm))
-        if request.args.get("searchByBarcode", type=bool, default=False):
+        if request.args.get("searchByBarcode", default="false") == "true":
             stmt = stmt.where(ProductType.barcode.ilike(searchTerm))
+        if request.args.get("searchByDescriptors", default="false") == "true":
+            stmt = stmt.where(or_(
+                ProductType.productDescriptor1.ilike(searchTerm),
+                ProductType.productDescriptor2.ilike(searchTerm),
+                ProductType.productDescriptor3.ilike(searchTerm)
+            ))
 
-    if "canExpire" in request.args:
-        if request.args.get("canExpire", type=bool):
-            stmt = stmt.where(ProductType.canExpire == True)
-        else:
-            stmt = stmt.where(ProductType.canExpire == False)
+    if "onlyShowExpirableStock" in request.args:
+        if request.args.get("onlyShowExpirableStock", default="false") == "true":
+            stmt = stmt.where(ProductType.canExpire)
 
-    if "expiryDateStart" in request.args:
-        expRangeStartDate = datetime.datetime.strptime(request.args.get("expiryDateStart"), "%Y-%m-%d")
-        stmt = stmt.where(StockItem.expiryDate >= expRangeStartDate)
+    if "limitExpiryDates" in request.args:
+        if request.args.get("limitExpiryDates", default="false") == "true":
+            if "expiryStartDate" in request.args:
+                expRangeStartDate = datetime.datetime.strptime(request.args.get("expiryStartDate"), "%Y-%m-%d")
+                stmt = stmt.where(StockItem.expiryDate >= expRangeStartDate)
 
-    if "expiryDateEnd" in request.args:
-        expRangeEndDate = datetime.datetime.strptime(request.args.get("expiryDateEnd"), "%Y-%m-%d")\
-            .replace(hour=11, minute=59)
-        stmt = stmt.where(StockItem.expiryDate <= expRangeEndDate)
+            if "expiryEndDate" in request.args:
+                expRangeEndDate = datetime.datetime.strptime(request.args.get("expiryEndDate"), "%Y-%m-%d")\
+                    .replace(hour=11, minute=59)
+                stmt = stmt.where(StockItem.expiryDate <= expRangeEndDate)
 
-    if "priceRangeStart" in request.args:
-        stmt.where(StockItem.price >= request.args.get("priceRangeStart"))
-
-    if "priceRangeEnd" in request.args:
-        stmt.where(StockItem.price <= request.args.get("priceRangeEnd"))
+    if "limitByPrice" in request.args:
+        if request.args.get("limitByPrice", default="false") == "true":
+            if "priceRangeStart" in request.args:
+                stmt = stmt.where(StockItem.price >= decimal.Decimal(request.args.get("priceRangeStart")))
+            if "priceRangeEnd" in request.args:
+                stmt = stmt.where(StockItem.price <= decimal.Decimal(request.args.get("priceRangeEnd")))
 
     # ... and ordering
     if "sortBy" in request.args:
-        if request.args.get("sortby") == "expiryDate":
-            stmt = stmt.order_by(StockItem.expiryDate)
-        elif request.args.get("sortBy") == "productName":
-            stmt = stmt.order_by(ProductType.productName)
+        if request.args.get("sortBy") == "productNameAsc":
+            stmt = stmt.order_by(ProductType.productName.asc())
+        elif request.args.get("sortBy") == "productNameDesc":
+            stmt = stmt.order_by(ProductType.productName.desc())
+        elif request.args.get("sortBy") == "dateAddedAsc":
+            stmt = stmt.order_by(StockItem.addedTimestamp.asc())
+        elif request.args.get("sortBy") == "dateAddedDesc":
+            stmt = stmt.order_by(StockItem.addedTimestamp.desc())
+        elif request.args.get("sortby") == "expiryDateAsc":
+            stmt = stmt.order_by(StockItem.expiryDate.asc())
+        elif request.args.get("sortby") == "expiryDateDesc":
+            stmt = stmt.order_by(StockItem.expiryDate.desc())
         # etc...
     else:
         stmt = stmt.order_by(StockItem.addedTimestamp)
@@ -125,22 +142,92 @@ def getStock():
             "id": row[0],
             "idNumber": row[1],
             "canExpire": row[2],
-            "expiryDate": row[3],
+            "expiryDate": row[3].strftime("%Y-%m-%d"),
             "quantityRemaining": row[4],
             "price": row[5],
             "productName": row[6],
-            "productBarcode": row[7]
+            "productBarcode": row[7],
+            "quantityUnit": row[8]
         })
     return make_response(jsonify(stockList), 200)
 
 
-@bp.route('/getStock/<int:stockId>')
+@bp.route('/getStockDetails/<stockId>')
 @login_required
 def getStockItemById(stockId):
     session = getDbSession()
-    stockItem = session.query(StockItem).filter(StockItem.id == stockId).scalar()
+    stockItem = session.query(
+            StockItem.id,
+            StockItem.idNumber,
+            StockItem.productType,
+            StockItem.addedTimestamp,
+            StockItem.expiryDate,
+            ProductType.canExpire,
+            StockItem.quantityRemaining,
+            ProductType.quantityUnit,
+            StockItem.price,
+            StockItem.isCheckedIn,
+            ProductType.productDescriptor1,
+            ProductType.productDescriptor2,
+            ProductType.productDescriptor3,
+            ProductType.tracksAllItemsOfProductType,
+            ProductType.tracksSpecificItems
+        )\
+        .filter(StockItem.id == stockId)\
+        .join(ProductType, ProductType.id == StockItem.productType) \
+        .first()
+
+    checkinRecord = session.query(CheckInRecord)\
+        .filter(CheckInRecord.stockItem == stockId)\
+        .order_by(CheckInRecord.checkInTimestamp.desc())\
+        .first()
+
+    if checkinRecord:
+        binId = checkinRecord.binId
+    else:
+        binId = None
+
+    if stockItem[4]: # expiry date
+        expiryDate = stockItem[4].strftime("%Y-%m-%d");
+
     if stockItem:
-        return make_response(jsonify(stockItem.toDict()), 200)
+        itemDict = {
+            "id":stockItem[0],
+            "idNumber":stockItem[1],
+            "productId":stockItem[2],
+            "addedTimestamp":stockItem[3],
+            "expiryDate":expiryDate,
+            "canExpire":stockItem[5],
+            "quantityRemaining":stockItem[6],
+            "quantityUnit":stockItem[7],
+            "price":stockItem[8],
+            "isCheckedIn":stockItem[9],
+            "productDescriptor1":stockItem[10],
+            "productDescriptor2":stockItem[11],
+            "productDescriptor3":stockItem[12],
+            "isBulk":stockItem[13],
+            "bin":binId
+        }
+
+        bins = session.query(Bin)\
+            .filter(Bin.locationName != "undefined location")\
+            .order_by(Bin.locationName.asc())\
+            .all()
+        products = session.query(ProductType)\
+            .filter(ProductType.productName != "undefined product type")\
+            .order_by(ProductType.productName.asc())\
+            .all()
+
+        placeholderBin = session.query(Bin).filter(Bin.id == -1).scalar()
+        placeholderProduct = session.query(ProductType).filter(ProductType.id == -1).scalar()
+
+        data = {
+            "stockItemDetails": itemDict,
+            "bins": [placeholderBin.toDict()] + [bin.toDict() for bin in bins],
+            "productTypes": [placeholderProduct.toDict()] + [productType.toDict() for productType in products]
+        }
+
+        return make_response(jsonify(data), 200)
     else:
         return make_response("No such item", 404)
 
@@ -176,6 +263,7 @@ def getStockOverviewTotals():
         ProductType.productDescriptor1,
         ProductType.productDescriptor2,
         ProductType.productDescriptor3,
+        ProductType.quantityUnit,
         func.sum(StockItem.quantityRemaining)) \
         .join(StockItem, StockItem.productType == ProductType.id) \
         .group_by(StockItem.productType)\
@@ -202,7 +290,8 @@ def getStockOverviewTotals():
             "descriptor1": row[3],
             "descriptor2": row[4],
             "descriptor3": row[5],
-            "stockAmount": row[6]
+            "quantityUnit": row[6],
+            "stockAmount": row[7]
         }
         for row in result
     ]
@@ -240,6 +329,7 @@ def getAvailableStockTotals():
             "descriptor1": row.productDescriptor1,
             "descriptor2": row.productDescriptor2,
             "descriptor3": row.productDescriptor3,
+            "quantityUnit": row.quantityUnit,
             "addedTimestamp": row.addedTimestamp,
         }
         for row in productTypesQueryResult
@@ -292,6 +382,7 @@ def getStockNearExpiry():
         ProductType.productDescriptor1,
         ProductType.productDescriptor2,
         ProductType.productDescriptor3,
+        ProductType.quantityUnit,
         ProductType.addedTimestamp,
         func.sum(StockItem.quantityRemaining),
         ProductType.barcode) \
@@ -323,8 +414,9 @@ def getStockNearExpiry():
             "descriptor1": row[3],
             "descriptor2": row[4],
             "descriptor3": row[5],
-            "addedTimestamp": row[6],
-            "stockAmount": row[7]
+            "quantityUnit": row[6],
+            "addedTimestamp": row[7],
+            "stockAmount": row[8]
         }
         for row in result
     ]
@@ -346,6 +438,7 @@ def getExpiredStock():
         ProductType.productDescriptor1,
         ProductType.productDescriptor2,
         ProductType.productDescriptor3,
+        ProductType.quantityUnit,
         ProductType.addedTimestamp,
         func.sum(StockItem.quantityRemaining),
         ProductType.barcode) \
@@ -376,8 +469,9 @@ def getExpiredStock():
             "descriptor1": row[3],
             "descriptor2": row[4],
             "descriptor3": row[5],
-            "addedTimestamp": row[6],
-            "stockAmount": row[7]
+            "quantityUnit": row[6],
+            "addedTimestamp": row[7],
+            "stockAmount": row[8]
         }
         for row in result
     ]
@@ -388,29 +482,37 @@ def getExpiredStock():
 @bp.route('/editStockItem', methods=("POST",))
 @login_required
 def updateStock():
-    if "id" not in request.args:
+    if "id" not in request.form:
         return make_response("stockItem id not provided", 400)
 
     session = getDbSession()
-    stockItem = session.query(StockItem).filter(StockItem.id == request.args.get("id")).first()
+    stockItem = session.query(StockItem).filter(StockItem.id == request.form.get("id")).scalar()
 
-    if "productType" in request.args:
-        stockItem.productType = request.args.get("productType")
+    if "productType" in request.form:
+        stockItem.productType = request.form.get("productType")
 
-    if "expiryDate" in request.args:
-        expdate = datetime.datetime.strptime(request.args.get("expiryDate", "%Y-%m-%d")).date()
+    if "expiryDate" in request.form:
+        expdate = datetime.datetime.strptime(request.form.get("expiryDate"), "%Y-%m-%d").date()
         stockItem.expiryDate = expdate
 
-    if "canExpire" in request.args and request.args.get("canExpire") == "True":
+    if "canExpire" in request.form and request.form.get("canExpire") == "true":
         stockItem.canExpire = True
-    elif "canExpire" in request.args and request.args.get("canExpire") == "False":
+    elif "canExpire" in request.form and request.form.get("canExpire") == "false":
         stockItem.canExpire = False
 
-    if "quantityRemaining" in request.args:
-        stockItem.quantityRemaining = request.args.get("quantityRemaining", type=float)
+    if "quantityRemaining" in request.form:
+        stockItem.quantityRemaining = decimal.Decimal(request.form.get("quantityRemaining", type=float))
 
-    if "price" in request.args:
-        stockItem.price = request.args.get("price")
+    if "price" in request.form:
+        stockItem.price = request.form.get("price")
+
+    # if the location of the stock has been changed, create a new check-in record to reflect this
+    if "binId" in request.form:
+        session.add(CheckInRecord(
+            stockItem = stockItem.id,
+            quantityCheckedIn = 0,
+            binId = request.form.get("binId")
+        ))
 
     session.commit()
 
@@ -431,14 +533,20 @@ def deleteStockItem():
     return make_response("stock deleted", 200)
 
 
-@bp.route('/deleteMultipleStockItems')
+@bp.route('/deleteMultipleStockItems', methods=("POST",))
 @login_required
 def deleteMultipleStockItems():
-    if "idList" not in request.args:
+    if "idList" not in request.json:
         return make_response("stockItem id list not provided", 400)
 
     session = getDbSession()
-    stmt = delete(StockItem).where(StockItem.id.in_(request.args.get("idList")))
+    placeholderId = session.query(ProductType.id).filter(ProductType.productName == "undefined product type").first()[0]
+    stmt = delete(StockItem).where(
+        and_(
+            StockItem.id.in_(request.json["idList"]),
+            StockItem.productType != placeholderId
+        )
+    )
     session.execute(stmt)
     session.commit()
 
