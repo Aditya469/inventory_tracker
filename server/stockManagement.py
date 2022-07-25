@@ -16,11 +16,11 @@ from sqlalchemy import select, delete, func, or_, update, and_
 bp = Blueprint('stockManagement', __name__)
 
 
-@bp.route('/viewStock')
+@bp.route('/stockManagement')
 @login_required
 def getStockPage():
 
-    return render_template("viewStock.html")
+    return render_template("stockManagement.html")
 
 
 @bp.route('/getIdStickerSheet/<int:idQty>')
