@@ -82,7 +82,7 @@ def changePassword():
         return render_template("changePassword.html")
     else:
         dbSession = getDbSession()
-        currentHashedPassword = dbSession.query(User.passwordHash).filter(User.username == session['username']).first()
+        currentHashedPassword = dbSession.query(User.passwordHash).filter(User.username == session['username']).scalar()
 
         if not check_password_hash(currentHashedPassword, request.form["currentPassword"]):
             return make_response("Current password incorrect", 400)

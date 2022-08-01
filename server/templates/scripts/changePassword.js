@@ -24,7 +24,7 @@ function changePassword(){
     formData.append("newPassword", $("#newPassword").val());
 
     $.ajax({
-        url: {{ url_for("users.changePassword") }},
+        url: "{{ url_for("users.changePassword") }}",
         type: "POST",
         data: formData,
         processData: false,
