@@ -40,6 +40,8 @@ def getProducts():
 
 	# add other search conditions as required
 
+	stmt = stmt.order_by(ProductType.productName.asc())
+
 	results = session.execute(stmt).scalars().all()
 	productList = [row.toDict() for row in results]
 

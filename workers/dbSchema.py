@@ -188,8 +188,9 @@ class Job(Base):
 	__tablename__ = "jobs"
 
 	id = Column(Integer, primary_key=True)
+	idString = Column(String, unique=True)
 	addedTimestamp = Column(DateTime(timezone=True), server_default=func.now())
-	qrcodePath = Column(String)
+	qrCodeName = Column(String)
 	jobName = Column(String)
 	associatedStockCheckins = relationship("CheckInRecord", backref='Job')
 	associatedStockCheckouts = relationship("CheckOutRecord", backref='Job')
@@ -199,7 +200,7 @@ class Job(Base):
 		return {
 			"id": self.id,
 			"addedTimestamp": self.addedTimestamp,
-			"qrcodePath": self.qrcodePath,
+			"qrCodeName": self.qrCodeName,
 			"jobName": self.jobName
 		}
 

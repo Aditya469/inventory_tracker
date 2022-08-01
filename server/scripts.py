@@ -10,7 +10,7 @@ bp = Blueprint('scripts', __name__)
 
 @bp.route('/scripts/<filename>',)
 @login_required
-def getFile(filename):
+def getScriptFile(filename):
     filename = "scripts/" + secure_filename(filename)
     response = make_response(render_template(filename))
     response.mimetype = 'text/javascript'

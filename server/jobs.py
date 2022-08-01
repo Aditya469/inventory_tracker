@@ -20,7 +20,7 @@ bp = Blueprint('jobs', __name__)
 @login_required
 def createJob():
 	error = None
-	if "jobName" not in request.form:
+	if "jobName" not in request.json:
 		error = "Job Name must be defined"
 
 	if error:
@@ -30,27 +30,99 @@ def createJob():
 
 	job = Job()
 	session.add(job)
-	job.jobName = request.form.get("jobName")
 	session.flush()
 
-	qrCodeString = f"job_{job.id}"
-	job.qrCodePath = os.path.join(current_app.instance_path, qrCodeString + ".png")
-	idCard = generateJobIdQrCodeLabel(QrCodeString=qrCodeString, JobName=job.jobName, DbSession=session)
-	idCard.save(job.qrCodePath)
+	job.idString = f"job_{job.id}"
+	job.qrCodeName = job.idString + ".png"
+	qrCodePath = os.path.join(current_app.instance_path, job.qrCodeName)
+	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=job.jobName, DbSession=session)
+	idCard.save(qrCodePath)
 
-	reqStockList = request.form.get("requiredStockList", default=None)
-	if reqStockList:
-		reqStockListJson = json.loads(reqStockList)
-		for stockReq in reqStockListJson:
-			assignedStockEntry = AssignedStock()
-			assignedStockEntry.productId = stockReq["productTypeId"]
-			assignedStockEntry.quantity = stockReq["quantityrequired"]
-			session.add(assignedStockEntry)
+	error = updateJobFromRequest(job.id, session)
+	if error is None:
+		session.commit()
+		return make_response({"newJobId": job.id}, 200)
+	else:
+		session.rollback()
+		return make_response(error, 400)
 
-	session.commit()
-	session.close()
 
-	return make_response(f"{request.form.get('jobName')} added", 200)
+@bp.route("/updateJob", methods=("POST",))
+@login_required
+def updateJob():
+	error = None
+	if "jobId" not in request.json:
+		error = "Job ID must be defined"
+
+	if error:
+		return make_response(error, 400)
+
+	session = getDbSession()
+	error = updateJobFromRequest(request.json["jobId"], session)
+	if error is None:
+		session.commit()
+		return make_response("Changes Saved", 200)
+	else:
+		session.rollback()
+		return make_response(error, 400)
+
+
+@bp.route("/deleteJob/<jobId>", methods=("POST",))
+@login_required
+def deleteJob(jobId):
+	dbSession = getDbSession()
+
+	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
+	stockAllocations = dbSession.query(AssignedStock).filter(AssignedStock.associatedJob == jobId).all()
+	for stockAllocation in stockAllocations:
+		dbSession.delete(stockAllocation)
+
+	if job.qrCodePath:
+		os.remove(job.qrCodePath)
+
+	dbSession.delete(job)
+
+	dbSession.commit()
+
+	return make_response("job deleted", 200)
+
+
+# process changes from overview page job panel. Encapsulted for reusability
+def updateJobFromRequest(jobId, dbSession):
+	error = None
+	if "jobName" not in request.json:
+		error = "jobName must be defined"
+
+	if error:
+		return error
+
+	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
+	job.jobName = request.json["jobName"];
+
+	if "newStockAssignments" in request.json:
+		for i in range(len(request.json['newStockAssignments'])):
+			newAssignment = AssignedStock(
+				associatedJob=jobId,
+				productId=request.json['newStockAssignments'][i]['productId'],
+				quantity=decimal.Decimal(request.json['newStockAssignments'][i]['quantity'])
+			)
+			dbSession.add(newAssignment)
+
+	if "changedStockAssignments" in request.json:
+		for i in range(len(request.json['changedStockAssignments'])):
+			assignment = dbSession.query(AssignedStock)\
+				.filter(AssignedStock.id == request.json['changedStockAssignments'][i]['assignmentId'])\
+				.scalar()
+
+			assignment.quantity = decimal.Decimal(request.json['changedStockAssignments'][i]['newQuantity'])
+
+	if "deletedStockAssignments" in request.json:
+		for i in range(len(request.json['deletedStockAssignments'])):
+			dbSession.query(AssignedStock)\
+				.filter(AssignedStock.id == request.json["deletedStockAssignments"][i])\
+				.delete()
+
+	return None
 
 
 def generateJobIdQrCodeLabel(QrCodeString, JobName, DbSession):
@@ -117,7 +189,7 @@ def getJobs():
 	return make_response(jsonify(jobList),  200)
 
 
-@bp.route("/getJob/<int:jobId>")
+@bp.route("/getJob/<jobId>")
 @login_required
 def getJob(jobId):
 	session = getDbSession()
@@ -133,7 +205,7 @@ def getJob(jobId):
 	assignedStockList = [
 		{
 			"productName": row[2],
-			"AssignationId": row[0],
+			"assignationId": row[0],
 			"quantity": row[1],
 			"unit": row[3]
 		}
@@ -146,14 +218,9 @@ def getJob(jobId):
 	keys = sorted(stockUsedTotals.keys())
 	stockUsedList = [stockUsedTotals[key] for key in keys]
 
-	return jsonify({"assignedStock": assignedStockList, "stockTotals": stockUsedList, "cost": stockUsedTotalCost})
-	return render_template(
-		"jobDetails",
-		jobId=jobId,
-		assignedStock=assignedStockList,
-		usedStock=stockUsedList,
-		totalCost=stockUsedTotalCost
-	)
+	jobDataDict = job.toDict()
+	jobDataDict.update({"assignedStock": assignedStockList, "stockTotals": stockUsedList, "cost": stockUsedTotalCost})
+	return jsonify(jobDataDict)
 
 
 def getTotalStockUsedOnJob(job):
@@ -162,21 +229,23 @@ def getTotalStockUsedOnJob(job):
 	totalCost = decimal.Decimal()
 	# get total checked out first, per product
 	for checkOutRecord in job.associatedStockCheckouts:
-		productTypeName = checkOutRecord.associatedStockItem.associatedProduct.productName
+		productType = checkOutRecord.associatedStockItem.associatedProduct
 
-		if productTypeName not in stockUsedTotals:
-			stockUsedTotals[productTypeName] = {
-				'productName': productTypeName,
+		if productType.productName not in stockUsedTotals:
+			stockUsedTotals[productType.productName] = {
+				'productName': productType.productName,
 				'productId': checkOutRecord.associatedStockItem.associatedProduct.id,
 				'qtyOfProductUsed': decimal.Decimal(),
-				'costOfProductUsed': decimal.Decimal()
+				'costOfProductUsed': decimal.Decimal(),
+				'quantityUnit': productType.quantityUnit
 			}
 
-		stockUsedTotals[productTypeName]['qtyOfProductUsed'] += checkOutRecord.quantityCheckedOut
-		stockUsedTotals[productTypeName]['costOfProductUsed'] += \
-			checkOutRecord.quantityCheckedOut * checkOutRecord.associatedStockItem.price
+		stockUsedTotals[productType.productName]['qtyOfProductUsed'] += checkOutRecord.quantityCheckedOut
+		stockUsedTotals[productType.productName]['costOfProductUsed'] += \
+			(checkOutRecord.quantityCheckedOut / productType.initialQuantity) * checkOutRecord.associatedStockItem.price
 
-		totalCost += checkOutRecord.quantityCheckedOut * checkOutRecord.associatedStockItem.price
+		totalCost += (checkOutRecord.quantityCheckedOut / productType.initialQuantity)\
+					 * checkOutRecord.associatedStockItem.price
 
 	# then subtract what was checked back in
 	for checkInRecord in job.associatedStockCheckins:
@@ -191,10 +260,14 @@ def getTotalStockUsedOnJob(job):
 
 		stockUsedTotals[productTypeName]['qtyOfProductUsed'] -= checkInRecord.quantityCheckedIn
 		stockUsedTotals[productTypeName]['costOfProductUsed'] -= \
-			checkInRecord.quantityCheckedIn * checkInRecord.associatedStockItem.price
+			(checkInRecord.quantityCheckedIn / productType.initialQuantity) * checkInRecord.associatedStockItem.price
 
-		totalCost -= checkInRecord.quantityCheckedIn * checkInRecord.associatedStockItem.price
+		totalCost -= (checkInRecord.quantityCheckedIn / productType.initialQuantity) * checkInRecord.associatedStockItem.price
 
+	for key in stockUsedTotals.keys():
+		stockUsedTotals[key]['costOfProductUsed'] = round(stockUsedTotals[key]['costOfProductUsed'], 2)
+
+	totalCost = round(totalCost, 2)
 	return stockUsedTotals, totalCost
 
 

@@ -1,3 +1,5 @@
+var assignedStockIdsToDelete = []
+
 $(document).ready(function(){
     updateJobsTable();
     updateStockTables();
@@ -25,8 +27,10 @@ function updateJobsTable(){
             table.append(thead);
 
             var tbody = $("<tbody>");
-            for(i=0; i<responseData.length; i++){
+            for(i=0; i < responseData.length; i++){
                 tr = $("<tr>");
+                tr.data("jobId", responseData[i].id);
+                tr.on("click", function(){ openJobDetailsPanel($(this).data("jobId")); });
                 tr.append($("<td>" + responseData[i].jobName + "</td>"));
                 tr.append($("<td>" + responseData[i].addedTimestamp + "</td>"));
                 tr.append($("<td>" + responseData[i].totalCost + "</td>"));
@@ -124,4 +128,248 @@ function generateOverviewStockTable(stockData)
     table.append(tbody);
 
     return table;
+}
+
+function closePanels(){
+    $("#greyout").prop("hidden",true);
+    $("#editJobPanel").prop("hidden",true);
+    $(".editJobInput").val("");
+    $(".editJobInput").empty();
+    $("#stockUsedTableBody").empty();
+    $("#assignedStockTableBody").empty();
+}
+
+function openJobDetailsPanel(jobId){
+    $("#greyout").prop("hidden",false);
+    $("#editJobPanel").prop("hidden",false);
+    // trigger a few handlers to get data loaded into elements on screen
+    onRequiredStockSearchBarInput();
+    assignedStockIdsToDelete = [];
+    if(jobId != -1){
+        $("#jobQrCodeLink").prop("hidden", false);
+        $("#stockUsedContainer").prop("hidden", false);
+        $("#deleteButton").prop("hidden", false);
+
+        var url = "{{ url_for( 'jobs.getJob', jobId='')}}" + jobId;
+        $.ajax({
+            type:"GET",
+            url: url,
+            success: function(jobData){
+                console.log(jobData);
+                populateJobPanel(jobData);
+            }
+        });
+    }
+    else{
+        $("#jobId").val(jobId);
+        $("#jobQrCodeLink").prop("hidden", true);
+        $("#stockUsedContainer").prop("hidden", true);
+        $("#deleteButton").prop("hidden", true);
+    }
+}
+
+function populateJobPanel(jobData){
+    assignedStockIdsToDelete = [];
+    $("#jobId").val(jobData.id);
+    $("#jobName").val(jobData.jobName);
+    $("#jobQrCodeLink").prop("href","{{ url_for('files.getFile', filename='') }}" + jobData.qrCodeName);
+    $("#totalCost").html("£" + jobData.cost);
+
+    $("#stockUsedTableBody").empty();
+
+    for(var i = 0; i < jobData.stockTotals.length; i++){
+        var row = $("<tr>");
+        row.append($("<td>").html(jobData.stockTotals[i].productName));
+        row.append($("<td>").html(
+            jobData.stockTotals[i].qtyOfProductUsed + " " +
+            (jobData.stockTotals[i].quantityUnit ? jobData.stockTotals[i].quantityUnit : "")));
+        row.append($("<td>").html(jobData.stockTotals[i].costOfProductUsed));
+        $("#stockUsedTableBody").append(row);
+    }
+
+    $("#assignedStockTableBody").empty();
+    for(var i = 0; i < jobData.assignedStock.length; i++){
+        var row = $("<tr>");
+        row.data("assignedStockRecordId", jobData.assignedStock[i].assignationId)
+
+        var checkbox = $("<input type='checkbox' class='assignedStockSelectCheckbox'>")
+        checkbox.on('click', function(){ onAssignedStockSelectCheckboxClicked(); });
+        row.append($("<td>").append(checkbox));
+
+        row.append($("<td>").html(jobData.assignedStock[i].productName));
+
+        var qtyContainerDiv = $("<div class='input-group w-50'>");
+
+        var numberInput = $("<input type='number' class='assignedStockQuantity form-control w-50'>");
+        numberInput.on('input', function(){ $(this).parents("tr").first().addClass("changedAssignedQty"); } );
+        numberInput.val(jobData.assignedStock[i].quantity)
+
+        var numberUnitSpan = $("<span class='input-group-text'>");
+        numberUnitSpan.html(jobData.assignedStock[i].unit);
+
+        qtyContainerDiv.append(numberInput);
+        qtyContainerDiv.append(numberUnitSpan);
+
+        row.append(qtyContainerDiv);
+
+        $("#assignedStockTableBody").append(row);
+    }
+}
+
+function onRequiredStockSearchBarInput(){
+    $.ajax({
+        type: "GET",
+        url: "{{ url_for('productManagement.getProducts') }}",
+        data: {"searchTerm": $("#assignStockSearchBar").val()},
+        success: function(products){
+            $("#knownProductDropdown").empty();
+            for(var i = 0; i < products.length; i++){
+                var option = $("<option>");
+                option.prop("value", products[i].id);
+                option.html(products[i].productName);
+                option.data("qtyUnit", products[i].quantityUnit);
+                if(i == 0)
+                    option.prop("selected", true);
+                $("#knownProductDropdown").append(option);
+            }
+            onKnownProductSelectChange();
+        }
+    });
+}
+
+function onKnownProductSelectChange(){
+    $("#quantityUnitDisplay").html($("#knownProductDropdown").children("option:selected").first().data("qtyUnit"));
+}
+
+function addStockToAssignedList(){
+    var row = $("<tr>");
+    var checkbox = $("<input type='checkbox' class='assignedStockSelectCheckbox'>");
+    checkbox.on("click", function(){ onAssignedStockSelectCheckboxClicked() });
+
+    var quantity = $("#quantityToAssign").val();
+    var selectedProductOption = $("#knownProductDropdown").children("option:selected").first();
+    var productName = selectedProductOption.html();
+    var productId = selectedProductOption.val();
+    var productQtyUnit = selectedProductOption.data("qtyUnit");
+
+    row.addClass("newAssignedQty")
+    row.data("productId", productId);
+
+    row.append($("<td>").append(checkbox));
+    row.append($("<td>").html(productName));
+
+    var qtyContainerDiv = $("<div class='input-group w-50'>");
+    var numberInput = $("<input type='number' class='assignedStockQuantity form-control w-50'>");
+    numberInput.val(quantity)
+    var numberUnitSpan = $("<span class='input-group-text'>");
+    numberUnitSpan.html(productQtyUnit);
+
+    qtyContainerDiv.append(numberInput);
+    qtyContainerDiv.append(numberUnitSpan);
+
+    row.append(qtyContainerDiv);
+
+    $("#assignedStockTableBody").append(row);
+}
+
+function onAssignedStockSelectCheckboxClicked(){
+    if($(".assignedStockSelectCheckbox:checked").length == $(".assignedStockSelectCheckbox").length)
+        $("#selectAllRequiredStock").prop("checked", true);
+    else
+        $("#selectAllRequiredStock").prop("checked", false);
+
+    if($(".assignedStockSelectCheckbox:checked").length > 0)
+        $("#removeAssignedStockButton").prop("disabled", false);
+    else
+        $("#removeAssignedStockButton").prop("disabled", true);
+}
+
+function onSelectAllRequiredStockClicked(){
+    if($("#selectAllRequiredStock").is(":checked"))
+        $(".assignedStockSelectCheckbox").prop("checked", true);
+    else
+        $(".assignedStockSelectCheckbox").prop("checked", false);
+
+    if($(".assignedStockSelectCheckbox:checked").length > 0)
+        $("#removeAssignedStockButton").prop("disabled", false);
+    else
+        $("#removeAssignedStockButton").prop("disabled", true);
+}
+
+function onRemoveAssignedStockButtonClicked(){
+    var rows = $(".assignedStockSelectCheckbox:checked").parents("tr");
+    for(var i = 0; i < rows.length; i++){
+        if($(rows[i]).data("assignedStockRecordId"))
+            assignedStockIdsToDelete.push($(rows[i]).data("assignedStockRecordId"));
+        $(rows[i]).remove();
+    }
+    console.log("assigned stock IDs to be deleted: " + assignedStockIdsToDelete);
+}
+
+function saveJobDetails(){
+    // this needs a list of newly assigned stock, a list of deleted assignments,
+    // and a list of changed assignments, as well as the name and ID of the job
+    var changedStockAssignments = [];
+    var changedRows = $(".changedAssignedQty");
+    for(var i = 0; i < changedRows.length; i++){
+        var assignmentId = $(changedRows[i]).data("assignedStockRecordId");
+        var newQty = $(changedRows[i]).find(".assignedStockQuantity").first().val();
+        changedStockAssignments.push({"assignmentId": assignmentId,"newQuantity": newQty});
+    }
+    var newStockAssignments = [];
+    var newRows = $(".newAssignedQty");
+    for(var i = 0; i < newRows.length; i++){
+        var productId = $(newRows[i]).data("productId");
+        var newQty =  $(newRows[i]).find(".assignedStockQuantity").first().val();
+        newStockAssignments.push({"productId": productId,"quantity": newQty});
+    }
+
+    requestArgs = {};
+    requestArgs["jobId"] = $("#jobId").val();
+    requestArgs["jobName"] = $("#jobName").val();
+    requestArgs["newStockAssignments"] = newStockAssignments;
+    requestArgs["changedStockAssignments"] = changedStockAssignments;
+    requestArgs["deletedStockAssignments"] = assignedStockIdsToDelete;
+
+
+    if($("#jobId").val() == "-1")
+        url = "{{ url_for('jobs.createJob') }}";
+    else
+        url = "{{ url_for('jobs.updateJob') }}";
+
+    console.log(requestArgs);
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: JSON.stringify(requestArgs),
+        processData: false,
+        contentType: "application/json",
+        cache: false,
+        success: function(responseData){
+            openJobDetailsPanel(responseData.newJobId); // this is an east way to get the panel to reload into the state for an existing job
+            updateJobsTable();
+            updateStockTables();
+            $("#saveJobFeedbackSpan").html("Job saved");
+            setTimeout(function(){$("#saveJobFeedbackSpan").empty();}, 5000);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(textStatus);
+        }
+    });
+}
+
+function deleteJob(){
+    $.ajax({
+        url: "{{ url_for('jobs.deleteJob', jobId="")}}" + $("#jobId").val(),
+        type: "POST",
+        success: function(jobId){
+            closePanels();
+            updateJobsTable();
+            updateStockTables();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(textStatus);
+        }
+    });
 }
