@@ -41,7 +41,7 @@ def addUser():
     newUser = User(
         username=request.form['newUsername'],
         passwordHash=generate_password_hash(request.form['newPassword']),
-        isAdmin=request.form["isAdmin"]
+        isAdmin=request.form["isAdmin"] == "true"
     )
 
     dbSession.add(newUser)
