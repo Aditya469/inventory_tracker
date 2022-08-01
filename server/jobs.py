@@ -77,8 +77,10 @@ def deleteJob(jobId):
 	for stockAllocation in stockAllocations:
 		dbSession.delete(stockAllocation)
 
-	if job.qrCodePath:
-		os.remove(job.qrCodePath)
+	if job.qrCodeName:
+		qrCodePath = os.path.join(current_app.instance_path, job.qrCodeName)
+		if os.path.exists(qrCodePath):
+			os.remove(qrCodePath)
 
 	dbSession.delete(job)
 
