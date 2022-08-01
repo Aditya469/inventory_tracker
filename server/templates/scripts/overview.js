@@ -149,6 +149,7 @@ function openJobDetailsPanel(jobId){
         $("#jobQrCodeLink").prop("hidden", false);
         $("#stockUsedContainer").prop("hidden", false);
         $("#deleteButton").prop("hidden", false);
+        $("#jobName").val("");
 
         var url = "{{ url_for( 'jobs.getJob', jobId='')}}" + jobId;
         $.ajax({
@@ -165,6 +166,7 @@ function openJobDetailsPanel(jobId){
         $("#jobQrCodeLink").prop("hidden", true);
         $("#stockUsedContainer").prop("hidden", true);
         $("#deleteButton").prop("hidden", true);
+        $("#jobName").val("");
     }
 }
 
