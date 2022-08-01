@@ -35,7 +35,7 @@ def createJob():
 	job.idString = f"job_{job.id}"
 	job.qrCodeName = job.idString + ".png"
 	qrCodePath = os.path.join(current_app.instance_path, job.qrCodeName)
-	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=job.jobName, DbSession=session)
+	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=request.json['jobName'], DbSession=session)
 	idCard.save(qrCodePath)
 
 	error = updateJobFromRequest(job.id, session)
