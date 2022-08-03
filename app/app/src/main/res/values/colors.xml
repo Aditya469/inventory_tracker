@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorSecond">#be0f34</color>
+    <color name="colorTextSecond">#fff</color>
+    <color name="colorSubmitBackground">#be0f34</color>
+    <color name="colorSubmitBackgroundDisabled">#d6a9b3</color>
+    <color name="colorSubmitBackgroundPressed">#990b29</color>
+    <color name="colorSubmitBackgroundfocused">#a30a2a</color>
+    <color name="colorSubmit">#fff</color>
+    <color name="torchOn">#f5f253</color>
+
+    <color name="clockOnConfirmationBackgroundColour">#34eb3a</color>
+    <color name="clockOnConfirmationTextColour">#000000</color>
+    <color name="clockOffConfirmationBackgroundColour">#5e64d1</color>
+    <color name="clockOffConfirmationTextColour">#000000</color>
+    <color name="stoppageOnConfirmationBackgroundColour">#de7428</color>
+    <color name="stoppageOnConfirmationTextColour">#000000</color>
+    <color name="stoppageOffConfirmationBackgroundColour">#07b034</color>
+    <color name="stoppageOffConfirmationTextColour">#000000</color>
+</resources>
