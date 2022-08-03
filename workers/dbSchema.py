@@ -175,12 +175,14 @@ class Bin(Base):
 	id = Column(Integer, primary_key=True)
 	idString = Column(String)
 	locationName = Column(String)
+	qrCodeName = Column(String)
 
 	def toDict(self):
 		return {
 			"id": self.id,
 			"idString": self.idString,
-			"locationName": self.locationName
+			"locationName": self.locationName,
+			"qrCodeName": self.qrCodeName
 		}
 
 
@@ -250,6 +252,8 @@ class Settings(Base):
 	displayIdCardName = Column(Boolean, default=True)
 	displayJobIdCardName = Column(Boolean, default=True)
 	idCardFontSize_px = Column(Integer, default=40)
+	displayBinIdCardName = Column(Boolean, default=True)
+
 
 	def toDict(self):
 		return {

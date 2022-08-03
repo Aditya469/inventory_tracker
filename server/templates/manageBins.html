@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block additionalHeadMaterial %}
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='binsManagement.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='common.css')}}">
+{% endblock %}
+
+{% block content %}
+<div id="contentContainer" class="container mt-2">
+	<div class="row row-cols-sm-1 row-cols-md-2	gx-2">
+		<div class="col col-sm-12 col-md-6 col-lg-4 px-3" id="addBinControls">
+			<h2>Add a New Bin</h2>
+			<div class="row">
+				<label class="col-auto" for="newBinName">New Bin Name:</label>
+				<input class="col" id="newBinName" type="text"/>
+			</div>
+			<div class="row">
+				<input class="col-5 offset-7" value="Add New Bin" type="button" onclick="addBin()">
+			</div>
+			<div class="row">
+				<span class="col-5 offset-7" id="addBinFeedbackSpan"/>
+			</div>
+		</div>
+		<div class="col col-sm-12 col-md-8 col-lg-6 px-3" id="availableBins">
+			<h2>Available Bins</h2>
+			<div id="binListContainer">
+
+			</div>
+	</div>
+</div>
+{% endblock %}

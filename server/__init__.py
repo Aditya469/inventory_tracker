@@ -44,4 +44,7 @@ def create_app():
     from . import files
     app.register_blueprint(files.bp)
 
+    from . import bins
+    app.register_blueprint(bins.bp)
+
     return app
