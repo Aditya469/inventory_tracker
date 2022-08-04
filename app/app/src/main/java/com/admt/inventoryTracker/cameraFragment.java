@@ -1,4 +1,4 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,7 +21,6 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -32,7 +31,6 @@ import android.renderscript.RenderScript;
 import android.renderscript.Script;
 import android.renderscript.Type;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
@@ -45,9 +43,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.admt.inventoryTracker.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -56,7 +54,6 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +63,8 @@ import java.util.concurrent.Semaphore;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+
+import inventoryTracker.ScriptC_yuv420888toRGB;
 
 
 /**
@@ -83,7 +82,7 @@ public class cameraFragment extends Fragment
     CameraSource cameraBarcodeReader = null;
     final int cameraPermissionsRequestId = 1; // used in callback to identify the
                                         // corresponding request for a response.
-    private static final String TAG = "ADMTBarcodeReaderCamera";
+    private static final String TAG = "ADMTInventoryTrackerCamera";
 
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundthread;

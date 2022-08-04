@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Process Time Tracker</string>
+    <string name="app_name">DigitME2 Inventory Tracker</string>
     <string name="user_id_placeholder_text">Scan a User Id</string>
     <string name="job_id_placeholder_text">Scan a Job Id</string>
     <string name="job_id_label">Job Id:</string>
@@ -191,4 +191,15 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_activity_front_screen">frontScreen</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -11,7 +11,7 @@ android {
     }
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.admt.barcodereader"
+        applicationId "com.admt.inventoryTracker"
         minSdkVersion 23
         targetSdkVersion 26
         versionCode 1
@@ -28,6 +28,9 @@ android {
             signingConfig signingConfigs.myconfig
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -37,6 +40,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'

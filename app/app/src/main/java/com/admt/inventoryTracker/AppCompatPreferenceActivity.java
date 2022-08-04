@@ -1,4 +1,4 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

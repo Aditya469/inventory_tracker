@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.admt.barcodereader.MainActivity">
+    tools:context="com.admt.inventoryTracker.com.admt.inventoryTracker.MainActivity">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -27,7 +27,7 @@
 
         <!--
         <fragment
-            android:name="com.admt.barcodereader.cameraFragment"
+            android:name="cameraFragment"
             android:id="@+id/camera_fragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -35,7 +35,7 @@
             />
 
         <fragment
-            android:name="com.admt.barcodereader.dataDisplayFragment"
+            android:name="dataDisplayFragment"
             android:id="@+id/data_display_fragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"

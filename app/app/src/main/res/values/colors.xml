@@ -2,13 +2,13 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorSecond">#be0f34</color>
+    <color name="colorAccent">#006600</color>
+    <color name="colorSecond">#006400</color>
     <color name="colorTextSecond">#fff</color>
-    <color name="colorSubmitBackground">#be0f34</color>
-    <color name="colorSubmitBackgroundDisabled">#d6a9b3</color>
-    <color name="colorSubmitBackgroundPressed">#990b29</color>
-    <color name="colorSubmitBackgroundfocused">#a30a2a</color>
+    <color name="colorSubmitBackground">#006400</color>
+    <color name="colorSubmitBackgroundDisabled">#4F754F</color>
+    <color name="colorSubmitBackgroundPressed">#005000</color>
+    <color name="colorSubmitBackgroundfocused">#005000</color>
     <color name="colorSubmit">#fff</color>
     <color name="torchOn">#f5f253</color>
 

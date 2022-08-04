@@ -1,4 +1,4 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.admt.inventoryTracker.R;
 
 public class settingsPasswordScreen extends AppCompatActivity
 {

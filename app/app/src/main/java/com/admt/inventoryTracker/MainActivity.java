@@ -1,4 +1,4 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import android.content.Intent;
 
@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.admt.inventoryTracker.R;
 
 public class MainActivity extends AppCompatActivity
         implements cameraFragment.onBarcodeReadListener,

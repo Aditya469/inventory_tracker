@@ -1,4 +1,4 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,14 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.admt.inventoryTracker.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(com.admt.barcodereader);
+#pragma rs java_package_name(inventoryTracker);
 #pragma rs_fp_relaxed
 
 int32_t width;

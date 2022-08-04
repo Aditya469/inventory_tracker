@@ -1,9 +1,11 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.admt.inventoryTracker.R;
 
 import java.util.Timer;
 import java.util.TimerTask;

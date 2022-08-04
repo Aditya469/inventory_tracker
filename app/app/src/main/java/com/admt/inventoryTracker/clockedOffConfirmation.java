@@ -1,24 +1,26 @@
-package com.admt.barcodereader;
+package com.admt.inventoryTracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.admt.inventoryTracker.R;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class clockedOnConfirmation extends AppCompatActivity {
+public class clockedOffConfirmation extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_clocked_on_confirmation);
+        setContentView(R.layout.activity_clocked_off_confirmation);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             String jobId = bundle.getString("jobId");
-            TextView jobLabel = (TextView)findViewById(R.id.tvClockedOnLabel);
+            TextView jobLabel = (TextView)findViewById(R.id.tvClockedOffLabel);
             jobLabel.setText(jobId);
         }
         Timer timer = new Timer();
