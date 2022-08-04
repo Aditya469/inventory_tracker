@@ -21,7 +21,7 @@ from werkzeug.utils import secure_filename
 
 from stockManagement import updateNewStockWithNewProduct
 from .auth import login_required
-from dbSchema import ProductType
+from dbSchema import ProductType, StockItem
 from db import getDbSession
 from sqlalchemy import select, or_
 import decimal
@@ -162,3 +162,26 @@ def updateProductFromRequestForm(session, product):
 
 	return None, product
 
+
+# note that this function doesn't have login requirement at the moment as
+# it is used by the app. TODO: secure this
+@bp.route("/getAppProductData")
+def getAppProductData():
+	dbSession = getDbSession()
+	products = dbSession.query(ProductType).all()
+
+	productDict = {}
+	for product in products:
+		if product.barcode is not None:
+			productDict[product.barcode] = {
+				"name": product.productName,
+				"expires": product.canExpire,
+				"isBulk": product.tracksAllItemsOfProductType
+			}
+			if product.tracksAllItemsOfProductType:
+				associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()
+				if associatedStockItem is not None:
+					productDict[product.barcode]["isAssignedId"] = True
+					productDict[product.barcode]["assocaitedStockId"] = associatedStockItem.id
+
+	return make_response(jsonify(productDict), 200)
