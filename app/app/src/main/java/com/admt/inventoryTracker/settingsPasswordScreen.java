@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -15,7 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.admt.inventoryTracker.R;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class settingsPasswordScreen extends AppCompatActivity
 {
@@ -49,13 +46,13 @@ public class settingsPasswordScreen extends AppCompatActivity
     private boolean submitPassword(){
         boolean successResult = false;
 
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.preferences_file_key),
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs_file_key),
                 Context.MODE_PRIVATE);
 
         EditText tbPassword = (EditText)findViewById(R.id.etPassword);
         String enteredPassword = tbPassword.getText().toString();
         String storedPassword = prefs.getString(
-                getString(R.string.preferences_password),"1234");
+                getString(R.string.prefs_settings_password),"1234");
 
         if(enteredPassword.equals(storedPassword))
         {
