@@ -170,18 +170,24 @@ def getAppProductData():
 	dbSession = getDbSession()
 	products = dbSession.query(ProductType).all()
 
-	productDict = {}
+	productList = []
 	for product in products:
+		productDict = {}
 		if product.barcode is not None:
-			productDict[product.barcode] = {
+			productDict = {
+				"id": product.id,
+				"barcode": product.barcode,
 				"name": product.productName,
 				"expires": product.canExpire,
-				"isBulk": product.tracksAllItemsOfProductType
+				"isBulk": product.tracksAllItemsOfProductType,
+				"isAssignedStockId": False,
+				"associatedStockId": None
 			}
 			if product.tracksAllItemsOfProductType:
 				associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()
 				if associatedStockItem is not None:
-					productDict[product.barcode]["isAssignedId"] = True
-					productDict[product.barcode]["assocaitedStockId"] = associatedStockItem.id
+					productDict["isAssignedId"] = True
+					productDict["assocaitedStockId"] = associatedStockItem.id
+			productList.append(productDict)
 
-	return make_response(jsonify(productDict), 200)
+	return make_response(jsonify(productList), 200)
