@@ -44,14 +44,14 @@
         -->
 
         <FrameLayout
-            android:id="@+id/cameraFragmentContainer"
+            android:id="@+id/fragmentContainer1"
             android:name="com.admt.barcodereader.cameraFragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <FrameLayout
-            android:id="@+id/dataDisplayFragmentContainer"
+            android:id="@+id/fragmentContainer2"
             android:name="com.admt.barcodereader.dataDisplayFragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

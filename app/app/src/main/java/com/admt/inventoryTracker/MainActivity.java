@@ -1,43 +1,55 @@
 package com.admt.inventoryTracker;
 
 import android.content.Intent;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
-import com.admt.inventoryTracker.R;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity
         implements cameraFragment.onBarcodeReadListener,
-        dataDisplayFragment.onDataDisplayInteraction,
-        numberPadFragment.OnNumpadInteractionListener
+        numberPadFragment.OnNumpadInteractionListener,
+        modeSelectorFragment.onModeSelectedListener,
+        addNewStockFragment.AddStockInteractionCallbacks
 {
     private cameraFragment mCameraFragment = null;
-    private dataDisplayFragment mDataDisplayFragment = null;
+    private addNewStockFragment mAddNewStockFragment = null;
+    private checkItemsFragment mCheckItemsFragment = null;
     private numberPadFragment mNumPadFragment = null;
+    private modeSelectorFragment mModeSelectFragment = null;
     boolean torchOn = false;
+
+    private ProductDataManager mProductDataManager = null;
+
+    private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK};
+    private CurrentState mCurrentState;
 
     public void onBarcodeRead(String barcodeValue)
     {
-        mDataDisplayFragment.UpdateDisplayedbarcodeReading(barcodeValue);
+        //mAddNewStockFragment.UpdateDisplayedbarcodeReading(barcodeValue);
     }
 
     public void onBarcodeEntered(String barcodeValue)
     {
-        mDataDisplayFragment.UpdateDisplayedbarcodeReading(barcodeValue);
-        onToggleNumPadRequest();
+        //mAddNewStockFragment.UpdateDisplayedbarcodeReading(barcodeValue);
+        //onToggleNumPadRequest();
     }
 
     public void onBarcodeSeen()
     {
         if(mCameraFragment != null)
             mCameraFragment.flashScreen();
+    }
+
+    @Override
+    public void onrequestCheckingMode() {
+
     }
 
     public void onBarcodeReadHandled()
@@ -58,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         {
             mNumPadFragment = new numberPadFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.cameraFragmentContainer, mNumPadFragment)
+                    .replace(R.id.fragmentContainer1, mNumPadFragment)
                     .commit();
 
             mCameraFragment = null;
@@ -67,13 +79,12 @@ public class MainActivity extends AppCompatActivity
         {
             mCameraFragment = new cameraFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.cameraFragmentContainer, mCameraFragment)
+                    .replace(R.id.fragmentContainer1, mCameraFragment)
                     .commit();
 
             mNumPadFragment = null;
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -82,9 +93,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-//        toolbar.setBackgroundColor(Color.parseColor("#be0f34"));
-//        toolbar.setTitleTextColor(0xFFFFFFFF);//Color.parseColor("#fff"));
-//        toolbar.setSubtitleTextColor(0xFFFFFFFF);
         setSupportActionBar(toolbar);
 
         // don't add fragments if the app has resumed from suspension
@@ -92,44 +100,29 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        mCameraFragment = new cameraFragment();
+        if(mProductDataManager == null)
+            mProductDataManager = new ProductDataManager(getApplication());
+
+        mModeSelectFragment = new modeSelectorFragment();
+
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.cameraFragmentContainer, mCameraFragment).commit();
+                .add(R.id.fragmentContainer1, mModeSelectFragment).commit();
+        mCurrentState = CurrentState.MODE_SELECT;
 
-        mDataDisplayFragment = new dataDisplayFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.dataDisplayFragmentContainer, mDataDisplayFragment).commit();
-    }
+        // since this works by swapping fragments around, the back button is overridden to
+        // allow the correct fragments to be swapped back into place
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(mCurrentState == CurrentState.MODE_SELECT)
+                    finish();
+                else if(mCurrentState == CurrentState.CHECK_STOCK || mCurrentState == CurrentState.ADD_STOCK){
+                    switchToSelectModeState();
+                }
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
 
-    @Override
-    public void onClockedOn(String JobId)
-    {
-        Intent intent = new Intent(this, clockedOnConfirmation.class);
-        intent.putExtra("jobId",JobId);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onClockedOff(String JobId) {
-        Intent intent = new Intent(this, clockedOffConfirmation.class);
-        intent.putExtra("jobId",JobId);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onStoppageStart(String JobId, String StoppageReason) {
-        Intent intent = new Intent(this, stoppageStartConfirmation.class);
-        intent.putExtra("jobId",JobId);
-        intent.putExtra("stoppageReason", StoppageReason);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onStoppageEnd(String JobId, String StoppageReason) {
-        Intent intent = new Intent(this, stoppageEndedConfirmation.class);
-        intent.putExtra("jobId",JobId);
-        intent.putExtra("stoppageReason", StoppageReason);
-        startActivity(intent);
     }
 
     @Override
@@ -150,16 +143,77 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.miTorch:
-                mCameraFragment.toggleTorch();
-                torchOn = !torchOn;
-                if (torchOn)
-                    item.setIcon(R.drawable.ic_flashlight_yellow);
-                else
-                    item.setIcon(R.drawable.ic_flashlight_black);
-                break;
+                if(mCameraFragment != null)
+                    mCameraFragment.toggleTorch();
+                    torchOn = !torchOn;
+                    if (torchOn)
+                        item.setIcon(R.drawable.ic_flashlight_yellow);
+                    else
+                        item.setIcon(R.drawable.ic_flashlight_black);
+                    break;
 
         }
 
         return true;
+    }
+
+    private void switchToSelectModeState(){
+        if(mCurrentState == CurrentState.ADD_STOCK) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(mAddNewStockFragment)
+                    .replace(R.id.fragmentContainer1, mModeSelectFragment)
+                    .commit();
+        }
+        else if(mCurrentState == CurrentState.CHECK_STOCK) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(mCheckItemsFragment)
+                    .replace(R.id.fragmentContainer1, mModeSelectFragment)
+                    .commit();
+        }
+        mCurrentState = CurrentState.MODE_SELECT;
+    }
+
+
+
+    @Override
+    public void onAddStockModeSelected() {
+        Button addStockBtn = (Button)findViewById(R.id.btnAddStock);
+        addStockBtn.setEnabled(false);
+        Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItems);
+        checkItemsBtn.setEnabled(false);
+
+        if(mCameraFragment == null)
+            mCameraFragment = new cameraFragment();
+
+        if(mAddNewStockFragment == null)
+            mAddNewStockFragment = new addNewStockFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer1, mCameraFragment)
+                .replace(R.id.fragmentContainer2, mAddNewStockFragment)
+                .commit();
+
+        mCurrentState = CurrentState.ADD_STOCK;
+    }
+
+    @Override
+    public void onCheckItemsModeSelected() {
+        Button addStockBtn = (Button)findViewById(R.id.btnAddStock);
+        addStockBtn.setEnabled(false);
+        Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItems);
+        checkItemsBtn.setEnabled(false);
+
+        if(mCameraFragment == null)
+            mCameraFragment = new cameraFragment();
+
+        if(mCheckItemsFragment == null)
+            mCheckItemsFragment = new checkItemsFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer1, mCameraFragment)
+                .replace(R.id.fragmentContainer2, mCheckItemsFragment)
+                .commit();
+
+        mCurrentState = CurrentState.CHECK_STOCK;
     }
 }

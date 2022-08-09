@@ -30,9 +30,6 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.Script;
 import android.renderscript.Type;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
@@ -45,7 +42,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.admt.inventoryTracker.R;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -60,9 +60,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
 
 import inventoryTracker.ScriptC_yuv420888toRGB;
 
@@ -199,7 +196,7 @@ public class cameraFragment extends Fragment
                 sem.acquire();
                 if (detections.size() > 0) {
                     SharedPreferences prefs = getContext().getSharedPreferences(
-                            getString(R.string.preferences_file_key),
+                            getString(R.string.prefs_file_key),
                             Context.MODE_PRIVATE
                     );
                     long detectionDelay = prefs.getLong("detectionDelay", 1000);
@@ -307,9 +304,9 @@ public class cameraFragment extends Fragment
         mBackgroundImageHandler = new Handler(mBackgroundImageThread.getLooper());
 
         SharedPreferences prefs = getActivity().getSharedPreferences(
-                getString(R.string.preferences_file_key), Context.MODE_PRIVATE);
+                getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
         boolean useFrontCamera = prefs.getBoolean(
-                getString(R.string.preferences_use_front_camera), true);
+                getString(R.string.prefs_use_front_camera), true);
         
         int desiredCameraFacing = CameraCharacteristics.LENS_FACING_FRONT;
         if(useFrontCamera)
