@@ -33,13 +33,13 @@ public class addNewStockFragment extends Fragment
     {
         void onBarcodeReadHandled();
         void onBarcodeSeen();
-        void onrequestCheckingMode();
+        void requestCheckingMode();
     }
 
     ProductDataManager mProductDataManager;
     AddStockInteractionCallbacks mAddStockInteractionCallbacks;
 
-    String TAG = "ADMTBarcodeReaderDataDisplay";
+    String TAG = "DigitME2InventoryTrackerAddStockFragment";
 
     public addNewStockFragment()
     {
