@@ -163,31 +163,3 @@ def updateProductFromRequestForm(session, product):
 	return None, product
 
 
-# note that this function doesn't have login requirement at the moment as
-# it is used by the app. TODO: secure this
-@bp.route("/getAppProductData")
-def getAppProductData():
-	dbSession = getDbSession()
-	products = dbSession.query(ProductType).all()
-
-	productList = []
-	for product in products:
-		productDict = {}
-		if product.barcode is not None:
-			productDict = {
-				"id": product.id,
-				"barcode": product.barcode,
-				"name": product.productName,
-				"expires": product.canExpire,
-				"isBulk": product.tracksAllItemsOfProductType,
-				"isAssignedStockId": False,
-				"associatedStockId": None
-			}
-			if product.tracksAllItemsOfProductType:
-				associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()
-				if associatedStockItem is not None:
-					productDict["isAssignedId"] = True
-					productDict["assocaitedStockId"] = associatedStockItem.id
-			productList.append(productDict)
-
-	return make_response(jsonify(productList), 200)

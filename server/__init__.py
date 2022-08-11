@@ -63,4 +63,7 @@ def create_app():
     from . import bins
     app.register_blueprint(bins.bp)
 
+    from . import api
+    app.register_blueprint(api.bp)
+
     return app

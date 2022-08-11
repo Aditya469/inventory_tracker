@@ -124,3 +124,5 @@ def generateBinIdQrCodeLabel(QrCodeString, LocationName, DbSession):
         )
 
     return idCard
+
+
