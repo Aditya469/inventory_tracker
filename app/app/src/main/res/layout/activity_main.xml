@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.admt.inventoryTracker.com.admt.inventoryTracker.MainActivity">
+    tools:context="com.admt.inventoryTracker.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,38 +21,19 @@
             app:popupTheme="@style/ToolbarPopUpTheme"
             />
 
-        <!--
-        <fragment
-            android:name="cameraFragment"
-            android:id="@+id/camera_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
-
-        <fragment
-            android:name="dataDisplayFragment"
-            android:id="@+id/data_display_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
-        -->
-
         <FrameLayout
-            android:name="com.admt.barcodereader.cameraFragmentContainer"
             android:id="@+id/fragmentContainer1"
+            android:name="com.admt.barcodereader.cameraFragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <FrameLayout
             android:name="com.admt.barcodereader.dataDisplayFragmentContainer"
             android:id="@+id/fragmentContainer2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2.5"
             />
     </LinearLayout>
 
