@@ -47,6 +47,7 @@ class ItemId(Base):
 	idNumber = Column(Integer, primary_key=True, unique=True)
 	isPendingAssignment = Column(Boolean, default=False)
 	isAssigned = Column(Boolean, default=False)
+	idString = Column(String)
 	associatedStock = relationship("StockItem", backref='itemIds', uselist=False)
 
 	def toDict(self):
@@ -61,7 +62,7 @@ class StockItem(Base):
 	__tablename__ = "stockItems"
 
 	id = Column(Integer, primary_key=True)  # ID in the database rather than QR code ID
-	idNumber = Column(Integer, ForeignKey("itemIds.idNumber"))
+	idString = Column(String, ForeignKey("itemIds.idString"))
 	productType = Column(Integer, ForeignKey("productTypes.id"))
 	addedTimestamp = Column(DateTime(timezone=True), server_default=func.now())
 	expiryDate = Column(Date, server_default=None)
@@ -73,7 +74,7 @@ class StockItem(Base):
 	def toDict(self):
 		return {
 			"id": self.id,
-			"idNumber": self.idNumber,
+			"idNumber": self.idString,
 			"productType": self.productType,
 			"addedTimestamp": self.addedTimestamp,
 			"expiryDate": self.expiryDate,

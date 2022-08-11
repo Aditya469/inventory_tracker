@@ -32,6 +32,8 @@ def fetchAvailableItemIds(countRequired):
 	for i in range(countToCreate):
 		newId = ItemId()
 		dbSession.add(newId)
+		dbSession.flush()
+		newId.idString = f"item_{newId.idNumber}"
 
 	dbSession.commit()
 
@@ -124,14 +126,14 @@ def generateItemIdQrCodeSheets(
 		id.isPendingAssignment = True
 		session.add(id)
 		idCard = generateIdCard(
-			idString=f"{id.idNumber}",
-			label=f"Item ID {id.idNumber}",
+			idString=f"{id.idString}",
+			label=f"{id.idString}",
 			labelFontSize=40,
 			totalWidth=math.floor(arrayWidth/columns),
 			totalHeight=math.floor(arrayHeight/rows),
 			padding=stickerPadding
 		)
-		filename = f"{current_app.instance_path}/{id.idNumber}.png"
+		filename = f"{current_app.instance_path}/{id.idString}.png"
 		idCard.save(filename)
 		fileList.append(filename)
 

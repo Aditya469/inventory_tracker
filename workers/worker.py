@@ -44,13 +44,13 @@ def onAddStockRequest(ch, method, properties, body):
 		session = Session()
 		requestParams = json.loads(bytes.decode(body, 'utf-8'))
 
-		if 'idNumber' not in requestParams:
+		if 'idString' not in requestParams:
 			logging.error("Failed to process request to add item. ID number not provided")
 			ch.basic_ack(delivery_tag=method.delivery_tag)
 			return
 
-		logging.info(f"Adding item with ID number {requestParams['idNumber']}")
-		stockItem = session.query(StockItem).filter(StockItem.idNumber == requestParams['idNumber']).first()
+		logging.info(f"Adding item with ID number {requestParams['idString']}")
+		stockItem = session.query(StockItem).filter(StockItem.idNumber == requestParams['idString']).first()
 		if stockItem is not None:
 			productType = session.query(ProductType).filter(ProductType.id == stockItem.productType).first()
 			if productType.tracksSpecificItems or not productType.tracksAllItemsOfProductType:
@@ -68,11 +68,11 @@ def onAddStockRequest(ch, method, properties, body):
 		else:
 			stockItem = StockItem()
 			session.add(stockItem)
-			itemId = session.query(ItemId).filter(ItemId.idNumber == requestParams['idNumber']).first()
+			itemId = session.query(ItemId).filter(ItemId.idNumber == requestParams['idString']).first()
 			session.add(itemId)
 			itemId.isPendingAssignment = False
 			itemId.isAssigned = True
-			stockItem.idNumber = requestParams['idNumber']
+			stockItem.idNumber = requestParams['idString']
 			stockItem.addedTimestamp = func.now()
 			stockItem.isCheckedIn = True
 

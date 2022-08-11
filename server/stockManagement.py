@@ -84,7 +84,7 @@ def getStock():
     session = getDbSession()
     stmt = select(
         StockItem.id,
-        StockItem.idNumber,
+        StockItem.idString,
         ProductType.canExpire,
         StockItem.expiryDate,
         StockItem.quantityRemaining,
@@ -100,7 +100,7 @@ def getStock():
         if request.args.get("searchByProductTypeName", default="false") == "true":
             stmt = stmt.where(ProductType.productName.ilike(searchTerm))
         if request.args.get("searchByIdNumber", default="false") == "true":
-            stmt = stmt.where(StockItem.idNumber.ilike(searchTerm))
+            stmt = stmt.where(StockItem.idString.ilike(searchTerm))
         if request.args.get("searchByBarcode", default="false") == "true":
             stmt = stmt.where(ProductType.barcode.ilike(searchTerm))
         if request.args.get("searchByDescriptors", default="false") == "true":
@@ -174,7 +174,7 @@ def getStockItemById(stockId):
     session = getDbSession()
     stockItem = session.query(
             StockItem.id,
-            StockItem.idNumber,
+            StockItem.idString,
             StockItem.productType,
             StockItem.addedTimestamp,
             StockItem.expiryDate,
