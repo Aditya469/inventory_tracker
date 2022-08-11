@@ -8,6 +8,8 @@ import android.net.NetworkCapabilities;
 import android.os.Handler;
 import android.widget.Toast;
 
+import com.admt.inventoryTracker.Product;
+import com.admt.inventoryTracker.R;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,36 +32,23 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.concurrent.Semaphore;
 
-public class ProductDataManager extends UpdateableServerDataManager<Product>{
-     public ProductDataManager(Application application) {
+public class LocationDataManager extends UpdateableServerDataManager<Location>
+{
+    public LocationDataManager(Application application) {
         super(application);
 
-        super.mJsonFileName = "productsData.json";
-        super.mUpdateEndpoint = "/getAppProductData";
+        super.mJsonFileName = "LocationList.json";
+        super.mUpdateEndpoint = "/getAppBinData";
         super.initialiseItemList();
     }
 
     @Override
-    protected Product parseJsonObjectToItem(JSONObject ItemJson) {
-        try {
-            Product product = new Product(
-                    ItemJson.getString("name"),
-                    ItemJson.getString("barcode"),
-                    ItemJson.getBoolean("expires"),
-                    ItemJson.getBoolean("isBulk"),
-                    ItemJson.getBoolean("isAssignedStockId"),
-                    ItemJson.getString("associatedStockId")
-            );
-
-            return product;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    protected Location parseJsonObjectToItem(JSONObject ItemJson) {
         return null;
     }
 
     @Override
-    protected String getItemDictKeyString(Product Item) {
-        return Item.Barcode;
+    protected String getItemDictKeyString(Location Item) {
+        return null;
     }
 }
