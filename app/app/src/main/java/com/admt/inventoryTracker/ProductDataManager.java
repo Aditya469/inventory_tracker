@@ -40,22 +40,16 @@ public class ProductDataManager extends UpdateableServerDataManager<Product>{
     }
 
     @Override
-    protected Product parseJsonObjectToItem(JSONObject ItemJson) {
-        try {
-            Product product = new Product(
-                    ItemJson.getString("name"),
-                    ItemJson.getString("barcode"),
-                    ItemJson.getBoolean("expires"),
-                    ItemJson.getBoolean("isBulk"),
-                    ItemJson.getBoolean("isAssignedStockId"),
-                    ItemJson.getString("associatedStockId")
-            );
-
-            return product;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    protected Product parseJsonObjectToItem(JSONObject ItemJson) throws JSONException {
+        Product product = new Product(
+                ItemJson.getString("name"),
+                ItemJson.getString("barcode"),
+                ItemJson.getBoolean("expires"),
+                ItemJson.getBoolean("isBulk"),
+                ItemJson.getBoolean("isAssignedStockId"),
+                ItemJson.getString("associatedStockId")
+        );
+        return product;
     }
 
     @Override

@@ -85,69 +85,56 @@ abstract class UpdateableServerDataManager<T> {
         {
             // wifi is not connected. Attempt to initialise the product list from the local copy
             Runnable runnable = () -> {
-                loadItemList();
+                try {
+                    loadItemList();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             };
             Thread t = new Thread(runnable);
             t.start();
         }
     }
 
-    private void saveItemListJson(JSONArray ProductArrayJson){
-        try {
-            File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
-            FileWriter fileWriter = new FileWriter(file);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(ProductArrayJson.toString());
-            bufferedWriter.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void saveItemListJson(JSONArray ProductArrayJson) throws IOException {
+        File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
+        FileWriter fileWriter = new FileWriter(file);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        bufferedWriter.write(ProductArrayJson.toString());
+        bufferedWriter.close();
     }
 
-    private void loadItemList(){
-        try{
-            File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            StringBuilder stringBuilder = new StringBuilder();
-            String line = bufferedReader.readLine();
-            while(line != null){
-                stringBuilder.append(line);
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
-            parseItemJsonArrayDataToMap(new JSONArray(stringBuilder.toString()));
-            mListInitialised = true;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private void loadItemList() throws IOException, JSONException, InterruptedException {
+        File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
+        FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = bufferedReader.readLine();
+        while(line != null){
+            stringBuilder.append(line);
+            line = bufferedReader.readLine();
         }
+        bufferedReader.close();
+        parseItemJsonArrayDataToMap(new JSONArray(stringBuilder.toString()));
+        mListInitialised = true;
     }
 
-    protected abstract T parseJsonObjectToItem(JSONObject ItemJson);
+    protected abstract T parseJsonObjectToItem(JSONObject ItemJson) throws JSONException;
 
     protected abstract String getItemDictKeyString(T Item);
 
-    void parseItemJsonArrayDataToMap(JSONArray ItemListJsonArray){
-        try {
-            mMapAccessSem.acquire();
-            for (int i = 0; i < ItemListJsonArray.length(); i++) {
-                JSONObject itemJson = ItemListJsonArray.getJSONObject(i);
-                T item = parseJsonObjectToItem(itemJson);
-                mItemMap.put(getItemDictKeyString(item), item);
-            }
-        } catch (JSONException | InterruptedException e) {
-            e.printStackTrace();
+    void parseItemJsonArrayDataToMap(JSONArray ItemListJsonArray) throws InterruptedException, JSONException {
+        mMapAccessSem.acquire();
+        for (int i = 0; i < ItemListJsonArray.length(); i++) {
+            JSONObject itemJson = ItemListJsonArray.getJSONObject(i);
+            T item = parseJsonObjectToItem(itemJson);
+            mItemMap.put(getItemDictKeyString(item), item);
         }
-        finally{
-            mMapAccessSem.release();
-        }
-
+        mMapAccessSem.release();
     }
 
     private void fetchUpdatedItemList(){
@@ -164,17 +151,32 @@ abstract class UpdateableServerDataManager<T> {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray ItemDataJson) {
-                        parseItemJsonArrayDataToMap(ItemDataJson);
-                        saveItemListJson(ItemDataJson);
-                        mListInitialised = true;
+                        try {
+                            parseItemJsonArrayDataToMap(ItemDataJson);
+                            saveItemListJson(ItemDataJson);
+                            mListInitialised = true;
+                        } catch (InterruptedException | IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        if(!mListInitialised)
-                            loadItemList();
+                        if(!mListInitialised) {
+                            try {
+                                loadItemList();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
         );
@@ -182,10 +184,9 @@ abstract class UpdateableServerDataManager<T> {
         mRequestQueue.add(jsonArrayRequest);
     }
 
-    public T get(String Key) throws RuntimeException
-    {
-        if(!isInitialised())
+    public T get(String Key) throws RuntimeException {
+        if (!isInitialised())
             throw new RuntimeException("Not initialised");
-        return(mItemMap.get(Key));
+        return (mItemMap.get(Key));
     }
 }
