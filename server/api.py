@@ -47,7 +47,8 @@ def getAppProductData():
 			"expires": product.canExpire,
 			"isBulk": product.tracksAllItemsOfProductType,
 			"isAssignedStockId": False,
-			"associatedStockId": None
+			"associatedStockId": None,
+			"productUnit": product.quantityUnit
 		}
 		if product.tracksAllItemsOfProductType:
 			associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()
