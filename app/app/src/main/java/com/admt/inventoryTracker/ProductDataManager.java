@@ -47,7 +47,8 @@ public class ProductDataManager extends UpdateableServerDataManager<Product>{
                 ItemJson.getBoolean("expires"),
                 ItemJson.getBoolean("isBulk"),
                 ItemJson.getBoolean("isAssignedStockId"),
-                ItemJson.getString("associatedStockId")
+                ItemJson.getString("associatedStockId"),
+                ItemJson.getString("quantityUnit")
         );
         return product;
     }

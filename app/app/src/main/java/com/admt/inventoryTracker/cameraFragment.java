@@ -199,7 +199,7 @@ public class cameraFragment extends Fragment
                             getString(R.string.prefs_file_key),
                             Context.MODE_PRIVATE
                     );
-                    long detectionDelay = prefs.getLong("detectionDelay", 1000);
+                    long detectionDelay = prefs.getLong(getString(R.string.prefs_camera_detection_delay), 1000);
                     long currentTimeMillis = SystemClock.elapsedRealtime();
 
                     int key = detections.keyAt(0);

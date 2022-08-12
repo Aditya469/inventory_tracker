@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,14 +23,17 @@ public class MainActivity extends AppCompatActivity
     private modeSelectorFragment mModeSelectFragment = null;
     boolean torchOn = false;
 
-    private ProductDataManager mProductDataManager = null;
+    private static ProductDataManager mProductDataManager = null;
+    private static LocationDataManager mLocationDataManger = null;
+    private static AddStockManager mAddStockManager = null;
 
     private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK};
     private CurrentState mCurrentState;
 
     public void onBarcodeRead(String barcodeValue)
     {
-        //mAddNewStockFragment.UpdateDisplayedbarcodeReading(barcodeValue);
+        if(mCurrentState == CurrentState.ADD_STOCK)
+            mAddNewStockFragment.addBarcode(barcodeValue);
     }
 
     public void onBarcodeEntered(String barcodeValue)
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onrequestCheckingMode() {
+    public void requestCheckingMode() {
 
     }
 
@@ -102,6 +103,12 @@ public class MainActivity extends AppCompatActivity
 
         if(mProductDataManager == null)
             mProductDataManager = new ProductDataManager(getApplication());
+
+        if(mLocationDataManger == null)
+            mLocationDataManger = new LocationDataManager(getApplication());
+
+        if(mAddStockManager == null)
+            mAddStockManager = new AddStockManager(getApplication());
 
         mModeSelectFragment = new modeSelectorFragment();
 
@@ -177,16 +184,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onAddStockModeSelected() {
-        Button addStockBtn = (Button)findViewById(R.id.btnAddStock);
+        Button addStockBtn = (Button)findViewById(R.id.btnAddStockMode);
         addStockBtn.setEnabled(false);
-        Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItems);
+        Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItemsMode);
         checkItemsBtn.setEnabled(false);
 
         if(mCameraFragment == null)
             mCameraFragment = new cameraFragment();
 
         if(mAddNewStockFragment == null)
-            mAddNewStockFragment = new addNewStockFragment();
+            mAddNewStockFragment = new addNewStockFragment(
+                    mProductDataManager,
+                    mLocationDataManger,
+                    mAddStockManager
+            );
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer1, mCameraFragment)
@@ -198,9 +209,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onCheckItemsModeSelected() {
-        Button addStockBtn = (Button)findViewById(R.id.btnAddStock);
+        Button addStockBtn = (Button)findViewById(R.id.btnAddStockMode);
         addStockBtn.setEnabled(false);
-        Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItems);
+        Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItemsMode);
         checkItemsBtn.setEnabled(false);
 
         if(mCameraFragment == null)

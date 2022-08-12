@@ -1,5 +1,6 @@
 package com.admt.inventoryTracker;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,9 +27,10 @@ public class AddStockManager {
 
     private String TAG = "InventoryTracker_AddStockManager";
 
-    public AddStockManager(Context context)
+    public AddStockManager(Application application)
     {
-        mAppContextRef = context;
+        mAppContextRef = application.getApplicationContext();
+        mRequestList = new ArrayList<AddStockRequestParameters>();
         mRequestQueue = Volley.newRequestQueue(mAppContextRef);
         mRequestQueue.start();
     }

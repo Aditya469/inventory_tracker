@@ -48,7 +48,7 @@ def getAppProductData():
 			"isBulk": product.tracksAllItemsOfProductType,
 			"isAssignedStockId": False,
 			"associatedStockId": None,
-			"productUnit": product.quantityUnit
+			"quantityUnit": product.quantityUnit
 		}
 		if product.tracksAllItemsOfProductType:
 			associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()

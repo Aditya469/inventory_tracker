@@ -1,12 +1,10 @@
 package com.admt.inventoryTracker;
 
-import android.graphics.ImageDecoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +34,7 @@ public class modeSelectorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button addStockBtn = (Button)getView().findViewById(R.id.btnAddStock);
+        Button addStockBtn = (Button)getView().findViewById(R.id.btnAddStockMode);
         addStockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,7 +42,7 @@ public class modeSelectorFragment extends Fragment {
             }
         });
 
-        Button checkItemsBtn = (Button)getView().findViewById(R.id.btnCheckItems);
+        Button checkItemsBtn = (Button)getView().findViewById(R.id.btnCheckItemsMode);
         checkItemsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

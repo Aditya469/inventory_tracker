@@ -1,9 +1,8 @@
 <resources>
     <!-- MainActivity -->
     <string name="app_name">DigitME2 Inventory Tracker</string>
-
-
     <string name="send">Send</string>
+
 
     <!-- settings password page -->
     <string name="title_activity_settings_password_screen"></string>
@@ -30,6 +29,27 @@
     </string-array>
 
 
+    <!-- add stock fragment -->
+    <string name="prompt_add_stock_scan_product_barcode">Scan the Item Barcode</string>
+    <string name="prompt_add_stock_scan_qr_code">Scan the Identifying QR Code</string>
+    <string name="prompt_add_stock_scan_bin_qr_code">Scan Bin QR code (optional)</string>
+    <string name="prompt_add_stock_scan_bin_qr_code_or_set_expiry">Scan Bin QR code or set Expiry</string>
+    <string name="prompt_add_stock_set_expiry_date">Set Expiry Date</string>
+    <string name="prompt_add_stock_ready">This Item Can Now Be Saved</string>
+
+
+
+    <string name="label_add_stock_barcode">Barcode:</string>
+    <string name="label_add_stock_product_name">Product:</string>
+    <string name="label_add_stock_qr_code_value">Item ID:</string>
+    <string name="label_add_stock_location">Location Name:</string>
+    <string name="label_add_stock_expiry">Expiry:</string>
+    <string name="label_add_stock_bulk_quantity_to_add">Packs to add:</string>
+    <string name="label_add_stock_amount_in_pack">Amount in this pack:</string>
+    <string name="label_add_stock_specific_item_partial_amount">Amount in this pack:</string>
+    <string name="label_add_stock_save">Save This Item</string>
+
+
     <!-- keys for shared prefs. Ideally should be in a separate XML file, but I'm having trouble
     getting android studio to find a custom file -->
     <string name="prefs_file_key" translatable="false">com.admt.inventoryTracker.prefs</string>
@@ -38,6 +58,26 @@
     <string name="prefs_use_front_camera" translatable="false">prefsCameraToUse</string>
     <string name="prefs_camera_detection_delay" translatable="false">prefsCameraDetectionDelay</string>
     <string name="prefs_use_fullscreen_confirmations" translatable="false">useFullscreenConfirmations</string>
+
+
+
+    <!--    System keywords. Kept here rather than have a list of repeated and typo-sensitive keys
+            distrubuted through the codebase -->
+    <string name="sys_prefix_item">item_</string>
+    <string name="sys_prefix_location">bin_</string>
+    <string name="sys_prefix_job">job_</string>
+
+
+
+
+
+
+
+
+
+
+
+    <!-- junkyard -->
 
 
     <string name="first_fragment_label"></string>

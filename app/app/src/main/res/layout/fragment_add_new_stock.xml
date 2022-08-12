@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clDataDisplayLayout"
+        android:id="@+id/clAddStockLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:descendantFocusability="beforeDescendants"
@@ -14,13 +14,13 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tvAddStockPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/prompt_add_stock_scan_qr_code"
+            android:text="@string/prompt_add_stock_scan_product_barcode"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,19 +33,22 @@
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/tvAddStockPrompt" />
 
 
         <TableLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/divider"
+            android:stretchColumns="1"
             app:layout_constraintBottom_toTopOf="@+id/buttonsLowerSet"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:stretchColumns="1">
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintVertical_bias="1.0">
 
             <TableRow
+                android:id="@+id/trAddStockBarcode"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -54,22 +57,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/label_add_stock_barcode"
                     android:gravity="left"
                     android:padding="3dp"
-                    />
+                    android:text="@string/label_add_stock_barcode" />
 
                 <EditText
-                    android:id="@+id/etItemBarcode"
+                    android:id="@+id/etAddStockItemBarcode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:ems="10"
-                    android:text="01267890"
+                    android:enabled="false"
                     android:gravity="right"
-                    />
+                    android:text=""/>
             </TableRow>
 
             <TableRow
+                android:id="@+id/trAddStockProductName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -78,22 +82,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/label_add_stock_product_name"
                     android:gravity="left"
                     android:padding="3dp"
-                    />
+                    android:text="@string/label_add_stock_product_name" />
 
-                <TextView
-                    android:id="@+id/tvProductName"
+                <EditText
+                    android:id="@+id/etAddStockProductName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:ems="10"
+                    android:enabled="false"
                     android:gravity="right"
-                    android:padding="10dp"
-                    />
+                    android:padding="10dp"/>
             </TableRow>
 
             <TableRow
+                android:id="@+id/trAddStockItemId"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -102,22 +107,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/label_add_stock_qr_code_value"
                     android:gravity="left"
                     android:padding="3dp"
-                    />
+                    android:text="@string/label_add_stock_qr_code_value" />
 
-                <TextView
-                    android:id="@+id/tvItemQrCode"
+                <EditText
+                    android:id="@+id/etAddStockItemQrCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:ems="10"
+                    android:enabled="false"
                     android:gravity="right"
-                    android:padding="10dp"
-                    />
+                    android:padding="10dp"/>
             </TableRow>
 
             <TableRow
+                android:id="@+id/trAddStockLocationName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -126,23 +132,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/label_add_stock_location"
                     android:gravity="left"
                     android:padding="3dp"
-                    />
+                    android:text="@string/label_add_stock_location" />
 
-                <TextView
-                    android:id="@+id/tvLocationName"
+                <EditText
+                    android:id="@+id/etAddStockLocationName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:ems="10"
-                    android:gravity="right"
-                    android:padding="10dp"
-                    />
+                    android:enabled="false"
+                    android:gravity="right" />
 
             </TableRow>
 
             <TableRow
+                android:id="@+id/trAddStockExpiry"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -151,22 +157,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/label_add_stock_expiry"
                     android:gravity="left"
                     android:padding="3dp"
-                    />
+                    android:text="@string/label_add_stock_expiry" />
 
                 <EditText
-                    android:id="@+id/etExpiryDate"
+                    android:id="@+id/etAddStockExpiryDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:ems="10"
-                    android:gravity="right"
-                    />
+                    android:focusable="false"
+                    android:gravity="right"/>
 
             </TableRow>
 
             <TableRow
+                android:id="@+id/trAddStockBulkAddQty"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -175,18 +182,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/label_add_stock_bulk_quantity_to_add"
                     android:gravity="left"
                     android:padding="3dp"
-                    />
+                    android:text="@string/label_add_stock_bulk_quantity_to_add" />
 
                 <EditText
-                    android:id="@+id/etQtyToAdd"
+                    android:id="@+id/etAddStockQtyToAdd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:inputType="numberDecimal"
                     android:ems="10"
-                    android:gravity="right"
-                    />
+                    android:gravity="right"/>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trAddStockSpecificItemQty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelStockItemQtyToAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_add_stock_specific_item_partial_amount" />
+
+                <EditText
+                    android:id="@+id/etAddStockPartialStockQty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:ems="10"
+                    android:gravity="right" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tvAddStockPartialPackUnit"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="unit" />
 
             </TableRow>
 
@@ -210,7 +248,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <Button
-                android:id="@+id/btnCancel"
+                android:id="@+id/btnAddStockCancel"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
@@ -221,15 +259,16 @@
                 app:layout_constraintTop_toTopOf="@+id/btnSend" />
 
             <Button
-                android:id="@+id/btnSend"
+                android:id="@+id/btnAddStockSave"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:backgroundTint="@color/submit_button_color_state_list"
                 android:elevation="8dp"
                 android:focusableInTouchMode="false"
-                android:text="@string/send"
+                android:text="@string/label_add_stock_save"
                 android:textColor="@color/colorSubmit"
+                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
