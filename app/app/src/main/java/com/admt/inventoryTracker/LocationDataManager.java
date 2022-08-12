@@ -43,12 +43,15 @@ public class LocationDataManager extends UpdateableServerDataManager<Location>
     }
 
     @Override
-    protected Location parseJsonObjectToItem(JSONObject ItemJson) {
-        return null;
+    protected Location parseJsonObjectToItem(JSONObject ItemJson) throws JSONException {
+        Location newLocation = new Location();
+        newLocation.LocationId = ItemJson.getString("idString");
+        newLocation.LocationName = ItemJson.getString("locationName");
+        return newLocation;
     }
 
     @Override
     protected String getItemDictKeyString(Location Item) {
-        return null;
+        return Item.LocationId;
     }
 }
