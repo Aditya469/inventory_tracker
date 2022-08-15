@@ -154,17 +154,21 @@ def getStock():
 
     stockList = []
     for row in results:
-        stockList.append({
-            "id": row[0],
-            "idNumber": row[1],
-            "canExpire": row[2],
-            "expiryDate": row[3].strftime("%Y-%m-%d"),
-            "quantityRemaining": row[4],
-            "price": row[5],
-            "productName": row[6],
-            "productBarcode": row[7],
-            "quantityUnit": row[8]
-        })
+        rowDict = {}
+        rowDict["id"] = row[0]
+        rowDict["idNumber"] = row[1]
+        rowDict["canExpire"] = row[2]
+        if rowDict["canExpire"]:
+            rowDict["expiryDate"] = row[3].strftime("%Y-%m-%d")
+        else:
+            rowDict["expiryDate"] = ""
+        rowDict["quantityRemaining"] = row[4]
+        rowDict["price"] = row[5]
+        rowDict["productName"] = row[6]
+        rowDict["productBarcode"] = row[7]
+        rowDict["quantityUnit"] = row[8]
+        stockList.append(rowDict)
+
     return make_response(jsonify(stockList), 200)
 
 
