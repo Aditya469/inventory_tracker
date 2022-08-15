@@ -10,6 +10,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity
         implements cameraFragment.onBarcodeReadListener,
         numberPadFragment.OnNumpadInteractionListener,
@@ -26,6 +29,9 @@ public class MainActivity extends AppCompatActivity
     private static ProductDataManager mProductDataManager = null;
     private static LocationDataManager mLocationDataManger = null;
     private static AddStockManager mAddStockManager = null;
+
+    private Timer mSendDataTimer;
+    private TimerTask mSendDataTimerTask;
 
     private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK};
     private CurrentState mCurrentState;
@@ -111,6 +117,30 @@ public class MainActivity extends AppCompatActivity
             mAddStockManager = new AddStockManager(getApplication());
 
         mModeSelectFragment = new modeSelectorFragment();
+
+        // As this app is expected to only have intermittent access to the network
+        mSendDataTimer = new Timer(false);
+        mSendDataTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(Utilities.isWifiConnected(getApplicationContext())){
+                    if(mAddStockManager != null) {
+                        mAddStockManager.SendAllRequests();
+                        while (mAddStockManager.hasPending()) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    // TODO: corresponding handling for check in/out
+                }
+            }
+        };
+        mSendDataTimer.scheduleAtFixedRate(mSendDataTimerTask, 1000, 10000);
+
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainer1, mModeSelectFragment).commit();
