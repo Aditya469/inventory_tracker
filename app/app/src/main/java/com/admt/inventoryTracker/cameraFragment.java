@@ -146,6 +146,7 @@ public class cameraFragment extends Fragment
             long maximumLifespanTimestamp;
         }
         private Map<String, BarcodeDetectionTimeouts> barcodeDetectionTimeoutsMap;
+        private Map<String, Long> recentlySentBarcodes;
         private Timer timer;
         private TimerTask timerTask;
         private final Semaphore sem;
@@ -154,11 +155,14 @@ public class cameraFragment extends Fragment
         {
             sem = new Semaphore(1, true);
             barcodeDetectionTimeoutsMap = new HashMap<>();
+            recentlySentBarcodes = new HashMap<>();
             timer = new Timer(true);
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
                     // run through the list of detections and remove any stale entries
+                    // also run through the list of recently sent and take out any entries that
+                    // have waited long enough to send again.
                     try {
                         sem.acquire();
                         long currentTime = SystemClock.elapsedRealtime();
@@ -171,6 +175,22 @@ public class cameraFragment extends Fragment
                                 if (currentTime > record.maximumLifespanTimestamp) {
                                     barcodeDetectionTimeoutsMap.remove(key);
                                     Log.d(TAG, String.format("Remove detection record of %s due to expiry", key));
+                                }
+                            }
+                        }
+                        catch (java.util.ConcurrentModificationException e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                        keys = recentlySentBarcodes.keySet();
+                        iterator = keys.iterator();
+                        try {
+                            while (iterator.hasNext()) {
+                                String key = (String) iterator.next();
+                                if (currentTime > recentlySentBarcodes.get(key)) {
+                                    recentlySentBarcodes.remove(key);
+                                    Log.d(TAG, String.format("Remove recently sent barcode %s due to expiry", key));
                                 }
                             }
                         }
@@ -200,32 +220,39 @@ public class cameraFragment extends Fragment
                             Context.MODE_PRIVATE
                     );
                     long detectionDelay = prefs.getLong(getString(R.string.prefs_camera_detection_delay), 1000);
+                    Long recentlySentTimeout = prefs.getLong(getString(R.string.prefs_minimum_wait_after_camera_send_barcode), 3000);
                     long currentTimeMillis = SystemClock.elapsedRealtime();
 
                     int key = detections.keyAt(0);
                     String barcodeNumber = detections.get(key).rawValue;
-                    Log.d(TAG, String.format("Handling barcode detection for string  %s", barcodeNumber));
-
-                    // only delay passing detected barcodes to the rest of the app if the delay is not 0
-                    if (detectionDelay != 0) {
-                        if (!barcodeDetectionTimeoutsMap.containsKey(barcodeNumber)) {
-                            // if the current barcode hasn't been recorded, add it now
-                            BarcodeDetectionTimeouts b = new BarcodeDetectionTimeouts();
-                            b.minimumValidityTimeout = currentTimeMillis + detectionDelay;
-                            b.maximumLifespanTimestamp = currentTimeMillis + (2 * detectionDelay);
-                            barcodeDetectionTimeoutsMap.put(barcodeNumber, b);
-                        } else {
-                            // otherwise, if the timeout has passed, send it up to the container app.
-                            BarcodeDetectionTimeouts b = barcodeDetectionTimeoutsMap.get(barcodeNumber);
-                            if (currentTimeMillis > b.minimumValidityTimeout) {
-                                mBarcodeReadCallback.onBarcodeRead(barcodeNumber);
-                                barcodeDetectionTimeoutsMap.remove(barcodeNumber);
-                            }
-                        }
-                    } else {
-                        mBarcodeReadCallback.onBarcodeRead(barcodeNumber);
+                    if(recentlySentBarcodes.containsKey(barcodeNumber)) {
+                        Log.d(TAG, String.format("skipping recently sent barcode %s", barcodeNumber));
                     }
+                    else{
+                        Log.d(TAG, String.format("Handling barcode detection for string  %s", barcodeNumber));
 
+                        // only delay passing detected barcodes to the rest of the app if the delay is not 0
+                        if (detectionDelay != 0) {
+                            if (!barcodeDetectionTimeoutsMap.containsKey(barcodeNumber)) {
+                                // if the current barcode hasn't been recorded, add it now
+                                BarcodeDetectionTimeouts b = new BarcodeDetectionTimeouts();
+                                b.minimumValidityTimeout = currentTimeMillis + detectionDelay;
+                                b.maximumLifespanTimestamp = currentTimeMillis + (2 * detectionDelay);
+                                barcodeDetectionTimeoutsMap.put(barcodeNumber, b);
+                            } else {
+                                // otherwise, if the timeout has passed, send it up to the container app.
+                                BarcodeDetectionTimeouts b = barcodeDetectionTimeoutsMap.get(barcodeNumber);
+                                if (currentTimeMillis > b.minimumValidityTimeout) {
+                                    mBarcodeReadCallback.onBarcodeRead(barcodeNumber);
+                                    barcodeDetectionTimeoutsMap.remove(barcodeNumber);
+                                    recentlySentBarcodes.put(barcodeNumber, (Long) currentTimeMillis + recentlySentTimeout);
+                                }
+                            }
+                        } else {
+                            mBarcodeReadCallback.onBarcodeRead(barcodeNumber);
+                            recentlySentBarcodes.put(barcodeNumber, (Long) currentTimeMillis + recentlySentTimeout);
+                        }
+                    }
                 }
                 sem.release();
             }

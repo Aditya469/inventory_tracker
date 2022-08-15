@@ -58,6 +58,7 @@
     <string name="prefs_use_front_camera" translatable="false">prefsCameraToUse</string>
     <string name="prefs_camera_detection_delay" translatable="false">prefsCameraDetectionDelay</string>
     <string name="prefs_use_fullscreen_confirmations" translatable="false">useFullscreenConfirmations</string>
+    <string name="prefs_minimum_wait_after_camera_send_barcode" translatable="false">minCameraBarcodeRepeatDelay</string>
 
 
 
