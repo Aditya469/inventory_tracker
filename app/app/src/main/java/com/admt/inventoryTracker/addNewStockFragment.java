@@ -316,7 +316,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
                         TextView tvPrompt = (TextView) (getActivity()
                                 .findViewById(R.id.tvAddStockPrompt));
-                        tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
+                        tvPrompt.setText(getString(R.string.prompt_add_stock_scan_qr_code));
 
                         if(mCurrentProduct.CanExpire) {
                             TableRow trExpiry = (TableRow) getActivity()
