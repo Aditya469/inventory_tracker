@@ -233,8 +233,6 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         else if(BarcodeData.startsWith(getContext().getString(R.string.sys_prefix_item))) {
             if(mAddStockRequestParameters.Barcode == null || mCurrentProduct == null)
                 error = "Scan a product barcode first";
-            if(mCurrentProduct.IsAssignedStockId && mCurrentProduct.AssociatedStockId != BarcodeData)
-                error = "This product already has an ID assigned. Use that instead (" + mCurrentProduct.AssociatedStockId + ").";
             else
             {
                 mAddStockRequestParameters.ItemId = BarcodeData;
@@ -300,6 +298,11 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             else {
                 mAddStockRequestParameters.Barcode = BarcodeData;
 
+                if(mCurrentProduct.IsAssignedStockId)
+                {
+                    mAddStockRequestParameters.ItemId = mCurrentProduct.AssociatedStockId;
+                }
+
                 runnable = new Runnable() {
                     @Override
                     public void run() {
@@ -313,7 +316,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
                         TextView tvPrompt = (TextView) (getActivity()
                                 .findViewById(R.id.tvAddStockPrompt));
-                        tvPrompt.setText(getString(R.string.prompt_add_stock_scan_qr_code));
+                        tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
 
                         if(mCurrentProduct.CanExpire) {
                             TableRow trExpiry = (TableRow) getActivity()
@@ -324,6 +327,14 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
                             TableRow trBulkQty = (TableRow) getActivity()
                                     .findViewById(R.id.trAddStockBulkAddQty);
                             trBulkQty.setVisibility(View.VISIBLE);
+
+                            if(mCurrentProduct.IsAssignedStockId)
+                            {
+                                EditText etItemId = (EditText) getActivity()
+                                        .findViewById(R.id.etAddStockItemQrCode);
+                                etItemId.setText(mCurrentProduct.AssociatedStockId);
+                                tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code));
+                            }
                         }
                         else {
                             TableRow trSpecQty = (TableRow) getActivity()
