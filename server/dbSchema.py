@@ -54,7 +54,8 @@ class ItemId(Base):
 		return {
 			"idNumber": self.idNumber,
 			"isPendingAssignment": self.isPendingAssignment,
-			"isAssigned": self.isAssigned
+			"isAssigned": self.isAssigned,
+			"idString": self.idString
 		}
 
 
@@ -160,6 +161,7 @@ class CheckInRecord(Base):
 	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	associatedStockItem = relationship("StockItem", backref="checkInRecords")
+	createdByRequestId = Column(String)
 
 	def toDict(self):
 		return {
@@ -182,6 +184,7 @@ class CheckOutRecord(Base):
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	associatedStockItem = relationship("StockItem", backref="checkOutRecords")
+	createdByRequestId = Column(String)
 
 	def toDict(self):
 		return{

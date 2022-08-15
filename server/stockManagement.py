@@ -680,8 +680,10 @@ def deleteNewlyAddedStock():
         productType = session.query(ProductType).filter(ProductType.id == StockItem.productType).first()
         if productType.tracksAllItemsOfProductType:
             stockItem.quantityRemaining -= checkinRecord.quantityCheckedIn
-        session.delete(stockItem)
-        session.delete(checkinRecord)
+        if stockItem:
+            session.delete(stockItem)
+        if checkinRecord:
+            session.delete(checkinRecord)
         session.delete(verificationRecord)
 
     session.commit()

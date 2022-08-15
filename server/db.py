@@ -66,7 +66,7 @@ def initApp(app):
 def getDbSession():
 	if 'dbSession' not in g:
 		# engine = create_engine('postgresql://server:server@localhost:5432/inventorydb')
-		engine = create_engine('sqlite:///inventoryDB.sqlite', echo=True)  # temporary for dev use
+		engine = create_engine('sqlite:///inventoryDB.sqlite', echo=False)  # temporary for dev use
 		Session = sessionmaker(bind=engine)
 		g.dbSession = Session()
 
