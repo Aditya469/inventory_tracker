@@ -58,6 +58,14 @@ class ItemId(Base):
 		}
 
 
+# simple alias class to allow one ID to point to another, to allow for multiple IDs to be the same bulk product
+class IdAlias(Base):
+	__tablename__ = "idAlias"
+	id = Column(Integer, primary_key=True, unique=True)
+	idString = Column(String)
+	stockItemAliased = Column(String, ForeignKey("stockItems.id"))
+
+
 class StockItem(Base):
 	__tablename__ = "stockItems"
 
