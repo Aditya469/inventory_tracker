@@ -112,13 +112,14 @@ def processAddStockRequest():
 		if productType is not None and productType.tracksAllItemsOfProductType:
 			stockItem = dbSession.query(StockItem).filter(StockItem.productType == productType.id).first()
 
-			aliasRecord = IdAlias(idString=requestParams['idString'], stockItemAliased=stockItem.id)
-			dbSession.add(aliasRecord)
+			if stockItem is not None:
+				aliasRecord = IdAlias(idString=requestParams['idString'], stockItemAliased=stockItem.id)
+				dbSession.add(aliasRecord)
 
-			# update itemId table so that the new ID won't get reused elsewhere
-			itemId = dbSession.query(ItemId).filter(ItemId.idNumber == requestParams['idString']).first()
-			itemId.isPendingAssignment = False
-			itemId.isAssigned = True
+				# update itemId table so that the new ID won't get reused elsewhere
+				itemId = dbSession.query(ItemId).filter(ItemId.idString == requestParams['idString']).first()
+				itemId.isPendingAssignment = False
+				itemId.isAssigned = True
 
 	# if we not have a stockItem record, it should be a bulk entry, so update it.
 	if stockItem is not None:
