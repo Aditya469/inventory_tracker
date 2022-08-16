@@ -231,7 +231,7 @@ def processCheckStockInRequest():
 
 	# attempt to get stockItem. The provided ID might be an alias, so if stockItem is initially null, check for an alias
 	stockItem = dbSession.query(StockItem) \
-		.filter(StockItem.idNumber == int(requestParams['idString']))\
+		.filter(StockItem.idString == requestParams['idString'])\
 		.first()
 
 	if stockItem is None:
@@ -241,7 +241,6 @@ def processCheckStockInRequest():
 				.filter(StockItem.idNumber == alias.stockItemAliased)\
 				.first()
 
-
 	if stockItem is None:
 		logging.error(f"Stock Item {requestParams['idString']} does not exist in the database")
 
@@ -250,15 +249,17 @@ def processCheckStockInRequest():
 		logging.error("Attempting to check in specific item that is already checked in")
 		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
-	if "quantityCheckingIn" not in requestParams:
-		logging.error("Failed to check in stock item. No quantity provided")
+	if "quantityCheckedIn" not in requestParams:
+		logging.error("Failed to check in stock item. quantityCheckedIn must be provided")
 		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
 	checkInRecord = CheckInRecord()
 	dbSession.add(checkInRecord)
-	checkInRecord.quantityCheckedIn = decimal.Decimal(requestParams['quantityCheckingIn'])
-	checkInRecord.checkInTimestamp = func.now()
+	checkInRecord.quantityCheckedIn = decimal.Decimal(requestParams['quantityCheckedIn'])
 	checkInRecord.stockItem = stockItem.id
+
+	if 'timestamp' in requestParams:
+		checkInRecord.checkinTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%d-%m-%Y %H:%M:%S")
 
 	if "jobId" in requestParams:
 		checkInRecord.jobId = requestParams['jobId']
@@ -266,7 +267,7 @@ def processCheckStockInRequest():
 	if 'binId' in requestParams:
 		checkInRecord.binId = requestParams['binId']
 
-	stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityCheckingIn'])
+	stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityCheckedIn'])
 	stockItem.isCheckedIn = True
 	dbSession.commit()
 	return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
@@ -285,6 +286,8 @@ def processCheckStockOutRequest():
 
 	if 'idString' not in requestParams:
 		logging.error("Failed to process request to check out item. ID number not provided")
+		# note that even though this is an error, the response is a 200 so that the app can still
+		# delete the request, otherwise it'll just keep coming back
 		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
 	# check the request ID to see if this request has been processed once already. If it has, send a nice message to
@@ -298,12 +301,18 @@ def processCheckStockOutRequest():
 		logging.info(f"Skipping duplicate request {requestParams['requestId']}")
 		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
-	logging.info(f"Processing check out request for stock item with ID number {requestParams['stockIdNumber']}")
+	logging.info(f"Processing check out request for stock item with ID number {requestParams['idString']}")
 
+	# attempt to get the stock item from the id string
 	stockItem = dbSession.query(StockItem)\
-		.filter(StockItem.idNumber == int(requestParams['stockIdNumber']))\
-		.limit(1)\
+		.filter(StockItem.idString == requestParams['idString'])\
 		.first()
+
+	# if the stock item wasn't found, check for an alias
+	if stockItem is None:
+		alias = dbSession.query(IdAlias).filter(IdAlias.idString == requestParams['idString']).first()
+		if alias:
+			stockItem = dbSession.query(StockItem).filter(StockItem.id == alias.stockItemAliased).first()
 
 	if stockItem is None:
 		logging.error(f"Stock Item {requestParams['stockIdNumber']} does not exist in the database")
@@ -322,11 +331,15 @@ def processCheckStockOutRequest():
 	checkOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
 	checkOutRecord.createdByRequestId = requestParams['requestId']
 
+	if 'timestamp' in requestParams:
+		checkOutRecord.checkOutTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%d-%m-%Y %H:%M:%S")
+
+
 	if 'quantityCheckedOut' in requestParams:
 		checkOutRecord.quantityCheckedOut = decimal.Decimal(requestParams['quantityCheckedOut'])
 	else:
 		if dbSession.query(ProductType.tracksSpecificItems).filter(ProductType.id == stockItem.productType).first()[0] is False:
-			logging.warning(
+			logging.info(
 				"Bulk or non-specific stock item checked out without specifying quantity. Assuming all."
 			)
 		checkOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
