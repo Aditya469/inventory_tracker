@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -383,7 +384,31 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
     private void onBtnSavePressed()
     {
-        mAddStockManager.QueueRequest(mAddStockRequestParameters);
+        AddStockRequestParameters requestToAdd = mAddStockRequestParameters;
+        ConstraintLayout rootLayout = getActivity().findViewById(R.id.clAddStockLayout);
+        Snackbar snackbar = Snackbar
+                .make(rootLayout, "Item added", Snackbar.LENGTH_LONG)
+                .addCallback(new Snackbar.Callback(){
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        switch (event){
+                            case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
+                            case Snackbar.Callback.DISMISS_EVENT_SWIPE:
+                            case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
+                                mAddStockManager.QueueRequest(requestToAdd);
+                        }
+                    }
+                })
+                .setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // no code actually needed here as the new request is added on a timeout
+                        Log.i(TAG, "onSaveSnackbar: undo action pressed. Request will not be added.");
+                    }
+                });
+
+        snackbar.show();
         resetDisplay();
     }
 
