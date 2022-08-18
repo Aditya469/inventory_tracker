@@ -1,14 +1,221 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".checkItemsFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clCheckItemsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
+
+        <TextView
+            android:id="@+id/tvCheckItemsPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/prompt_check_stock_scan_item_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCheckItemsPrompt" />
+
+
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:stretchColumns="1"
+            app:layout_constraintBottom_toTopOf="@+id/buttonsLowerSet"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintVertical_bias="1.0">
+
+            <TableRow
+                android:id="@+id/trCheckStockItemId"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelCheckStockItemId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_item_id" />
+
+                <EditText
+                    android:id="@+id/etCheckStockItemId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:gravity="right"
+                    android:text=""/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trCheckStockProductName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelCheckStockProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_product_name" />
+
+                <EditText
+                    android:id="@+id/etCheckStockProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:gravity="right"
+                    android:padding="10dp"/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trCheckStockLocationName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelCheckStockLocationId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_location" />
+
+                <EditText
+                    android:id="@+id/etCheckStockLocationName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:gravity="right" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trCheckStockQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvCheckStockQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_quantity" />
+
+                <EditText
+                    android:id="@+id/etCheckStockQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:ems="10"
+                    android:gravity="right" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tvCheckStockQtyUnit"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="unit" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonsLowerSet"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="0dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/btnCheckStockCancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.25"
+                android:elevation="8dp"
+                android:text="@android:string/cancel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btnSend" />
+
+            <Button
+                android:id="@+id/btnCheckStockIn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:backgroundTint="@color/submit_button_color_state_list"
+                android:elevation="8dp"
+                android:focusableInTouchMode="false"
+                android:text="@string/label_check_stock_checkin"
+                android:textColor="@color/colorSubmit"
+                android:enabled="false"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btnCancel"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+            <Button
+                android:id="@+id/btnCheckStockOut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:backgroundTint="@color/submit_button_color_state_list"
+                android:elevation="8dp"
+                android:focusableInTouchMode="false"
+                android:text="@string/label_check_stock_checkout"
+                android:textColor="@color/colorSubmit"
+                android:enabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btnCancel"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

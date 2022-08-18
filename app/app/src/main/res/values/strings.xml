@@ -30,15 +30,6 @@
 
 
     <!-- add stock fragment -->
-    <string name="prompt_add_stock_scan_product_barcode">Scan the Item Barcode</string>
-    <string name="prompt_add_stock_scan_qr_code">Scan the Identifying QR Code</string>
-    <string name="prompt_add_stock_scan_bin_qr_code">Scan Bin QR code (optional)</string>
-    <string name="prompt_add_stock_scan_bin_qr_code_or_set_expiry">Scan Bin QR code or set Expiry</string>
-    <string name="prompt_add_stock_set_expiry_date">Set Expiry Date</string>
-    <string name="prompt_add_stock_ready">This Item Can Now Be Saved</string>
-
-
-
     <string name="label_add_stock_barcode">Barcode:</string>
     <string name="label_add_stock_product_name">Product:</string>
     <string name="label_add_stock_qr_code_value">Item ID:</string>
@@ -48,6 +39,26 @@
     <string name="label_add_stock_amount_in_pack">Amount in this pack:</string>
     <string name="label_add_stock_specific_item_partial_amount">Amount in this pack:</string>
     <string name="label_add_stock_save">Save This Item</string>
+
+    <string name="prompt_add_stock_scan_product_barcode">Scan the Item Barcode</string>
+    <string name="prompt_add_stock_scan_qr_code">Scan the Identifying QR Code</string>
+    <string name="prompt_add_stock_scan_bin_qr_code">Scan Bin QR code (optional)</string>
+    <string name="prompt_add_stock_scan_bin_qr_code_or_set_expiry">Scan Bin QR code or set Expiry</string>
+    <string name="prompt_add_stock_set_expiry_date">Set Expiry Date</string>
+    <string name="prompt_add_stock_ready">This Item Can Now Be Saved</string>
+
+
+    <!-- check stock fragment -->
+    <string name="label_check_stock_item_id">Item QR Code:</string>
+    <string name="label_check_stock_product_name">Product Type:</string>
+    <string name="label_check_stock_location">Location:</string>
+    <string name="label_check_stock_quantity">Quantity:</string>
+    <string name="label_check_stock_checkin">Check Item In</string>
+    <string name="label_check_stock_checkout">Check Item Out</string>
+
+    <string name="prompt_check_stock_scan_item_id">Scan an Item ID QR Code</string>
+    <string name="prompt_check_stock_set_amount">Set Qty. to Check In/Out</string>
+    <string name="prompt_check_stock_ready">This Item Can Now Be Checked In/Out</string>
 
 
     <!-- keys for shared prefs. Ideally should be in a separate XML file, but I'm having trouble
