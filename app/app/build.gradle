@@ -9,11 +9,11 @@ android {
             keyPassword 'digitme'
         }
     }
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.admt.inventoryTracker"
-        minSdkVersion 23
-        targetSdkVersion 26
+        minSdkVersion 26
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'

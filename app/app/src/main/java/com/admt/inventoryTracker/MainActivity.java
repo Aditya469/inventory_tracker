@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity
         implements cameraFragment.onBarcodeReadListener,
         numberPadFragment.OnNumpadInteractionListener,
         modeSelectorFragment.onModeSelectedListener,
-        addNewStockFragment.AddStockInteractionCallbacks
+        StockInteractionHandlingCallbacks
 {
     private cameraFragment mCameraFragment = null;
     private addNewStockFragment mAddNewStockFragment = null;
@@ -28,7 +28,12 @@ public class MainActivity extends AppCompatActivity
 
     private static ProductDataManager mProductDataManager = null;
     private static LocationDataManager mLocationDataManger = null;
+    private static ItemIdLookUpDataManager mItemIdLookUpDataManager = null;
+    private static JobLookupDataManager mJobLookupDataManager = null;
+
     private static AddStockManager mAddStockManager = null;
+    private static CheckStockInOutManager mCheckStockInOutManager = null;
+
 
     private Timer mSendDataTimer;
     private TimerTask mSendDataTimerTask;
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity
     {
         if(mCurrentState == CurrentState.ADD_STOCK)
             mAddNewStockFragment.addBarcode(barcodeValue);
+        else if(mCurrentState == CurrentState.CHECK_STOCK)
+            mCheckItemsFragment.addBarcode(barcodeValue);
     }
 
     public void onBarcodeEntered(String barcodeValue)
@@ -48,21 +55,9 @@ public class MainActivity extends AppCompatActivity
         //onToggleNumPadRequest();
     }
 
-    public void onBarcodeSeen()
-    {
-        if(mCameraFragment != null)
+    public void onBarcodeSeen() {
+        if (mCameraFragment != null)
             mCameraFragment.flashScreen();
-    }
-
-    @Override
-    public void requestCheckingMode() {
-
-    }
-
-    public void onBarcodeReadHandled()
-    {
-        if(mCameraFragment != null)
-            mCameraFragment.cancelBarcodeReadWait();
     }
 
     public void onToggleTorchRequest()
@@ -116,6 +111,15 @@ public class MainActivity extends AppCompatActivity
         if(mAddStockManager == null)
             mAddStockManager = new AddStockManager(getApplication());
 
+        if(mCheckStockInOutManager == null)
+            mCheckStockInOutManager = new CheckStockInOutManager(getApplication());
+
+        if(mItemIdLookUpDataManager == null)
+            mItemIdLookUpDataManager = new ItemIdLookUpDataManager(getApplication());
+
+        if(mJobLookupDataManager == null)
+            mJobLookupDataManager = new JobLookupDataManager(getApplication());
+
         mModeSelectFragment = new modeSelectorFragment();
 
         // As this app is expected to only have intermittent access to the network
@@ -137,7 +141,18 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-                    // TODO: corresponding handling for check in/out
+                    if(mCheckStockInOutManager != null){
+                        if(mCheckStockInOutManager.hasPending()){
+                            mCheckStockInOutManager.SendAllRequests();
+                            while(mCheckStockInOutManager.hasPending()){
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
                 }
             }
         };
@@ -221,8 +236,8 @@ public class MainActivity extends AppCompatActivity
         Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItemsMode);
         checkItemsBtn.setEnabled(false);
 
-        if(mCameraFragment == null)
-            mCameraFragment = new cameraFragment();
+        //if(mAddNewStockFragment == null)
+        mCameraFragment = new cameraFragment();
 
         if(mAddNewStockFragment == null)
             mAddNewStockFragment = new addNewStockFragment(
@@ -246,11 +261,17 @@ public class MainActivity extends AppCompatActivity
         Button checkItemsBtn = (Button)findViewById(R.id.btnCheckItemsMode);
         checkItemsBtn.setEnabled(false);
 
-        if(mCameraFragment == null)
-            mCameraFragment = new cameraFragment();
+        //if(mCameraFragment == null)
+        mCameraFragment = new cameraFragment();
 
         if(mCheckItemsFragment == null)
-            mCheckItemsFragment = new checkItemsFragment();
+            mCheckItemsFragment = new checkItemsFragment(
+                    mProductDataManager,
+                    mLocationDataManger,
+                    mCheckStockInOutManager,
+                    mItemIdLookUpDataManager,
+                    mJobLookupDataManager
+            );
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer1, mCameraFragment)

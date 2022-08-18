@@ -98,6 +98,31 @@
             </TableRow>
 
             <TableRow
+                android:id="@+id/trCheckStockProductBarcode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelCheckStockProductBarcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_product_barcode" />
+
+                <EditText
+                    android:id="@+id/etCheckStockProductBarcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:gravity="right"
+                    android:padding="10dp"/>
+            </TableRow>
+
+            <TableRow
                 android:id="@+id/trCheckStockLocationName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -150,6 +175,31 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:text="unit" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trCheckStockJobName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelCheckStockJobId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_job" />
+
+                <EditText
+                    android:id="@+id/etCheckStockJobName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:gravity="right" />
+
             </TableRow>
         </TableLayout>
 

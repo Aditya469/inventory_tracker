@@ -23,7 +23,8 @@ from werkzeug.utils import secure_filename
 
 from stockManagement import updateNewStockWithNewProduct
 from .auth import login_required
-from dbSchema import ProductType, StockItem, Bin, ItemId, CheckInRecord, VerificationRecord, IdAlias, CheckOutRecord
+from dbSchema import ProductType, StockItem, Bin, ItemId, CheckInRecord, VerificationRecord, IdAlias, CheckOutRecord, \
+	Job
 from db import getDbSession
 from sqlalchemy import select, or_, create_engine, func
 import decimal
@@ -69,13 +70,20 @@ def getAppBinData():
 	return make_response(jsonify(binList), 200)
 
 
+@bp.route("/getAppJobData")
+def getAppJobData():
+	dbSession = getDbSession()
+	jobList = [{"idString": job.idString, "jobName": job.jobName} for job in dbSession.query(Job).all()]
+	return make_response(jsonify(jobList), 200)
+
+
 # fetch a dict of itemIds against product barcodes
 @bp.route("/getAppItemIdBarcodeList")
 def getAppStockData():
 	# the structure of this is probably really inefficient cos I'm half asleep today. TODO: revisit
 	dbSession = getDbSession()
 
-	stockItems = dbSession.query(StockItem).filter(StockItem.quantityRemaining > decimal.Decimal(0)).all()
+	stockItems = dbSession.query(StockItem).all()
 	stockBarcodeList = []
 	for stockItem in stockItems:
 		barcode = dbSession.query(ProductType.barcode).filter(ProductType.id == stockItem.productType).one()[0]
@@ -84,7 +92,6 @@ def getAppStockData():
 	aliasIds = dbSession.query(IdAlias).all()
 	for alias in aliasIds:
 		stockItem = dbSession.query(StockItem)\
-			.filter(StockItem.quantityRemaining > decimal.Decimal(0))\
 			.filter(StockItem.id == alias.stockItemAliased)\
 			.scalar()
 
@@ -293,7 +300,7 @@ def processCheckStockInRequest():
 	checkInRecord.stockItem = stockItem.id
 
 	if 'timestamp' in requestParams:
-		checkInRecord.checkinTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%d-%m-%Y %H:%M:%S")
+		checkInRecord.checkinTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
 	if "jobId" in requestParams:
 		checkInRecord.jobId = requestParams['jobId']
@@ -366,7 +373,7 @@ def processCheckStockOutRequest():
 	checkOutRecord.createdByRequestId = requestParams['requestId']
 
 	if 'timestamp' in requestParams:
-		checkOutRecord.checkOutTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%d-%m-%Y %H:%M:%S")
+		checkOutRecord.checkOutTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
 
 	if 'quantityCheckedOut' in requestParams:

@@ -24,7 +24,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.Calendar;
 
@@ -36,19 +35,12 @@ import java.util.Calendar;
  */
 public class addNewStockFragment extends Fragment implements DatePickerDialog.OnDateSetListener
 {
-    public interface AddStockInteractionCallbacks
-    {
-        void onBarcodeReadHandled();
-        void onBarcodeSeen();
-        void requestCheckingMode();
-    }
-
     ProductDataManager mProductDataManager;
     LocationDataManager mLocationDataManager;
     AddStockManager mAddStockManager;
     AddStockRequestParameters mAddStockRequestParameters;
 
-    AddStockInteractionCallbacks mAddStockInteractionCallbacks;
+    StockInteractionHandlingCallbacks mStockHandlingInteractionCallbacks;
     Product mCurrentProduct;
 
     String TAG = "DigitME2InventoryTrackerAddStockFragment";
@@ -61,7 +53,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
     public addNewStockFragment(ProductDataManager PDMRef, LocationDataManager LDMRef, AddStockManager ASMRef)
     {
         MainActivity mainActivity = (MainActivity)getActivity();
-        mAddStockInteractionCallbacks = (AddStockInteractionCallbacks)mainActivity;
+        mStockHandlingInteractionCallbacks = mainActivity;
 
         mProductDataManager = PDMRef;
         mLocationDataManager = LDMRef;
@@ -75,7 +67,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         super.onCreate(savedInstanceState);
 
         MainActivity mainActivity = (MainActivity)getActivity();
-        mAddStockInteractionCallbacks = (AddStockInteractionCallbacks) mainActivity;
+        mStockHandlingInteractionCallbacks = mainActivity;
     }
 
     @Override
@@ -84,9 +76,6 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
     {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_new_stock, container, false);
-
-        SharedPreferences prefs = getContext().getSharedPreferences(
-                getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
 
         Button btnSave = (Button)view.findViewById(R.id.btnAddStockSave);
         btnSave.setOnClickListener(new View.OnClickListener()
@@ -138,13 +127,19 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
             @Override
             public void afterTextChanged(Editable editable) {
-                mAddStockRequestParameters.ItemQuantityToAdd =  Double.parseDouble(editable.toString());
-                if(isAddStockRequestValid()) {
-                    TextView tvPrompt = (TextView)(getActivity().
-                            findViewById(R.id.tvAddStockPrompt));
-                    tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
+                try {
+                    mAddStockRequestParameters.ItemQuantityToAdd = Double.parseDouble(editable.toString());
+                    if (isAddStockRequestValid()) {
+                        TextView tvPrompt = (TextView) (getActivity().
+                                findViewById(R.id.tvAddStockPrompt));
+                        tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
 
-                    enableSaveButton();
+                        enableSaveButton();
+                    }
+                }
+                catch (java.lang.NumberFormatException e)
+                {
+                    e.printStackTrace();
                 }
             }
         });
@@ -225,6 +220,8 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         String error = null;
         Runnable runnable;
         Handler mainHandler = new Handler(getContext().getMainLooper());
+
+        mStockHandlingInteractionCallbacks.onBarcodeSeen();
 
         // add a new barcode to the collection of data for this request. Update
         // mAddStockRequestParameters and the screen as appropriate.
@@ -387,7 +384,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         AddStockRequestParameters requestToAdd = mAddStockRequestParameters;
         ConstraintLayout rootLayout = getActivity().findViewById(R.id.clAddStockLayout);
         Snackbar snackbar = Snackbar
-                .make(rootLayout, "Item added", Snackbar.LENGTH_LONG)
+                .make(rootLayout, R.string.label_add_stock_item_added_confirmation, Snackbar.LENGTH_LONG)
                 .addCallback(new Snackbar.Callback(){
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
