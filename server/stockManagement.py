@@ -208,7 +208,9 @@ def getStockItemById(stockId):
         binId = None
 
     if stockItem[4]: # expiry date
-        expiryDate = stockItem[4].strftime("%Y-%m-%d");
+        expiryDate = stockItem[4].strftime("%Y-%m-%d")
+    else:
+        expiryDate = ""
 
     if stockItem:
         itemDict = {
