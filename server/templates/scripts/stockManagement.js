@@ -86,7 +86,10 @@ function generateStockTable(stockData){
         tr.data("stockId", stockData[i].id)
         tr.on("click", function(){ openStockItemPanel($(this).data("stockId")); });
         var selectChk = $("<input type='checkbox' class='form-check-input stockItemSelectCheckbox'>");
-        selectChk.on("click", function(){onStockItemSelectCheckboxClicked();});
+        selectChk.on("click", function(e){
+            e.stopPropagation();
+            onStockItemSelectCheckboxClicked();
+        });
         tr.append($("<td/>").append(selectChk));
         tr.append($("<td>" + stockData[i].productName + "</td>"));
         tr.append($("<td>" + stockData[i].quantityRemaining + (stockData[i].quantityUnit ? " " + stockData[i].quantityUnit : "") +"</td>"));
