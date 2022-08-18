@@ -69,6 +69,32 @@ def getAppBinData():
 	return make_response(jsonify(binList), 200)
 
 
+# fetch a dict of itemIds against product barcodes
+@bp.route("/getAppItemIdBarcodeList")
+def getAppStockData():
+	# the structure of this is probably really inefficient cos I'm half asleep today. TODO: revisit
+	dbSession = getDbSession()
+
+	stockItems = dbSession.query(StockItem).filter(StockItem.quantityRemaining > decimal.Decimal(0)).all()
+	stockBarcodeList = []
+	for stockItem in stockItems:
+		barcode = dbSession.query(ProductType.barcode).filter(ProductType.id == stockItem.productType).one()[0]
+		stockBarcodeList.append({"itemId": stockItem.idString, "barcode": barcode})
+
+	aliasIds = dbSession.query(IdAlias).all()
+	for alias in aliasIds:
+		stockItem = dbSession.query(StockItem)\
+			.filter(StockItem.quantityRemaining > decimal.Decimal(0))\
+			.filter(StockItem.id == alias.stockItemAliased)\
+			.scalar()
+
+		if stockItem is not None:
+			barcode = dbSession.query(ProductType.barcode).filter(ProductType.id == stockItem.productType).one()[0]
+			stockBarcodeList.append({"itemId": alias.idString, "barcode": barcode})
+
+	return make_response(jsonify(stockBarcodeList), 200)
+
+
 # note this function was converted from the rabbitmq worker that was used originally
 @bp.route("/addStockRequest", methods=("POST",))
 def processAddStockRequest():
@@ -83,7 +109,7 @@ def processAddStockRequest():
 		return make_response("requestId not provided", 200)
 
 	if 'idString' not in requestParams:
-		logging.error("Failed to process request to add item. ID number not provided")
+		logging.error("Failed to process request to add item. idString not provided")
 		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
 	# check the request ID to see if this request has been processed once already. If it has, send a nice message to
@@ -113,6 +139,14 @@ def processAddStockRequest():
 			stockItem = dbSession.query(StockItem).filter(StockItem.productType == productType.id).first()
 
 			if stockItem is not None:
+				# check if the idString has already been used. If it has, error out
+				existingAliasRecord = dbSession.query(IdAlias)\
+					.filter(IdAlias.idString == requestParams['idString'])\
+					.first()
+				if existingAliasRecord is not None:
+					logging.error("Got an idString that is already aliased to a stock item")
+					return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+
 				aliasRecord = IdAlias(idString=requestParams['idString'], stockItemAliased=stockItem.id)
 				dbSession.add(aliasRecord)
 
