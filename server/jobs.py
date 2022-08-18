@@ -39,16 +39,19 @@ def createJob():
 	if "jobName" not in request.json:
 		error = "Job Name must be defined"
 
+	session = getDbSession()
+
+	if session.query(Job).filter(Job.jobName == request.json['jobName']).first():
+		error = "A job with that name exists. Job names must be unique"
+
 	if error:
 		return make_response(error, 400)
-
-	session = getDbSession()
 
 	job = Job()
 	session.add(job)
 	session.flush()
 
-	job.idString = f"job_{job.id}"
+	job.idString = request.json['jobName']
 	job.qrCodeName = job.idString + ".png"
 	qrCodePath = os.path.join(current_app.instance_path, job.qrCodeName)
 	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=request.json['jobName'], DbSession=session)
