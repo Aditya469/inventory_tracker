@@ -125,12 +125,14 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 if(Utilities.isWifiConnected(getApplicationContext())){
                     if(mAddStockManager != null) {
-                        mAddStockManager.SendAllRequests();
-                        while (mAddStockManager.hasPending()) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                        if(mAddStockManager.hasPending()) {
+                            mAddStockManager.SendAllRequests();
+                            while (mAddStockManager.hasPending()) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }

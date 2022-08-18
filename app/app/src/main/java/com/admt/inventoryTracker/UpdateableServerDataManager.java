@@ -100,11 +100,11 @@ abstract class UpdateableServerDataManager<T> {
         }
     }
 
-    private void saveItemListJson(JSONArray ProductArrayJson) throws IOException {
+    private void saveItemListJson(JSONArray ItemArrayJson) throws IOException {
         File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        bufferedWriter.write(ProductArrayJson.toString());
+        bufferedWriter.write(ItemArrayJson.toString());
         bufferedWriter.close();
     }
 
