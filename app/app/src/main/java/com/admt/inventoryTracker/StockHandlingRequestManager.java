@@ -155,9 +155,9 @@ public abstract class StockHandlingRequestManager<T>
 
                 Set<String> requestIds = mRequestMap.keySet();
                 Iterator<String> requestIdIterator = requestIds.iterator();
-                mRequestMapAccessSem.acquire();
                 while(requestIdIterator.hasNext())
                 {
+                    mRequestMapAccessSem.acquire();
                     String requestId = requestIdIterator.next();
                     T request = mRequestMap.get(requestId);
                     String url = "http://" + ipAddress + getServerEndpointName(request);
@@ -198,9 +198,10 @@ public abstract class StockHandlingRequestManager<T>
                             }
 
                     );
+                    mRequestMapAccessSem.release();
                     mRequestQueue.add(addStockRequest);
                 }
-                mRequestMapAccessSem.release();
+
             }
         }
         catch (JSONException e)

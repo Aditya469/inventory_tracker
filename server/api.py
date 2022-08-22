@@ -16,6 +16,7 @@ limitations under the License.
 import datetime
 import logging
 
+import flask
 from flask import (
 	Blueprint, render_template, request, make_response, jsonify
 )
@@ -397,3 +398,9 @@ def processCheckStockOutRequest():
 
 	dbSession.commit()
 	return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+
+
+@bp.route("/host")
+def handleDiscovery():
+	hostname = flask.request.host
+	return make_response(jsonify({"inventoryTrackerHostName": hostname}), 200)

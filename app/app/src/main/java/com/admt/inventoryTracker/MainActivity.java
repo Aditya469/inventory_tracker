@@ -127,9 +127,9 @@ public class MainActivity extends AppCompatActivity
         mSendDataTimerTask = new TimerTask() {
             @Override
             public void run() {
-                if(Utilities.isWifiConnected(getApplicationContext())){
-                    if(mAddStockManager != null) {
-                        if(mAddStockManager.hasPending()) {
+                if (Utilities.isWifiConnected(getApplicationContext())) {
+                    if (mAddStockManager != null) {
+                        if (mAddStockManager.hasPending()) {
                             mAddStockManager.SendAllRequests();
                             while (mAddStockManager.hasPending()) {
                                 try {
@@ -141,10 +141,10 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-                    if(mCheckStockInOutManager != null){
-                        if(mCheckStockInOutManager.hasPending()){
+                    if (mCheckStockInOutManager != null) {
+                        if (mCheckStockInOutManager.hasPending()) {
                             mCheckStockInOutManager.SendAllRequests();
-                            while(mCheckStockInOutManager.hasPending()){
+                            while (mCheckStockInOutManager.hasPending()) {
                                 try {
                                     Thread.sleep(1000);
                                 } catch (InterruptedException e) {
