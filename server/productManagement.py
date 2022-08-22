@@ -77,9 +77,13 @@ def getProduct(productId):
 @login_required
 def addNewProductType():
 	session = getDbSession()
-	newProduct = ProductType()
-	session.add(newProduct)
-	errorState, product = updateProductFromRequestForm(session, newProduct)
+	existingProduct = session.query(ProductType).filter(ProductType.barcode == request.form.get("barcode", default=None)).first()
+	if existingProduct:
+		errorState = "A product with that barcode already exists"
+	else:
+		newProduct = ProductType()
+		session.add(newProduct)
+		errorState, product = updateProductFromRequestForm(session, newProduct)
 	if errorState is None:
 		session.commit()
 		updateNewStockWithNewProduct(product)
