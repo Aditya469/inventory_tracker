@@ -58,6 +58,9 @@ function updateProductsTable(){
             }
 
             $("#productsTableContainer").empty().append(table);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -109,6 +112,9 @@ function updateNewStockTable(){
             }
 
             $("#stockOverviewTableContainer").empty().append(table);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -164,7 +170,7 @@ function deleteSelectedNewStockItems(){
             updateNewStockTable();
         },
         error: function(jqXHR, textStatus, errorThrown){
-            alert(textStatus);
+            alert(jqXHR.responseText);
         }
     });
 }
@@ -177,7 +183,7 @@ function verifyAllNewStock(){
             updateNewStockTable();
         },
         error: function(jqXHR, textStatus, errorThrown){
-            alert(textStatus);
+            alert(jqXHR.responseText);
         }
     });
 }
@@ -218,7 +224,7 @@ function openProductDetailsPanel(prodId){
                 $("#addedTimestamp").html(responseData.addedTimestamp);
             },
             error: function(jqXHR, textStatus, errorThrown){
-                alert(textStatus);
+                alert(jqXHR.responseText);
             }
         });
     }
@@ -288,7 +294,7 @@ function saveProductDetails(){
             updateNewStockTable();
         },
         error: function(jqXHR, textStatus, errorThrown){
-            $("#saveProductFeedbackSpan").html(textStatus);
+            $("#saveProductFeedbackSpan").html(jqXHR.responseText);
         }
     });
 }
@@ -309,7 +315,7 @@ function deleteProduct(){
                 updateProductsTable();
             },
             error: function(jqXHR, textStatus, errorThrown){
-                $("#saveProductFeedbackSpan").html(textStatus);
+                $("#saveProductFeedbackSpan").html(jqXHR.responseText);
             }
         });
     }

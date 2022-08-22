@@ -55,6 +55,9 @@ function updateJobsTable(){
             table.append(tbody);
 
             $("#jobsTableContainer").empty().append(table);
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText)
         }
     });
 }
@@ -73,6 +76,9 @@ function updateStockTables(){
             var table = generateOverviewStockTable(responseData);
             table.attr("id","stockTotalTable");
             $("#totalStockTableContainer").empty().append(table);
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText)
         }
     });
 
@@ -85,6 +91,9 @@ function updateStockTables(){
             var table = generateOverviewStockTable(responseData);
             table.attr("id", "availableStockTable");
             $("#availableStockTableContainer").empty().append(table);
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText)
         }
     });
 
@@ -97,6 +106,9 @@ function updateStockTables(){
             var table = generateOverviewStockTable(responseData);
             table.attr("id", "oldStockTable");
             $("#oldStockTableContainer").empty().append(table);
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText)
         }
     });
 
@@ -109,6 +121,9 @@ function updateStockTables(){
             var table = generateOverviewStockTable(responseData);
             table.attr("id", "expiredStockTable");
             $("#expiredStockTableContainer").empty().append(table);
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText)
         }
     });
 }
@@ -174,6 +189,9 @@ function openJobDetailsPanel(jobId){
             success: function(jobData){
                 console.log(jobData);
                 populateJobPanel(jobData);
+            },
+            error:function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR.responseText)
             }
         });
     }
@@ -249,6 +267,9 @@ function onRequiredStockSearchBarInput(){
                 if(i == 0)
                     option.prop("selected", true);
                 $("#knownProductDropdown").append(option);
+            },
+            error:function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR.responseText)
             }
             onKnownProductSelectChange();
         }
@@ -372,7 +393,7 @@ function saveJobDetails(){
             setTimeout(function(){$("#saveJobFeedbackSpan").empty();}, 5000);
         },
         error: function(jqXHR, textStatus, errorThrown){
-            alert(textStatus);
+            alert(jqXHR.responseText);
         }
     });
 }
@@ -387,7 +408,7 @@ function deleteJob(){
             updateStockTables();
         },
         error: function(jqXHR, textStatus, errorThrown){
-            alert(textStatus);
+            alert(jqXHR.responseText);
         }
     });
 }

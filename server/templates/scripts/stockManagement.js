@@ -58,6 +58,9 @@ function updateStockTable(){
             console.log(responseData)
             var table = generateStockTable(responseData);
             $("#stockTableContainer").empty().append(table);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
         }
     });
 
@@ -190,8 +193,8 @@ function onDeleteSelectedButtonClicked(){
                 updateStockTable();
                 $("#deleteStockButton").prop("disabled", true);
             },
-            error: function(){
-                console.log(e);
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR.responseText);
             }
         });
     }
@@ -265,6 +268,9 @@ function openStockItemPanel(stockItemId){
                 $("#stockItemExpires").prop("checked", false);
 
 
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -301,8 +307,8 @@ function saveStockItemDetails(){
             updateStockTable();
             $("#deleteStockButton").prop("disabled", true);
         },
-        error: function(){
-            console.log(e);
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -322,8 +328,8 @@ function deleteStockItem(){
                 closeStockItemPanel();
                 updateStockTable();
             },
-            error: function(){
-                console.log(e);
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR.responseText);
             }
         });
     }

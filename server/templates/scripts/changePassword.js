@@ -50,9 +50,9 @@ function changePassword(){
             console.log(responseData);
             $("#feedback").html(responseData);
         },
-        error: function(e){
-            console.log(e);
-            $("#feedback").html(e.responseText);
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#feedback").html(jqXHR.responseText);
         }
     });
 }

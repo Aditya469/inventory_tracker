@@ -64,6 +64,9 @@ function updateUsersTable(){
             }
 
             $("#userTableContainer").empty().append(table);
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -88,9 +91,9 @@ function addNewUser(){
             $("#newPassword").val("");
             $("#newUserFeedback").html("New User " + $("#newUsername").val() + " added");
         },
-        error: function(e){
-            console.log(e);
-            $("#newUserFeedback").html(e.responseText);
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#newUserFeedback").html(jqXHR.responseText);
         }
     });
 }
@@ -110,9 +113,9 @@ function resetPassword(username){
             console.log(responseData);
             $("#currentUserFeedback").html("Password reset complete");
         },
-        error: function(e){
-            console.log(e);
-            $("#currentUserFeedback").html(e.responseText);
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#currentUserFeedback").html(jqXHR.responseText);
         }
     });
 }
@@ -133,9 +136,9 @@ function deleteUser(username){
             updateUsersTable();
             $("#currentUserFeedback").html("User deleted");
         },
-        error: function(e){
-            console.log(e);
-            $("#currentUserFeedback").html(e.responseText);
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#currentUserFeedback").html(jqXHR.responseText);
         }
     });
 }

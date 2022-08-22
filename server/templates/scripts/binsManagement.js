@@ -42,8 +42,8 @@ function addBin(){
             updateBinsTable();
         },
         error: function(jqXHR, textStatus, errorThrown){
-            console.log(textStatus);
-            $("#addBinFeedbackSpan").html(textStatus);
+            console.log(jqXHR.responseText);
+            $("#addBinFeedbackSpan").html(jqXHR.responseText);
         }
     });
 }
@@ -58,8 +58,8 @@ function deleteBin(binId){
                 $("#addBinFeedbackSpan").html("");
             },
             error: function(jqXHR, textStatus, errorThrown){
-                console.log(textStatus);
-                $("#addBinFeedbackSpan").html(textStatus);
+                console.log(jqXHR.responseText);
+                $("#addBinFeedbackSpan").html(jqXHR.responseText);
             }
         });
     }
