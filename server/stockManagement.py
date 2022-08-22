@@ -541,14 +541,14 @@ def updateStock():
     return make_response("Changes saved", 200)
 
 
-@bp.route('/deleteStockItem')
+@bp.route('/deleteStockItem', methods=("POST",))
 @login_required
 def deleteStockItem():
-    if "id" not in request.args:
+    if "id" not in request.json:
         return make_response("stockItem id not provided", 400)
 
     session = getDbSession()
-    stockItem = session.query(StockItem).filter(StockItem.id == request.args.get("id")).first()
+    stockItem = session.query(StockItem).filter(StockItem.id == request.json.get("id")).first()
     session.delete(stockItem)
     session.commit()
 

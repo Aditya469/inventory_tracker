@@ -304,3 +304,25 @@ function saveStockItemDetails(){
         }
     });
 }
+
+function deleteStockItem(){
+    if(confirm("Delete this item of stock?")){
+        var id = $("#stockId").val();
+        var data = {"id": id};
+        $.ajax({
+            url: "{{ url_for('stockManagement.deleteStockItem') }}",
+            type: "POST",
+            data: JSON.stringify(data),
+            processData: false,
+            contentType: "application/json",
+            cache: false,
+            success: function(){
+                closeStockItemPanel();
+                updateStockTable();
+            },
+            error: function(){
+                console.log(e);
+            }
+        });
+    }
+}
