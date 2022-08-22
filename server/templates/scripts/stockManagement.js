@@ -172,27 +172,29 @@ function onLimitByPriceCheckboxClicked(){
 }
 
 function onDeleteSelectedButtonClicked(){
-    var selectedRows = $(".stockItemSelectCheckbox:checked").closest("tr");
-    var idList = []
-    for(var i = 0; i < selectedRows.length; i++){
-        idList.push($(selectedRows[i]).data("stockId"));
-    }
-
-    $.ajax({
-        url: "{{ url_for('stockManagement.deleteMultipleStockItems') }}",
-        type: "POST",
-        data: JSON.stringify({"idList":idList}),
-        processData: false,
-        contentType: "application/json",
-        cache: false,
-        success: function(){
-            updateStockTable();
-            $("#deleteStockButton").prop("disabled", true);
-        },
-        error: function(){
-            console.log(e);
+    if(confirm("Delete the selected items?")){
+        var selectedRows = $(".stockItemSelectCheckbox:checked").closest("tr");
+        var idList = []
+        for(var i = 0; i < selectedRows.length; i++){
+            idList.push($(selectedRows[i]).data("stockId"));
         }
-    });
+
+        $.ajax({
+            url: "{{ url_for('stockManagement.deleteMultipleStockItems') }}",
+            type: "POST",
+            data: JSON.stringify({"idList":idList}),
+            processData: false,
+            contentType: "application/json",
+            cache: false,
+            success: function(){
+                updateStockTable();
+                $("#deleteStockButton").prop("disabled", true);
+            },
+            error: function(){
+                console.log(e);
+            }
+        });
+    }
 }
 
 function closeStockItemPanel(){

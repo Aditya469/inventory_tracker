@@ -49,18 +49,20 @@ function addBin(){
 }
 
 function deleteBin(binId){
-    $.ajax({
-        url: "{{ url_for("bins.deleteBin", binId="") }}" + binId,
-        type: "POST",
-        success: function(){
-            updateBinsTable();
-            $("#addBinFeedbackSpan").html("");
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            console.log(textStatus);
-            $("#addBinFeedbackSpan").html(textStatus);
-        }
-    });
+    if(confirm("Delete this bin?")){
+        $.ajax({
+            url: "{{ url_for("bins.deleteBin", binId="") }}" + binId,
+            type: "POST",
+            success: function(){
+                updateBinsTable();
+                $("#addBinFeedbackSpan").html("");
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log(textStatus);
+                $("#addBinFeedbackSpan").html(textStatus);
+            }
+        });
+    }
 }
 
 function updateBinsTable(){
