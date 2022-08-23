@@ -14,11 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var assignedStockIdsToDelete = []
+var assignedStockIdsToDelete = [];
 
 $(document).ready(function(){
     updateJobsTable();
     updateStockTables();
+    setJobStockTableSizes();
+    $(window).resize(function(){ setJobStockTableSizes(); });
 });
 
 function updateJobsTable(){
@@ -205,6 +207,7 @@ function openJobDetailsPanel(jobId){
 }
 
 function populateJobPanel(jobData){
+    setJobStockTableSizes();
     assignedStockIdsToDelete = [];
     $("#jobId").val(jobData.id);
     $("#jobName").val(jobData.jobName);
@@ -234,9 +237,9 @@ function populateJobPanel(jobData){
 
         row.append($("<td>").html(jobData.assignedStock[i].productName));
 
-        var qtyContainerDiv = $("<div class='input-group w-50'>");
+        var qtyContainerDiv = $("<div class='input-group'>");
 
-        var numberInput = $("<input type='number' class='assignedStockQuantity form-control w-50'>");
+        var numberInput = $("<input type='number' class='assignedStockQuantity form-control'>");
         numberInput.on('input', function(){ $(this).parents("tr").first().addClass("changedAssignedQty"); } );
         numberInput.val(jobData.assignedStock[i].quantity)
 
@@ -246,7 +249,7 @@ function populateJobPanel(jobData){
         qtyContainerDiv.append(numberInput);
         qtyContainerDiv.append(numberUnitSpan);
 
-        row.append(qtyContainerDiv);
+        row.append($("<td>").append(qtyContainerDiv));
 
         $("#assignedStockTableBody").append(row);
     }
@@ -297,8 +300,8 @@ function addStockToAssignedList(){
     row.append($("<td>").append(checkbox));
     row.append($("<td>").html(productName));
 
-    var qtyContainerDiv = $("<div class='input-group w-50'>");
-    var numberInput = $("<input type='number' class='assignedStockQuantity form-control w-50'>");
+    var qtyContainerDiv = $("<div class='input-group'>");
+    var numberInput = $("<input type='number' class='assignedStockQuantity form-control'>");
     numberInput.val(quantity)
     var numberUnitSpan = $("<span class='input-group-text'>");
     numberUnitSpan.html(productQtyUnit);
@@ -306,7 +309,7 @@ function addStockToAssignedList(){
     qtyContainerDiv.append(numberInput);
     qtyContainerDiv.append(numberUnitSpan);
 
-    row.append(qtyContainerDiv);
+    row.append($("<td>").append(qtyContainerDiv));
 
     $("#assignedStockTableBody").append(row);
 }
@@ -413,4 +416,25 @@ function deleteJob(){
             }
         });
     }
+}
+
+function setJobStockTableSizes(){
+    // calculate the height of the required stock adn stock used table containers and set
+    var stockUsedContainerHeight = $("#editJobPanel").height() - (
+        $("#jobPanelNav").outerHeight() +
+        $("#jobNameContainer").outerHeight() +
+        $("#commitButtonsContainer").outerHeight()
+    );
+    var newHeightStyling = "height: " + stockUsedContainerHeight + "px;";
+    $("#stockUsedContainer").prop("style", newHeightStyling);
+
+    var assignedStockContainerHeight = $("#editJobPanel").height() - (
+        $("#jobPanelNav").outerHeight() +
+        $("#reqStockTitle").outerHeight() +
+        $("#reqStockSearch").outerHeight() +
+        $("#reqStockAssign").outerHeight() +
+        $("#commitButtonsContainer").outerHeight()
+    );
+    newHeightStyling = "height: " + assignedStockContainerHeight + "px;";
+    $("#assignedStockTableContainer").prop("style", newHeightStyling);
 }
