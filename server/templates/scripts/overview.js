@@ -57,7 +57,7 @@ function updateJobsTable(){
             $("#jobsTableContainer").empty().append(table);
         },
         error:function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText)
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -78,7 +78,7 @@ function updateStockTables(){
             $("#totalStockTableContainer").empty().append(table);
         },
         error:function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText)
+            console.log(jqXHR.responseText);
         }
     });
 
@@ -93,7 +93,7 @@ function updateStockTables(){
             $("#availableStockTableContainer").empty().append(table);
         },
         error:function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText)
+            console.log(jqXHR.responseText);
         }
     });
 
@@ -108,7 +108,7 @@ function updateStockTables(){
             $("#oldStockTableContainer").empty().append(table);
         },
         error:function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText)
+            console.log(jqXHR.responseText);
         }
     });
 
@@ -123,7 +123,7 @@ function updateStockTables(){
             $("#expiredStockTableContainer").empty().append(table);
         },
         error:function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText)
+            console.log(jqXHR.responseText);
         }
     });
 }
@@ -191,7 +191,7 @@ function openJobDetailsPanel(jobId){
                 populateJobPanel(jobData);
             },
             error:function(jqXHR, textStatus, errorThrown){
-                console.log(jqXHR.responseText)
+                console.log(jqXHR.responseText);
             }
         });
     }
@@ -267,11 +267,11 @@ function onRequiredStockSearchBarInput(){
                 if(i == 0)
                     option.prop("selected", true);
                 $("#knownProductDropdown").append(option);
-            },
-            error:function(jqXHR, textStatus, errorThrown){
-                console.log(jqXHR.responseText)
             }
             onKnownProductSelectChange();
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText)
         }
     });
 }
@@ -399,16 +399,18 @@ function saveJobDetails(){
 }
 
 function deleteJob(){
-    $.ajax({
-        url: "{{ url_for('jobs.deleteJob', jobId="")}}" + $("#jobId").val(),
-        type: "POST",
-        success: function(jobId){
-            closePanels();
-            updateJobsTable();
-            updateStockTables();
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            alert(jqXHR.responseText);
-        }
-    });
+    if(confirm("Delete this job?")){
+        $.ajax({
+            url: "{{ url_for('jobs.deleteJob', jobId="")}}" + $("#jobId").val(),
+            type: "POST",
+            success: function(jobId){
+                closePanels();
+                updateJobsTable();
+                updateStockTables();
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert(jqXHR.responseText);
+            }
+        });
+    }
 }

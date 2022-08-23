@@ -118,7 +118,7 @@ def updateJobFromRequest(jobId, dbSession):
 		return error
 
 	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
-	job.jobName = request.json["jobName"];
+	job.jobName = request.json["jobName"]
 
 	if "newStockAssignments" in request.json:
 		for i in range(len(request.json['newStockAssignments'])):
