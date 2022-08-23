@@ -324,6 +324,8 @@ function deleteProduct(){
 function closeProductDetailsPanel(){
     $(".editProductPanelInput").val("").removeClass("is-invalid");
     $("#saveProductFeedbackSpan").html("");
+    $("#addedTimestampLabel").prop("hidden", true);
+    $("#addedTimestamp").prop("hidden", true);
     $("#addedTimestamp").html("");
     $("#greyout").prop("hidden", true);
     $("#editProductPanel").prop("hidden", true);
