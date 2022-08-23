@@ -323,7 +323,8 @@ function deleteProduct(){
 
 function closeProductDetailsPanel(){
     $(".editProductPanelInput").val("").removeClass("is-invalid");
-    $("#saveProductFeedbackSpan").html(");
+    $("#saveProductFeedbackSpan").html("");
+    $("#addedTimestamp").html("");
     $("#greyout").prop("hidden", true);
     $("#editProductPanel").prop("hidden", true);
 }
