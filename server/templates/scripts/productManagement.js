@@ -204,12 +204,12 @@ function openProductDetailsPanel(prodId){
                 $("#productName").val(responseData.productName);
                 $("#barcode").val(responseData.barcode);
                 if(responseData.tracksSpecificItems){
-                    //$("#bulkSelector").prop("checked", false);
+                    $("#bulkSelector").prop("checked", false);
                     $("#specificItemSelector").prop("checked", true);
                 }
                 else{
                     $("#bulkSelector").prop("checked", true);
-                    //$("#specificItemSelector").prop("checked", false);
+                    $("#specificItemSelector").prop("checked", false);
                 }
                 $("#descriptor1").val(responseData.productDescriptor1 ? responseData.productDescriptor1 : "");
                 $("#descriptor2").val(responseData.productDescriptor2 ? responseData.productDescriptor2 : "");

@@ -161,8 +161,11 @@ def updateProductFromRequestForm(session, product):
 	if "expectedPrice" in request.form and request.form['expectedPrice'] != "":
 		product.expectedPrice = decimal.Decimal(request.form["expectedPrice"])
 
-	if "canExpire" in request.form and request.form["canExpire"] == "true":
-		product.canExpire = True
+	if "canExpire" in request.form:
+		if request.form["canExpire"] == "true":
+			product.canExpire = True
+		else:
+			product.canExpire = False
 
 	return None, product
 
