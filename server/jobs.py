@@ -37,7 +37,9 @@ bp = Blueprint('jobs', __name__)
 def createJob():
 	error = None
 	if "jobName" not in request.json:
-		error = "Job Name must be defined"
+		error = "jobName must be defined"
+	if request.json.get("jobName") == "":
+		error = "Job Name must not be blank"
 
 	session = getDbSession()
 
