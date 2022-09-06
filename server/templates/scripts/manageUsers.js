@@ -25,15 +25,18 @@ function updateUsersTable(){
         success:function(responseData){
             console.log(responseData);
 
-            var table = $("<table class='table'>");
+            var table = $("<table class='table m-2'>");
             var header = $("<thead>");
-            var headerRow = $("<tr class='header'>");
+            var headerRow = $("<tr>");
             headerRow.append($("<th>Username</th>"));
             headerRow.append($("<th>Is User Admin</th>"));
             headerRow.append($("<th>Reset Password</th>"));
             headerRow.append($("<th>Delete User</th>"));
-            table.append(headerRow);
+            header.append(headerRow);
+            table.append(header);
 
+            var body = $("<tbody>");
+            table.append(body);
             var i;
             for(i = 0; i < responseData.length; i++){
                 var row = $("<tr>");
@@ -60,7 +63,7 @@ function updateUsersTable(){
                     deleteUserBtn.prop("disabled","true");
                 }
 
-                table.append(row);
+                body.append(row);
             }
 
             $("#userTableContainer").empty().append(table);
