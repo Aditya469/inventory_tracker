@@ -313,7 +313,7 @@ def getStockOverviewTotals():
             "descriptor2": row[4],
             "descriptor3": row[5],
             "quantityUnit": row[6],
-            "stockAmount": round(row[7], 2)
+            "stockAmount": formatStockAmount(row[7], 2)
         }
         for row in result
     ]
@@ -381,7 +381,7 @@ def getAvailableStockTotals():
     # then update the product list
     for product in productList:
         if product['productId'] in stockDict:
-            product['stockAmount'] = round(stockDict[product['productId']], 2)
+            product['stockAmount'] = formatStockAmount(stockDict[product['productId']], 2)
         else:
             product['stockAmount'] = None
 
@@ -441,7 +441,7 @@ def getStockNearExpiry():
             "descriptor3": row[5],
             "quantityUnit": row[6],
             "addedTimestamp": row[7],
-            "stockAmount": round(row[8],2)
+            "stockAmount": formatStockAmount(row[8],2)
         }
         for row in result
     ]
@@ -496,12 +496,20 @@ def getExpiredStock():
             "descriptor3": row[5],
             "quantityUnit": row[6],
             "addedTimestamp": row[7],
-            "stockAmount": round(row[8], 2)
+            "stockAmount": formatStockAmount(row[8], 2)
         }
         for row in result
     ]
 
     return productList
+
+
+def formatStockAmount(stockAmount, maxDecimalPlaces):
+    if int(stockAmount) != stockAmount:
+        stockAmount = round(stockAmount, maxDecimalPlaces)
+
+    return f"{stockAmount}"
+
 
 
 @bp.route('/editStockItem', methods=("POST",))
