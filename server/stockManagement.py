@@ -313,7 +313,7 @@ def getStockOverviewTotals():
             "descriptor2": row[4],
             "descriptor3": row[5],
             "quantityUnit": row[6],
-            "stockAmount": row[7]
+            "stockAmount": round(row[7], 2)
         }
         for row in result
     ]
@@ -373,12 +373,15 @@ def getAvailableStockTotals():
     for row in assignedStockQueryResult:
         productId = row[0]
         assignedQty = row[1]
-        stockDict[productId] = stockDict[productId] - assignedQty
+        if productId in stockDict:
+            stockDict[productId] = stockDict[productId] - assignedQty
+        else:
+            stockDict[productId] = 0 - assignedQty
 
     # then update the product list
     for product in productList:
         if product['productId'] in stockDict:
-            product['stockAmount'] = stockDict[product['productId']]
+            product['stockAmount'] = round(stockDict[product['productId']], 2)
         else:
             product['stockAmount'] = None
 
@@ -438,7 +441,7 @@ def getStockNearExpiry():
             "descriptor3": row[5],
             "quantityUnit": row[6],
             "addedTimestamp": row[7],
-            "stockAmount": row[8]
+            "stockAmount": round(row[8],2)
         }
         for row in result
     ]
@@ -493,7 +496,7 @@ def getExpiredStock():
             "descriptor3": row[5],
             "quantityUnit": row[6],
             "addedTimestamp": row[7],
-            "stockAmount": row[8]
+            "stockAmount": round(row[8], 2)
         }
         for row in result
     ]
