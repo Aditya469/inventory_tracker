@@ -176,6 +176,7 @@ public abstract class StockHandlingRequestManager<T>
                                         mRequestMapAccessSem.acquire();
 
                                         mRequestMap.remove(response.get("processedId"));
+                                        Utilities.showDebugMessage(mAppContextRef, String.format("Processed request ID %s", response.get("processedId")));
 
                                         /* only update the cached copy when the last pending
                                          * request has been removed. No point hammering the

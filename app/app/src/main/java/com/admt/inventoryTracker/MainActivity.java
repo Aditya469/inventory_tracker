@@ -2,9 +2,12 @@ package com.admt.inventoryTracker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +20,7 @@ public class MainActivity extends AppCompatActivity
         implements cameraFragment.onBarcodeReadListener,
         numberPadFragment.OnNumpadInteractionListener,
         modeSelectorFragment.onModeSelectedListener,
-        StockInteractionHandlingCallbacks
-{
+        StockInteractionHandlingCallbacks {
     private cameraFragment mCameraFragment = null;
     private addNewStockFragment mAddNewStockFragment = null;
     private checkItemsFragment mCheckItemsFragment = null;
@@ -38,19 +40,19 @@ public class MainActivity extends AppCompatActivity
     private Timer mSendDataTimer;
     private TimerTask mSendDataTimerTask;
 
-    private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK};
+    private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK}
+
+    ;
     private CurrentState mCurrentState;
 
-    public void onBarcodeRead(String barcodeValue)
-    {
-        if(mCurrentState == CurrentState.ADD_STOCK)
+    public void onBarcodeRead(String barcodeValue) {
+        if (mCurrentState == CurrentState.ADD_STOCK)
             mAddNewStockFragment.addBarcode(barcodeValue);
-        else if(mCurrentState == CurrentState.CHECK_STOCK)
+        else if (mCurrentState == CurrentState.CHECK_STOCK)
             mCheckItemsFragment.addBarcode(barcodeValue);
     }
 
-    public void onBarcodeEntered(String barcodeValue)
-    {
+    public void onBarcodeEntered(String barcodeValue) {
         //mAddNewStockFragment.UpdateDisplayedbarcodeReading(barcodeValue);
         //onToggleNumPadRequest();
     }
@@ -60,25 +62,20 @@ public class MainActivity extends AppCompatActivity
             mCameraFragment.flashScreen();
     }
 
-    public void onToggleTorchRequest()
-    {
-        if(mCameraFragment != null)
+    public void onToggleTorchRequest() {
+        if (mCameraFragment != null)
             mCameraFragment.toggleTorch();
     }
 
-    public void onToggleNumPadRequest()
-    {
-        if(mNumPadFragment == null)
-        {
+    public void onToggleNumPadRequest() {
+        if (mNumPadFragment == null) {
             mNumPadFragment = new numberPadFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer1, mNumPadFragment)
                     .commit();
 
             mCameraFragment = null;
-        }
-        else
-        {
+        } else {
             mCameraFragment = new cameraFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer1, mCameraFragment)
@@ -89,12 +86,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // don't add fragments if the app has resumed from suspension
@@ -102,22 +98,22 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        if(mProductDataManager == null)
+        if (mProductDataManager == null)
             mProductDataManager = new ProductDataManager(getApplication());
 
-        if(mLocationDataManger == null)
+        if (mLocationDataManger == null)
             mLocationDataManger = new LocationDataManager(getApplication());
 
-        if(mAddStockManager == null)
+        if (mAddStockManager == null)
             mAddStockManager = new AddStockManager(getApplication());
 
-        if(mCheckStockInOutManager == null)
+        if (mCheckStockInOutManager == null)
             mCheckStockInOutManager = new CheckStockInOutManager(getApplication());
 
-        if(mItemIdLookUpDataManager == null)
+        if (mItemIdLookUpDataManager == null)
             mItemIdLookUpDataManager = new ItemIdLookUpDataManager(getApplication());
 
-        if(mJobLookupDataManager == null)
+        if (mJobLookupDataManager == null)
             mJobLookupDataManager = new JobLookupDataManager(getApplication());
 
         mModeSelectFragment = new modeSelectorFragment();
@@ -127,9 +123,12 @@ public class MainActivity extends AppCompatActivity
         mSendDataTimerTask = new TimerTask() {
             @Override
             public void run() {
+                Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+                Runnable runnable;
                 if (Utilities.isWifiConnected(getApplicationContext())) {
                     if (mAddStockManager != null) {
                         if (mAddStockManager.hasPending()) {
+                            Utilities.showDebugMessage(getApplicationContext(),"Begin sending addStock requests");
                             mAddStockManager.SendAllRequests();
                             while (mAddStockManager.hasPending()) {
                                 try {
@@ -138,11 +137,13 @@ public class MainActivity extends AppCompatActivity
                                     e.printStackTrace();
                                 }
                             }
+                            Utilities.showDebugMessage(getApplicationContext(),"addStock requests processed");
                         }
                     }
 
                     if (mCheckStockInOutManager != null) {
                         if (mCheckStockInOutManager.hasPending()) {
+                            Utilities.showDebugMessage(getApplicationContext(),"Begin send checkStock requests");
                             mCheckStockInOutManager.SendAllRequests();
                             while (mCheckStockInOutManager.hasPending()) {
                                 try {
@@ -151,8 +152,12 @@ public class MainActivity extends AppCompatActivity
                                     e.printStackTrace();
                                 }
                             }
+                            Utilities.showDebugMessage(getApplicationContext(),"checkStock requests processed");
                         }
                     }
+                }
+                else {
+                    Utilities.showDebugMessage(getApplicationContext(),"Wifi is not connected");
                 }
             }
         };
@@ -168,9 +173,9 @@ public class MainActivity extends AppCompatActivity
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if(mCurrentState == CurrentState.MODE_SELECT)
+                if (mCurrentState == CurrentState.MODE_SELECT)
                     finish();
-                else if(mCurrentState == CurrentState.CHECK_STOCK || mCurrentState == CurrentState.ADD_STOCK){
+                else if (mCurrentState == CurrentState.CHECK_STOCK || mCurrentState == CurrentState.ADD_STOCK) {
                     switchToSelectModeState();
                 }
             }
