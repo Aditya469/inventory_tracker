@@ -187,6 +187,7 @@ def getStockItemById(stockId):
             ProductType.quantityUnit,
             StockItem.price,
             StockItem.isCheckedIn,
+            ProductType.productName,
             ProductType.productDescriptor1,
             ProductType.productDescriptor2,
             ProductType.productDescriptor3,
@@ -214,21 +215,22 @@ def getStockItemById(stockId):
 
     if stockItem:
         itemDict = {
-            "id":stockItem[0],
-            "idNumber":stockItem[1],
-            "productId":stockItem[2],
-            "addedTimestamp":stockItem[3],
-            "expiryDate":expiryDate,
-            "canExpire":stockItem[5],
-            "quantityRemaining":stockItem[6],
-            "quantityUnit":stockItem[7],
-            "price":stockItem[8],
-            "isCheckedIn":stockItem[9],
-            "productDescriptor1":stockItem[10],
-            "productDescriptor2":stockItem[11],
-            "productDescriptor3":stockItem[12],
-            "isBulk":stockItem[13],
-            "bin":binId
+            "id": stockItem[0],
+            "idNumber": stockItem[1],
+            "productId": stockItem[2],
+            "addedTimestamp": stockItem[3],
+            "expiryDate": expiryDate,
+            "canExpire": stockItem[5],
+            "quantityRemaining": stockItem[6],
+            "quantityUnit": stockItem[7],
+            "price": stockItem[8],
+            "isCheckedIn": stockItem[9],
+            "productTypeName": stockItem[10],
+            "productDescriptor1": stockItem[11],
+            "productDescriptor2": stockItem[12],
+            "productDescriptor3": stockItem[13],
+            "isBulk": stockItem[14],
+            "bin": binId
         }
 
         bins = session.query(Bin)\
@@ -245,8 +247,7 @@ def getStockItemById(stockId):
 
         data = {
             "stockItemDetails": itemDict,
-            "bins": [placeholderBin.toDict()] + [bin.toDict() for bin in bins],
-            "productTypes": [placeholderProduct.toDict()] + [productType.toDict() for productType in products]
+            "bins": [placeholderBin.toDict()] + [bin.toDict() for bin in bins]
         }
 
         return make_response(jsonify(data), 200)

@@ -216,22 +216,13 @@ function openStockItemPanel(stockItemId){
         success:function (responseData){
             console.log(responseData);
             // unbox for cleaner access
-            var productTypes = responseData.productTypes;
             var bins = responseData.bins;
             var stockItemDetails = responseData.stockItemDetails;
 
             $("#greyout").prop("hidden", false);
             $("#editStockItemPanel").prop("hidden", false);
             var i;
-            // set product and bin selects from
-            for(i = 0; i < productTypes.length; i++){
-                var option = $("<option>");
-                option.prop("value", productTypes[i].id);
-                option.html(productTypes[i].productName);
-                if(productTypes[i].id == stockItemDetails.productId)
-                    option.prop("selected", true);
-                $("#productType").append(option);
-            }
+            // populate bin select
             for(i = 0; i < bins.length; i++){
                 var option = $("<option>");
                 option.value = bins[i].id;
@@ -242,6 +233,7 @@ function openStockItemPanel(stockItemId){
             }
             $("#location").data("locationUpdated", false);
 
+            $("#productTypeName").html(stockItemDetails.productTypeName);
             $("#quantityRemaining").val(stockItemDetails.quantityRemaining);
             $("#quantityUnitDisplay").html(stockItemDetails.quantityUnit);
 
@@ -282,7 +274,6 @@ function onLocationUpdated(){
 function saveStockItemDetails(){
     var data = new FormData();
     data.append("id", $("#stockId").val());
-    data.append("productType", $("#productType").val());
     data.append("quantityRemaining", $("#quantityRemaining").val());
     var expiryDate = $("#expiryDate").val();
     if(expiryDate != "")
