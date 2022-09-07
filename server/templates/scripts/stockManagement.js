@@ -225,7 +225,7 @@ function openStockItemPanel(stockItemId){
             // populate bin select
             for(i = 0; i < bins.length; i++){
                 var option = $("<option>");
-                option.value = bins[i].id;
+                option.prop("value", bins[i].id);
                 option.html(bins[i].locationName);
                 if(bins[i].id == stockItemDetails.bin)
                     option.prop("selected", true);
@@ -283,8 +283,7 @@ function saveStockItemDetails(){
     else
         data.append("canExpire", "false");
 
-    if($("#location").data("locationUpdated"))
-        data.append("binId", $("#location").val());
+    data.append("binId", $("#location").val());
 
 
     $.ajax({
@@ -296,6 +295,8 @@ function saveStockItemDetails(){
         cache: false,
         success: function(){
             updateStockTable();
+            $("#saveStockItemFeedbackSpan").html("Changes saved");
+            setTimeout(function(){$("#saveStockItemFeedbackSpan").empty();}, 3000);
             $("#deleteStockButton").prop("disabled", true);
         },
         error: function(jqXHR, textStatus, errorThrown){
