@@ -34,14 +34,23 @@ limitations under the License.
 			<label for="newUsername">New User Name:</label>
 			<input type="text" id="newUsername">
 			<label for="newPassword">Password:</label>
-			<input type="password" id="newPassword">
-			<label for="isAdmin">Is Admin:</label>
-			<input type="checkbox" id="isAdmin">
+			<input type="text" id="newPassword">
+			<label for="accessLevel">Access Level:</label>
+			<select id="accessLevel">
+				<option value="0">Read-Only</option>
+				<option value="1">Edit</option>
+				<option value="2">Create</option>
+				<option value="3">Administrator</option>
+			</select>
+			<label for="emailAddress">Email Address</label>
+			<input type="text" id="emailAddress">
+			<label for="receiveStockNotifications">Receives stock notifications?:</label>
+			<input type="checkbox" id="receiveStockNotifications">
 			<input type="button" onclick="addNewUser()" value="Add New User" id="addNewUserBtn">
 			<span id="newUserFeedback"></span>
 		</div>
 	</div>
-	<div id="currentUsers">
+	<div id="currentUsers" class="mx-5">
 		<h2>Current Users</h2>
 		<span id="currentUserFeedback"></span>
 		<div id="userTableContainer">

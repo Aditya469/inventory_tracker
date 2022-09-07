@@ -23,31 +23,35 @@ from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import delete, update
 from .db import getDbSession, User
-from .auth import login_required
+from .auth import login_required, admin_access_required, userHasAdminAccess
 
 bp = Blueprint('users', __name__)
 
 
-@login_required
 @bp.route('/manageUsers')
+@admin_access_required
 def manageUsers():
-    if g.user.isAdmin:
-        return render_template('manageUsers.html')
-    else:
-        abort(403)
+    return render_template('manageUsers.html')
 
 
-@login_required
 @bp.route('/getUsers')
+@admin_access_required
 def getUsers():
     dbSession = getDbSession()
-    userData = dbSession.query(User.username, User.isAdmin).order_by(User.username.asc()).all()
-    list = [user._asdict() for user in userData]
-    return make_response(jsonify(list), 200)
+    userData = dbSession.query(User).order_by(User.username.asc()).filter(User.username == "admin").all()
+    userData += dbSession.query(User).order_by(User.username.asc()).filter(User.username != "admin").all()
+    userDataList = [{
+            "username": user.username,
+            "emailAddress": user.emailAddress,
+            "accessLevel": user.accessLevel,
+            "receiveStockNotifications": user.receiveStockNotifications
+        }
+        for user in userData]
+    return make_response(jsonify(userDataList), 200)
 
 
-@login_required
 @bp.route("/addUser", methods=("POST",))
+@admin_access_required
 def addUser():
     dbSession = getDbSession()
 
@@ -57,7 +61,9 @@ def addUser():
     newUser = User(
         username=request.form['newUsername'],
         passwordHash=generate_password_hash(request.form['newPassword']),
-        isAdmin=request.form["isAdmin"] == "true"
+        accessLevel=request.form["accessLevel"],
+        emailAddress=request.form["emailAddress"],
+        receiveStockNotifications=request.form["receiveStockNotifications"] == "true"
     )
 
     dbSession.add(newUser)
@@ -66,8 +72,8 @@ def addUser():
     return make_response("New user added", 200)
 
 
-@login_required
 @bp.route("/deleteUser", methods=("POST",))
+@admin_access_required
 def deleteUser():
     dbSession = getDbSession()
     stmt = delete(User).where(User.username == request.form["username"])
@@ -77,8 +83,8 @@ def deleteUser():
     return make_response("User deleted", 200)
 
 
-@login_required
 @bp.route("/resetPassword", methods=("POST",))
+@admin_access_required
 def resetPassword():
     dbSession = getDbSession()
 
@@ -91,8 +97,8 @@ def resetPassword():
     return make_response("password reset", 200)
 
 
-@login_required
 @bp.route("/changePassword", methods=("GET", "POST"))
+@admin_access_required
 def changePassword():
     if request.method == "GET":
         return render_template("changePassword.html")
@@ -110,3 +116,18 @@ def changePassword():
         dbSession.commit()
 
         return make_response("password updated", 200)
+
+
+@bp.route("/updateUser", methods=("POST",))
+@admin_access_required
+def updateUser():
+    dbSession = getDbSession()
+
+    user = dbSession.query(User).filter(User.username == request.json["username"]).first()
+    user.accessLevel = request.json["accessLevel"]
+    user.receiveStockNotifications = request.json["receiveStockNotifications"]
+    user.emailAddress = request.json["emailAddress"]
+
+    dbSession.commit()
+
+    return make_response("changes saved", 200)

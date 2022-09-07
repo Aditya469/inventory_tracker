@@ -40,7 +40,7 @@ def initApp(app):
 	# check if the admin user exists. This is used as a proxy for the database being set up
 	res = session.query(User).filter(User.username == 'admin').count()
 	if res == 0:
-		adminUser = User(username='admin', passwordHash=generate_password_hash('admin'), isAdmin=True)
+		adminUser = User(username='admin', passwordHash=generate_password_hash('admin'), acessLevel=3)
 		session.add(adminUser)
 		session.add(Settings())  # add a row to settings with the defaults from the DB schema
 

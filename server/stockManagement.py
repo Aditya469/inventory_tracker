@@ -22,7 +22,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 import datetime
-from auth import login_required
+from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from db import getDbSession, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin
@@ -40,7 +40,7 @@ def getStockPage():
 
 
 @bp.route('/getIdStickerSheet/<int:idQty>')
-@login_required
+@create_access_required
 def getItemStickerSheet(idQty):
     dbSession = getDbSession()
     pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()[0]
@@ -512,9 +512,8 @@ def formatStockAmount(stockAmount, maxDecimalPlaces):
     return f"{stockAmount}"
 
 
-
 @bp.route('/editStockItem', methods=("POST",))
-@login_required
+@edit_access_required
 def updateStock():
     if "id" not in request.form:
         return make_response("stockItem id not provided", 400)
@@ -554,7 +553,7 @@ def updateStock():
 
 
 @bp.route('/deleteStockItem', methods=("POST",))
-@login_required
+@create_access_required
 def deleteStockItem():
     if "id" not in request.json:
         return make_response("stockItem id not provided", 400)
@@ -568,7 +567,7 @@ def deleteStockItem():
 
 
 @bp.route('/deleteMultipleStockItems', methods=("POST",))
-@login_required
+@create_access_required
 def deleteMultipleStockItems():
     if "idList" not in request.json:
         return make_response("stockItem id list not provided", 400)
@@ -636,7 +635,7 @@ def getNewlyAddedStock():
 
 
 @bp.route('/verifyAllNewStock', methods=("POST",))
-@login_required
+@create_access_required
 def verifyAllNewStock():
     session = getDbSession()
     session.execute(update(VerificationRecord).where(VerificationRecord.isVerified==False).values(isVerified=True))
@@ -680,6 +679,7 @@ def updateNewStockWithNewProduct(newProductType):
 
 
 @bp.route('/deleteNewlyAddedStock', methods=("POST",))
+@create_access_required
 def deleteNewlyAddedStock():
     verificationRecordIdList = request.json
 

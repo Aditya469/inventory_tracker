@@ -129,6 +129,10 @@ class ProductType(Base):
 	expectedPrice = Column(Numeric)
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
+	reorderLevel = Column(Numeric)
+	notifyForReorder = Column(Boolean, default=False)
+	needsReordering = Column(Boolean, default=False)
+	stockOnOrder = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", back_populates='associatedProduct')
 	associatedAssignedStock = relationship("AssignedStock", backref="productTypes")
 
@@ -258,7 +262,18 @@ class User(Base):
 
 	username = Column(Text, primary_key=True, unique=True)
 	passwordHash = Column(Text)
-	isAdmin = Column(Boolean, default=False)
+	accessLevel = Column(Integer, default=0)  # 0 = read-only, 1 = edit, 2 = create, 3 = admin
+	emailAddress = Column(Text)
+	receiveStockNotifications = Column(Boolean, default=True)
+
+	def toDict(self):
+		return{
+			"username": self.username,
+			"passwordHash": self.passwordHash,
+			"accessLevel": self.accessLevel,
+			"emailAddress": self.emailAddress,
+			"receiveStockNotifications": self.receiveStockNotifications
+		}
 
 
 class Settings(Base):

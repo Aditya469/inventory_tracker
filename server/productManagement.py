@@ -20,7 +20,7 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 from stockManagement import updateNewStockWithNewProduct
-from .auth import login_required
+from .auth import login_required, admin_access_required,create_access_required,edit_access_required
 from dbSchema import ProductType, StockItem
 from db import getDbSession
 from sqlalchemy import select, or_
@@ -74,7 +74,7 @@ def getProduct(productId):
 
 
 @bp.route('/addProduct', methods=('POST',))
-@login_required
+@create_access_required
 def addNewProductType():
 	session = getDbSession()
 	existingProduct = session.query(ProductType).filter(ProductType.barcode == request.form.get("barcode", default=None)).first()
@@ -93,7 +93,7 @@ def addNewProductType():
 
 
 @bp.route('/updateProduct', methods=('POST',))
-@login_required
+@edit_access_required
 def updateProductType():
 	if 'id' not in request.form:
 		return make_response("Product type ID required", 400)
@@ -111,7 +111,7 @@ def updateProductType():
 
 
 @bp.route('/deleteProduct', methods=('POST',))
-@login_required
+@create_access_required
 def deleteProductType():
 	if 'id' not in request.form:
 		return make_response("Product type ID required", 400)

@@ -38,7 +38,7 @@ limitations under the License.
 					<a class="nav-item nav-link m-2" href="{{ url_for('productManagement.getProductManagementPage') }}">Products and New Stock</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('stockManagement.getStockPage') }}">Stock Management</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('bins.manageBins') }}">Bins/Locations</a>
-					{% if g.user['isAdmin'] %}
+					{% if g.user['accessLevel'] == 3 %}
 					<a class="nav-item nav-link m-2" href="{{ url_for('users.manageUsers') }}">Users</a>
 					{% endif %}
 				</div>

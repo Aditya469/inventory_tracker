@@ -25,11 +25,13 @@ function updateUsersTable(){
         success:function(responseData){
             console.log(responseData);
 
-            var table = $("<table class='table m-2'>");
+            var table = $("<table class='table'>");
             var header = $("<thead>");
             var headerRow = $("<tr>");
             headerRow.append($("<th>Username</th>"));
-            headerRow.append($("<th>Is User Admin</th>"));
+            headerRow.append($("<th>Access Level</th>"));
+            headerRow.append($("<th>Receives Notifications</th>"));
+            headerRow.append($("<th>Email Address</th>"));
             headerRow.append($("<th>Reset Password</th>"));
             headerRow.append($("<th>Delete User</th>"));
             header.append(headerRow);
@@ -40,12 +42,51 @@ function updateUsersTable(){
             var i;
             for(i = 0; i < responseData.length; i++){
                 var row = $("<tr>");
+                row.data("username", responseData[i]['username']);
                 row.append($("<td>").html(responseData[i]['username']));
 
-                if(responseData[i]['isAdmin'])
-                    row.append($("<td>Yes</td>"));
+
+                var accessLevelSel = $("<select class='accessLevelSelector'>");
+                accessLevelSel.on("change", function(){onUserConfigChanged(this);})
+                if(responseData[i]['accessLevel'] == "0")
+                    accessLevelSel.append($("<option value='0' selected>Read-Only</option>"));
                 else
-                    row.append($("<td>No</td>"));
+                    accessLevelSel.append($("<option value='0'>Read-Only</option>"));
+
+                if(responseData[i]['accessLevel'] == "1")
+                    accessLevelSel.append($("<option value='1' selected>Edit</option>"));
+                else
+                    accessLevelSel.append($("<option value='1'>Edit</option>"));
+
+                if(responseData[i]['accessLevel'] == "2")
+                    accessLevelSel.append($("<option value='2' selected>Create</option>"));
+                else
+                    accessLevelSel.append($("<option value='2'>Create</option>"));
+
+                if(responseData[i]['accessLevel'] == "3")
+                    accessLevelSel.append($("<option value='3' selected>Admin</option>"));
+                else
+                    accessLevelSel.append($("<option value='3'>Admin</option>"));
+
+                row.append($("<td>").append(accessLevelSel));
+
+                var receiveStockNotificationsCheckbox = $("<input type='checkbox' class='receiveStockNotificationsCheckbox'>");
+                receiveStockNotificationsCheckbox.on("change", function(){onUserConfigChanged(this);});
+                if(responseData[i]['receiveStockNotifications'])
+                    receiveStockNotificationsCheckbox.prop("checked", true);
+                else
+                    receiveStockNotificationsCheckbox.prop("checked", false);
+
+                row.append($("<td class='text-center'>").append(receiveStockNotificationsCheckbox))
+
+
+                var emailAddressInput = $("<input type='text' class='emailAddress'>");
+                emailAddressInput.on("change", function(){onUserConfigChanged(this);});
+                if(responseData[i]['emailAddress'] != null)
+                    emailAddressInput.val(responseData[i]['emailAddress']);
+                else
+                    emailAddressInput.val("");
+                row.append($("<td>").append(emailAddressInput));
 
                 var resetPasswordBtn = $("<input class='button'>");
                 resetPasswordBtn.attr("type","button");
@@ -78,7 +119,9 @@ function addNewUser(){
     var formData = new FormData();
     formData.append("newUsername", $("#newUsername").val());
     formData.append("newPassword", $("#newPassword").val());
-    formData.append("isAdmin", $("#isAdmin").is(":checked"));
+    formData.append("accessLevel", $("#accessLevel").val());
+    formData.append("emailAddress", $("#emailAddress").val());
+    formData.append("receiveStockNotifications", $("#receiveStockNotifications").is(":checked"));
 
     $.ajax({
         url: "{{ url_for("users.addUser") }}",
@@ -92,6 +135,9 @@ function addNewUser(){
             updateUsersTable();
             $("#newUsername").val("");
             $("#newPassword").val("");
+            $("#accessLevel").val("0");
+            $("#emailAddress").val("");
+            $("#receiveStockNotifications").prop("checked", false);
             $("#newUserFeedback").html("New User " + $("#newUsername").val() + " added");
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -138,6 +184,32 @@ function deleteUser(username){
             console.log(responseData);
             updateUsersTable();
             $("#currentUserFeedback").html("User deleted");
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#currentUserFeedback").html(jqXHR.responseText);
+        }
+    });
+}
+
+function onUserConfigChanged(element){
+    var row = $(element).closest("tr");
+
+    var requestJson = {}
+    requestJson["username"]  = row.data("username");
+    requestJson["accessLevel"] = row.find(".accessLevelSelector").val();
+    requestJson["emailAddress"] = row.find(".emailAddress").val();
+    requestJson["receiveStockNotifications"] = row.find(".receiveStockNotificationsCheckbox").is(":checked");
+
+    $.ajax({
+        url: "{{ url_for("users.updateUser") }}",
+        type: "POST",
+        data: JSON.stringify(requestJson),
+        processData: false,
+        contentType: "application/json",
+        cache: false,
+        success: function(responseData){
+            console.log(responseData);
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);

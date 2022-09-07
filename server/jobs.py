@@ -27,13 +27,13 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from db import getDbSession
 from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType
 import json
-from auth import login_required
+from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
 bp = Blueprint('jobs', __name__)
 
 
 @bp.route("/createJob", methods=("POST",))
-@login_required
+@create_access_required
 def createJob():
 	error = None
 	if "jobName" not in request.json:
@@ -69,7 +69,7 @@ def createJob():
 
 
 @bp.route("/updateJob", methods=("POST",))
-@login_required
+@edit_access_required
 def updateJob():
 	error = None
 	if "jobId" not in request.json:
@@ -89,7 +89,7 @@ def updateJob():
 
 
 @bp.route("/deleteJob/<jobId>", methods=("POST",))
-@login_required
+@create_access_required
 def deleteJob(jobId):
 	dbSession = getDbSession()
 
@@ -295,7 +295,7 @@ def getTotalStockUsedOnJob(job):
 
 
 @bp.route("/addAssignedStock", methods=("POST",))
-@login_required
+@edit_access_required
 def addAssignedStock():
 	error = None
 	if "productId" not in request.form:
@@ -321,7 +321,7 @@ def addAssignedStock():
 
 
 @bp.route("/deleteAssignedStock", methods=("POST",))
-@login_required
+@edit_access_required
 def deleteAssignedStock():
 	if "assignedItemId" not in request.form and "assignedItemList" not in request.form:
 		return make_response("Item ID or ID list must be provided")

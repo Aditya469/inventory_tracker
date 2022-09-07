@@ -28,7 +28,7 @@ from sqlalchemy import delete, update
 from dbSchema import Bin, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
 from .db import getDbSession, User
-from .auth import login_required
+from .auth import login_required, userHasAdminAccess, create_access_required
 
 bp = Blueprint('bins', __name__)
 
@@ -36,7 +36,7 @@ bp = Blueprint('bins', __name__)
 @bp.route('/manageBins')
 @login_required
 def manageBins():
-    if g.user.isAdmin:
+    if userHasAdminAccess():
         return render_template('manageBins.html')
     else:
         abort(403)
@@ -52,7 +52,7 @@ def getBins():
 
 
 @bp.route('/createBin', methods=("POST",))
-@login_required
+@create_access_required
 def createBin():
     if "locationName" not in request.json:
         return make_response("locationName must be defined", 400)
@@ -73,7 +73,7 @@ def createBin():
 
 
 @bp.route('/deleteBin/<binId>', methods=("POST",))
-@login_required
+@create_access_required
 def deleteBin(binId):
     dbSession = getDbSession()
     bin = dbSession.query(Bin).filter(Bin.id == binId).first()
