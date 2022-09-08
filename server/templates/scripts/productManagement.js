@@ -44,6 +44,13 @@ function updateProductsTable(){
                 tr = $("<tr>");
                 tr.data("productId", responseData[i].id);
                 tr.click(function(){ openProductDetailsPanel($(this).data("productId")); });
+                if(responseData[i].needsReorder == true)
+                {
+                    if(responseData[i].stockReordered == true)
+                        tr.addClass("table-info");
+                    else
+                        tr.addClass("table-warning");
+                }
                 tr.append($("<td>" + responseData[i].productName + "</td>"));
                 tr.append($("<td>" + responseData[i].barcode + "</td>"));
                 if(responseData[i].tracksAllItemsOfProductType)
@@ -119,9 +126,9 @@ function updateNewStockTable(){
     });
 }
 
-function openProductEditPanel(ProductId){
-    console.log("Open panel for product id " + ProductId);
-}
+//function openProductEditPanel(ProductId){
+//    console.log("Open panel for product id " + ProductId);
+//}
 
 function onNewStockSelectCheckboxClicked(){
     if($(".newStockSelectCheckbox:checked").length == $(".newStockSelectCheckbox").length){
@@ -221,6 +228,24 @@ function openProductDetailsPanel(prodId){
                 else
                     $("#canExpire").prop("checked", false);
                 $("#expectedPrice").val(responseData.expectedPrice);
+                $("#reorderLevel").val(responseData.reorderLevel);
+                if(responseData.sendStockNotifications)
+                    $("#sendStockNotifications").prop("checked", true);
+                else
+                    $("#sendStockNotifications").prop("checked", false);
+                if(responseData.needsReorder){
+                    $("#markReorderedButton").prop("hidden", false);
+                    if(!responseData.stockReordered){
+                        $("#markReorderedButton").prop("enabled", true);
+                        $("#markReorderedButton").val("Record New Stock Ordered");
+                    }
+                    else{
+                        $("#markReorderedButton").prop("enabled", false);
+                        $("#markReorderedButton").val("Awaiting New Stock...");
+                    }
+                }
+                else
+                    $("#markReorderedButton").prop("hidden", true);
                 $("#addedTimestamp").html(responseData.addedTimestamp);
             },
             error: function(jqXHR, textStatus, errorThrown){
@@ -275,6 +300,11 @@ function saveProductDetails(){
         fd.append("canExpire", "true");
     else
         fd.append("canExpire", "false");
+    fd.append("reorderLevel", $("#reorderLevel").val());
+    if($("#sendStockNotifications").is(":checked"))
+        fd.append("sendStockNotifications", "true");
+    else
+        fd.append("sendStockNotifications", "false");
 
     if($("#productId").val() == "")
         var url = "{{ url_for('productManagement.addNewProductType') }}";

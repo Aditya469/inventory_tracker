@@ -167,6 +167,12 @@ def updateProductFromRequestForm(session, product):
 		else:
 			product.canExpire = False
 
+	if "reorderLevel" in request.form:
+		product.reorderLevel = request.form["reorderLevel"]
+
+	if "sendStockNotifications" in request.form:
+		product.sendStockNotifications = request.form["sendStockNotifications"] == "true"
+
 	return None, product
 
 

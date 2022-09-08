@@ -130,9 +130,9 @@ class ProductType(Base):
 	barcode = Column(String)
 	canExpire = Column(Boolean, default=False)
 	reorderLevel = Column(Numeric)
-	notifyForReorder = Column(Boolean, default=False)
+	sendStockNotifications = Column(Boolean, default=False)
 	needsReordering = Column(Boolean, default=False)
-	stockOnOrder = Column(Boolean, default=False)
+	stockReordered = Column(Boolean, default=False)
 	associatedStock = relationship("StockItem", back_populates='associatedProduct')
 	associatedAssignedStock = relationship("AssignedStock", backref="productTypes")
 
@@ -151,7 +151,11 @@ class ProductType(Base):
 			"quantityUnit": self.quantityUnit,
 			"expectedPrice": self.expectedPrice,
 			"barcode": self.barcode,
-			"canExpire": self.canExpire
+			"canExpire": self.canExpire,
+			"reorderLevel": self.reorderLevel,
+			"sendStockNotifications": self.sendStockNotifications,
+			"needsReordering": self.needsReordering,
+			"stockReordered": self.stockReordered
 		}
 
 
