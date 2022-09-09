@@ -44,7 +44,7 @@ function updateProductsTable(){
                 tr = $("<tr>");
                 tr.data("productId", responseData[i].id);
                 tr.click(function(){ openProductDetailsPanel($(this).data("productId")); });
-                if(responseData[i].needsReorder == true)
+                if(responseData[i].needsReordering == true)
                 {
                     if(responseData[i].stockReordered == true)
                         tr.addClass("table-info");
@@ -233,19 +233,15 @@ function openProductDetailsPanel(prodId){
                     $("#sendStockNotifications").prop("checked", true);
                 else
                     $("#sendStockNotifications").prop("checked", false);
-                if(responseData.needsReorder){
-                    $("#markReorderedButton").prop("hidden", false);
-                    if(!responseData.stockReordered){
-                        $("#markReorderedButton").prop("enabled", true);
-                        $("#markReorderedButton").val("Record New Stock Ordered");
-                    }
-                    else{
-                        $("#markReorderedButton").prop("enabled", false);
-                        $("#markReorderedButton").val("Awaiting New Stock...");
-                    }
+                if(responseData.needsReordering){
+                    $("#newStockOrdered").prop("hidden", false);
+                    if(responseData.stockReordered)
+                        $("#newStockOrdered").prop("checked",true);
+                    else
+                        $("#newStockOrdered").prop("checked",false);
                 }
                 else
-                    $("#markReorderedButton").prop("hidden", true);
+                    $("#newStockOrdered").prop("hidden", true);
                 $("#addedTimestamp").html(responseData.addedTimestamp);
             },
             error: function(jqXHR, textStatus, errorThrown){
@@ -305,6 +301,10 @@ function saveProductDetails(){
         fd.append("sendStockNotifications", "true");
     else
         fd.append("sendStockNotifications", "false");
+    if($("#newStockOrdered").is(":checked"))
+        fd.append("newStockOrdered", "true");
+    else
+        fd.append("newStockOrdered", "false");
 
     if($("#productId").val() == "")
         var url = "{{ url_for('productManagement.addNewProductType') }}";
@@ -359,4 +359,5 @@ function closeProductDetailsPanel(){
     $("#addedTimestamp").html("");
     $("#greyout").prop("hidden", true);
     $("#editProductPanel").prop("hidden", true);
+    $("#markReorderedButton").prop("hidden", true);
 }

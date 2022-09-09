@@ -124,12 +124,12 @@ class ProductType(Base):
 	productDescriptor2 = Column(Text, default="")
 	productDescriptor3 = Column(Text, default="")
 	addedTimestamp = Column(DateTime, server_default=func.now())
-	initialQuantity = Column(Numeric)
-	quantityUnit = Column(String)
-	expectedPrice = Column(Numeric)
-	barcode = Column(String)
+	initialQuantity = Column(Numeric, default="")
+	quantityUnit = Column(String, default="")
+	expectedPrice = Column(Numeric, default=0)
+	barcode = Column(String, default="undefined")
 	canExpire = Column(Boolean, default=False)
-	reorderLevel = Column(Numeric)
+	reorderLevel = Column(Numeric, default=None)
 	sendStockNotifications = Column(Boolean, default=False)
 	needsReordering = Column(Boolean, default=False)
 	stockReordered = Column(Boolean, default=False)
@@ -268,7 +268,7 @@ class User(Base):
 	passwordHash = Column(Text)
 	accessLevel = Column(Integer, default=0)  # 0 = read-only, 1 = edit, 2 = create, 3 = admin
 	emailAddress = Column(Text)
-	receiveStockNotifications = Column(Boolean, default=True)
+	receiveStockNotifications = Column(Boolean, default=False)
 
 	def toDict(self):
 		return{
@@ -300,7 +300,12 @@ class Settings(Base):
 	displayJobIdCardName = Column(Boolean, default=True)
 	idCardFontSize_px = Column(Integer, default=40)
 	displayBinIdCardName = Column(Boolean, default=True)
-
+	emailSmtpServerName = Column(String)
+	emailSmtpServerPort = Column(String)
+	emailAccountName = Column(String)
+	emailAccountPassword = Column(String)
+	emailSecurityMethod = Column(String)
+	sendEmails = Column(Boolean)
 
 	def toDict(self):
 		return {

@@ -21,10 +21,12 @@ from werkzeug.utils import secure_filename
 
 from stockManagement import updateNewStockWithNewProduct
 from .auth import login_required, admin_access_required,create_access_required,edit_access_required
-from dbSchema import ProductType, StockItem
+from dbSchema import ProductType, StockItem, User
 from db import getDbSession
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, func
 import decimal
+from emailNotification import sendEmail
+from messages import getStockNeedsReorderingMessage
 
 bp = Blueprint('productManagement', __name__)
 
@@ -167,12 +169,56 @@ def updateProductFromRequestForm(session, product):
 		else:
 			product.canExpire = False
 
-	if "reorderLevel" in request.form:
-		product.reorderLevel = request.form["reorderLevel"]
+	if "reorderLevel" in request.form and request.form["reorderLevel"] != "":
+		product.reorderLevel = decimal.Decimal(request.form["reorderLevel"])
+	else:
+		product.reorderLevel = None
 
 	if "sendStockNotifications" in request.form:
 		product.sendStockNotifications = request.form["sendStockNotifications"] == "true"
 
+	if "newStockOrdered" in request.form:
+		product.stockReordered = request.form["newStockOrdered"] == "true"
+
 	return None, product
 
+
+@bp.route("/startReorderCheck")
+def startReorderCheck():
+	findAndMarkProductsToReorder()
+	return make_response("", 200)
+
+
+'''
+Function to run periodically which finds products that are below the 
+reorder level and marks them appropriately in the database
+'''
+def findAndMarkProductsToReorder():
+	dbSession = getDbSession()
+
+	productList = dbSession.query(ProductType)\
+		.filter(ProductType.reorderLevel != None) \
+		.filter(ProductType.reorderLevel != "None") \
+		.all()
+	reorderNotificationIds = []
+
+	for product in productList:
+		stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
+			.filter(StockItem.productType == product.id)\
+			.first()[0]
+
+		if stockQty is None or stockQty <= product.reorderLevel:
+			if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
+				product.needsReordering = True
+				if product.sendStockNotifications:
+					reorderNotificationIds.append(product.id)
+		else:
+			product.needsReordering = False
+
+	if len(reorderNotificationIds) > 0:
+		emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
+		message = getStockNeedsReorderingMessage(reorderNotificationIds)
+		sendEmail(emailAddressList, "Stock needs reordering", message)
+
+	dbSession.commit()
 
