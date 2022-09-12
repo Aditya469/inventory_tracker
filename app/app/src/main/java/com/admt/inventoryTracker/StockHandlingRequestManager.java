@@ -93,7 +93,6 @@ public abstract class StockHandlingRequestManager<T>
 
                 mRequestMap.put(requestId, request);
             }
-            mRequestMapAccessSem.release();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -101,6 +100,9 @@ public abstract class StockHandlingRequestManager<T>
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        finally{
+            mRequestMapAccessSem.release();
         }
     }
 
