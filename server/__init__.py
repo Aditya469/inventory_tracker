@@ -66,4 +66,7 @@ def create_app():
     from . import api
     app.register_blueprint(api.bp)
 
+    from . import systemSettings
+    app.register_blueprint(systemSettings.bp)
+
     return app
