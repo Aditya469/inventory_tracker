@@ -132,6 +132,10 @@ def getStock():
             if "priceRangeEnd" in request.args:
                 stmt = stmt.where(StockItem.price <= decimal.Decimal(request.args.get("priceRangeEnd")))
 
+    if "hideZeroStockEntries" in request.args:
+        if request.args.get("hideZeroStockEntries", default="false") == "true":
+            stmt = stmt.where(StockItem.quantityRemaining != 0)
+
     # ... and ordering
     if "sortBy" in request.args:
         if request.args.get("sortBy") == "productNameAsc":

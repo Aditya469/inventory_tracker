@@ -49,6 +49,7 @@ function updateStockTable(){
         requestParams.priceRangeEnd = endPrice;
 
     requestParams.sortBy = $("input[name='stockSortingOptions']:checked").val();
+    requestParams.hideZeroStockEntries = $("#hideZeroStockEntries").is(":checked");
 
     $.ajax({
         url: "{{ url_for('stockManagement.getStock') }}",
