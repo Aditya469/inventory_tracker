@@ -18,9 +18,9 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
         if(Request.Timestamp != null)
             requestJson.put("timestamp", Request.Timestamp);
         if(Request.JobId != null)
-            requestJson.put("jobId", Request.JobId);
+            requestJson.put("jobIdString", Request.JobId);
         if(Request.BinId != null)
-            requestJson.put("binId", Request.BinId);
+            requestJson.put("binIdString", Request.BinId);
         if(Request.CheckRequestType == CheckStockInOutRequestParameters.CheckingType.CHECK_IN) {
             if (Request.QuantityChecking != null)
                 requestJson.put("quantityCheckedIn", Request.QuantityChecking);

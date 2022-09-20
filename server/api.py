@@ -303,11 +303,11 @@ def processCheckStockInRequest():
 	if 'timestamp' in requestParams:
 		checkInRecord.checkinTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
-	if "jobId" in requestParams:
-		checkInRecord.jobId = requestParams['jobId']
+	if "jobIdString" in requestParams:
+		checkInRecord.jobId = dbSession.query(Job.id).filter(Job.idString == requestParams['jobIdString']).first()[0]
 
-	if 'binId' in requestParams:
-		checkInRecord.binId = requestParams['binId']
+	if 'binIdString' in requestParams:
+		checkInRecord.binId = dbSession.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
 
 	stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityCheckedIn'])
 	stockItem.isCheckedIn = True

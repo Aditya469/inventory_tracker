@@ -185,12 +185,12 @@ public class checkItemsFragment extends Fragment {
             mainHandler.post(runnable);
         }
         else if(BarcodeData.startsWith(getString(R.string.sys_prefix_job))) {
-            mCurrentCheckingRequest.JobId = BarcodeData;
             JobNameLookup jobNameLookup = mJobLookupDataManager.get(BarcodeData);
             if(jobNameLookup == null){
                 error = "Job is not known";
             }
             else {
+                mCurrentCheckingRequest.JobId = jobNameLookup.JobIdString;
                 runnable = new Runnable() {
                     @Override
                     public void run() {

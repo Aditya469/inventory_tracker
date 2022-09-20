@@ -16,13 +16,13 @@ public class JobLookupDataManager extends UpdateableServerDataManager<JobNameLoo
     @Override
     protected JobNameLookup parseJsonObjectToItem(JSONObject ItemJson) throws JSONException {
         JobNameLookup jobNameLookup = new JobNameLookup();
-        jobNameLookup.JobId = ItemJson.getString("idString");
+        jobNameLookup.JobIdString = ItemJson.getString("idString");
         jobNameLookup.JobName = ItemJson.getString("jobName");
         return jobNameLookup;
     }
 
     @Override
     protected String getItemDictKeyString(JobNameLookup Item) {
-        return Item.JobId;
+        return Item.JobIdString;
     }
 }
