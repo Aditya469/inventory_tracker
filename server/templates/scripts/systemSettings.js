@@ -9,8 +9,9 @@ function loadSettings(){
         datatype:"JSON",
         success: function(settings){
             console.log(settings);
+            $("#settingsId").val(settings.id);
             $("#dbMakeBackups").prop("checked", settings.dbMakeBackups);
-            $("#dbBackupAtTime").val(settings.dbAutoBackupTime);
+            $("#dbBackupAtTime").val(settings.dbBackupAtTime);
             $("#dbNumberOfBackups").val(settings.dbNumberOfBackups);
         }
     });
@@ -18,6 +19,7 @@ function loadSettings(){
 
 function saveSettings(){
     var newSettings = {};
+    newSettings.id = $("#settingsId").val();
     newSettings.dbMakeBackups = $("#dbMakeBackups").is(":checked");
     newSettings.dbBackupAtTime = $("#dbBackupAtTime").val();
     newSettings.dbNumberOfBackups = $("#dbNumberOfBackups").val();

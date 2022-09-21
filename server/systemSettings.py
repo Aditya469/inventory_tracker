@@ -23,7 +23,6 @@ from werkzeug.utils import secure_filename
 from auth import login_required, admin_access_required
 from db import getDbSession
 from dbSchema import Settings
-from scheduledTasks import scheduleDatabaseBackup
 
 bp = Blueprint('systemSettings', __name__)
 
@@ -46,8 +45,6 @@ def getSystemSettings():
 def saveSystemSettings():
     dbSession = getDbSession()
     settings = dbSession.query(Settings).filter(Settings.id == request.json.get("id")).first()
-
-    rescheduleDbBackup = False
 
     if "stickerSheetPageHeight_mm" in request.json:
         settings.stickerSheetPageHeight_mm = request.json.get("stickerSheetPageHeight_mm")
@@ -95,15 +92,11 @@ def saveSystemSettings():
         settings.sendEmails = request.json.get("sendEmails")
     if "dbNumberOfBackups" in request.json:
         settings.dbNumberOfBackups = int(request.json.get("dbNumberOfBackups"))
-        rescheduleDbBackup = True
     if "dbBackupAtTime" in request.json:
-        settings.dbBackupAtTime = datetime.datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
-        rescheduleDbBackup = True
+        settings.dbBackupAtTime = datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
     if "dbMakeBackups" in request.json:
         settings.dbMakeBackups = request.json.get("dbMakeBackups")
-        rescheduleDbBackup = True
 
     dbSession.commit()
 
-
-    return make_response(200)
+    return make_response("Settings updated", 200)

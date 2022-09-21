@@ -311,9 +311,8 @@ class Settings(Base):
 	dbBackupAtTime = Column(Time(timezone=True))
 	dbMakeBackups = Column(Boolean, default=True)
 
-
 	def toDict(self):
-		return {
+		dataDict = {
 			"id": self.id,
 			"stickerSheetPageHeight_mm": self.stickerSheetPageHeight_mm,
 			"stickerSheetPageWidth_mm": self.stickerSheetPageWidth_mm,
@@ -338,6 +337,12 @@ class Settings(Base):
 			"emailSecurityMethod": self.emailSecurityMethod,
 			"sendEmails": self.sendEmails,
 			"dbNumberOfBackups": self.dbNumberOfBackups,
-			"dbBackupAtTime": self.dbBackupAtTime,
 			"dbMakeBackups": self.dbMakeBackups,
 		}
+		if self.dbBackupAtTime is None:
+			dataDict["dbBackupAtTime"] = None
+		else:
+			dataDict["dbBackupAtTime"] = self.dbBackupAtTime.strftime("%H:%M")
+
+		return dataDict
+

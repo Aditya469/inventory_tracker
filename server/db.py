@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
-from decimal import getcontext
+
 
 import click
 from flask import current_app, g
@@ -30,10 +30,9 @@ from sqlalchemy.sql import func
 from dbSchema import Base, User, ProductType, StockItem, Settings, ItemId, Bin
 
 from filelock import FileLock, Timeout
+from paths import dbPath, dbLockFilePath
 
-dbPath = "./inventoryDB.sqlite"
-lockFilePath = "./dbLockFile.lock"
-dbLock = FileLock(lockFilePath, timeout=1)
+dbLock = FileLock(dbLockFilePath, timeout=1)
 
 def initApp(app):
 	# engine = create_engine('postgresql://server:server@localhost:5432/inventorydb')
@@ -78,7 +77,7 @@ def getDbSession():
 			Session = sessionmaker(bind=engine)
 			g.dbSession = Session()
 		except Timeout:
-			abort(500)
+			abort("Database is locked", 500)
 
 	return g.dbSession
 
