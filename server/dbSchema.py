@@ -13,9 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
-
 from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, \
-	Text
+	Text, Time
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
@@ -24,7 +23,7 @@ Base = declarative_base()
 # this section borrowed from https://stackoverflow.com/questions/10355767/how-should-i-handle-decimal-in-sqlalchemy-sqlite
 from decimal import Decimal as D
 import sqlalchemy.types as types
-
+from datetime import datetime
 
 class Numeric(types.TypeDecorator):
 	impl = types.String
@@ -269,6 +268,7 @@ class User(Base):
 	accessLevel = Column(Integer, default=0)  # 0 = read-only, 1 = edit, 2 = create, 3 = admin
 	emailAddress = Column(Text)
 	receiveStockNotifications = Column(Boolean, default=False)
+	receiveDbBackupNotifications = Column(Boolean, default=False)
 
 	def toDict(self):
 		return{
@@ -276,7 +276,8 @@ class User(Base):
 			"passwordHash": self.passwordHash,
 			"accessLevel": self.accessLevel,
 			"emailAddress": self.emailAddress,
-			"receiveStockNotifications": self.receiveStockNotifications
+			"receiveStockNotifications": self.receiveStockNotifications,
+			"receiveDbBackupNotifications": self.receiveDbBackupNotifications
 		}
 
 
@@ -306,6 +307,10 @@ class Settings(Base):
 	emailAccountPassword = Column(String)
 	emailSecurityMethod = Column(String)
 	sendEmails = Column(Boolean)
+	dbNumberOfBackups = Column(Integer, default=5)
+	dbBackupAtTime = Column(Time(timezone=True))
+	dbMakeBackups = Column(Boolean, default=True)
+
 
 	def toDict(self):
 		return {
@@ -321,7 +326,18 @@ class Settings(Base):
 			"idCardHeight_mm": self.idCardHeight_mm,
 			"idCardWidth_mm": self.idCardWidth_mm,
 			"idCardDpi": self.idCardDpi,
+			"idCardPadding_mm": self.idCardPadding_mm,
 			"displayIdCardName": self.displayIdCardName,
 			"displayJobIdCardName": self.displayJobIdCardName,
-			"idCardFontSize_px": self.idCardFontSize_px
+			"idCardFontSize_px": self.idCardFontSize_px,
+			"displayBinIdCardName": self.displayBinIdCardName,
+			"emailSmtpServerName": self.emailSmtpServerName,
+			"emailSmtpServerPort": self.emailSmtpServerPort,
+			"emailAccountName": self.emailAccountName,
+			"emailAccountPassword": self.emailAccountPassword,
+			"emailSecurityMethod": self.emailSecurityMethod,
+			"sendEmails": self.sendEmails,
+			"dbNumberOfBackups": self.dbNumberOfBackups,
+			"dbBackupAtTime": self.dbBackupAtTime,
+			"dbMakeBackups": self.dbMakeBackups,
 		}

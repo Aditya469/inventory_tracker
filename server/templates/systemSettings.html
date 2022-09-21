@@ -25,9 +25,25 @@ limitations under the License.
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
-    <div class="row">
+    <div class="row ">
         <div class="col-sm-12 col-md-6 offset-md-3" id="backupSettings">
-
+            <h1>Database Backup</h1>
+            <label class="col-6 form-check-label" for="dbMakeBackups">Make Automatic Backups</label>
+            <input class="col-6 form-check-input align-self-start" id="dbMakeBackups" type="checkbox" onchange="saveSettings()">
+            <div class="row co-12">
+                <label class="col-6" for="dbBackupAtTime">Nightly Backup Time</label>
+                <div class="col-auto">
+                    <input class="form-control align-self-start" id="dbBackupAtTime" type="time" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-6" for="dbNumberOfBackups">Number Of Backups To Keep</label>
+                <div class="col-3">
+                    <input class="form-control align-self-start" id="dbNumberOfBackups" type="number" onchange="saveSettings()">
+                </div>
+            </div>
+            <input type="button" class="col-9 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
+            <input type="button" class="col-9 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup">
         </div>
     </div>
 </div>

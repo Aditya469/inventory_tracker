@@ -107,116 +107,120 @@ def getAppStockData():
 @bp.route("/addStockRequest", methods=("POST",))
 def processAddStockRequest():
 	logging.info("Processing request to add item")
-	# check barcode number
-	# create stock item
-	dbSession = getDbSession()
-	requestParams = request.json
+	try:
+		# check barcode number
+		# create stock item
+		dbSession = getDbSession()
+		requestParams = request.json
 
-	if 'requestId' not in requestParams:
-		logging.error("requestId not provided")
-		return make_response("requestId not provided", 200)
+		if 'requestId' not in requestParams:
+			logging.error("requestId not provided")
+			return make_response("requestId not provided", 200)
 
-	if 'idString' not in requestParams:
-		logging.error("Failed to process request to add item. idString not provided")
-		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
-
-	# check the request ID to see if this request has been processed once already. If it has, send a nice message to
-	# inform the app and then finish.
-	existingCheckinRecord = dbSession.query(CheckInRecord).filter(
-		CheckInRecord.createdByRequestId == requestParams['requestId']).first()
-	existingCheckoutRecord = dbSession.query(CheckOutRecord).filter(
-		CheckOutRecord.createdByRequestId == requestParams['requestId']).first()
-
-	if existingCheckinRecord is not None or existingCheckoutRecord is not None:
-		logging.info(f"Skipping duplicate request {requestParams['requestId']}")
-		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
-
-	logging.info(f"Adding item with ID number {requestParams['idString']}")
-
-	# check if the ID is already in use. If it is, check if it is a particular (non-bulk) item. If so, error out.
-	# Also see if the barcode corresponds to a bulk stock item. If it does, create an alias record for the new ID to the
-	# existing stock item ID, and then continue
-	stockItem = dbSession.query(StockItem).filter(StockItem.idString == requestParams['idString']).first()
-	productType = dbSession.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).first()
-	checkInRecord = CheckInRecord()
-
-	if stockItem is None:
-		# barcode might correspond to an existing bulk stock item. If so, fetch this item, add the new stock,
-		# and make an alias record
-		if productType is not None and productType.tracksAllItemsOfProductType:
-			stockItem = dbSession.query(StockItem).filter(StockItem.productType == productType.id).first()
-
-			if stockItem is not None:
-				# check if the idString has already been used. If it has, error out
-				existingAliasRecord = dbSession.query(IdAlias)\
-					.filter(IdAlias.idString == requestParams['idString'])\
-					.first()
-				if existingAliasRecord is not None:
-					logging.error("Got an idString that is already aliased to a stock item")
-					return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
-
-				aliasRecord = IdAlias(idString=requestParams['idString'], stockItemAliased=stockItem.id)
-				dbSession.add(aliasRecord)
-
-				# update itemId table so that the new ID won't get reused elsewhere
-				itemId = dbSession.query(ItemId).filter(ItemId.idString == requestParams['idString']).first()
-				itemId.isPendingAssignment = False
-				itemId.isAssigned = True
-
-	# if we not have a stockItem record, it should be a bulk entry, so update it.
-	if stockItem is not None:
-		if productType.tracksSpecificItems or not productType.tracksAllItemsOfProductType:
-			logging.error("Got an ID number that exists for a non-bulk product")
+		if 'idString' not in requestParams:
+			logging.error("Failed to process request to add item. idString not provided")
 			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
-		# stockItem is an existing bulk stock entry with a matching ID
-		bulkItemCount = 1
-		if 'bulkItemCount' in requestParams:
-			bulkItemCount = int(requestParams['bulkItemCount'])
-		stockItem.quantityRemaining += productType.initialQuantity * bulkItemCount
-		checkInRecord.quantityCheckedIn = productType.initialQuantity * bulkItemCount
-		# continues below ...
+		# check the request ID to see if this request has been processed once already. If it has, send a nice message to
+		# inform the app and then finish.
+		existingCheckinRecord = dbSession.query(CheckInRecord).filter(
+			CheckInRecord.createdByRequestId == requestParams['requestId']).first()
+		existingCheckoutRecord = dbSession.query(CheckOutRecord).filter(
+			CheckOutRecord.createdByRequestId == requestParams['requestId']).first()
 
-	# itemID is not attached to a stock item. Create one.
-	else:
-		stockItem = StockItem()
-		dbSession.add(stockItem)
-		itemId = dbSession.query(ItemId).filter(ItemId.idString == requestParams['idString']).first()
-		itemId.isPendingAssignment = False
-		itemId.isAssigned = True
-		stockItem.idString = requestParams['idString']
-		stockItem.addedTimestamp = func.now()
-		stockItem.isCheckedIn = True
+		if existingCheckinRecord is not None or existingCheckoutRecord is not None:
+			logging.info(f"Skipping duplicate request {requestParams['requestId']}")
+			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
-		if 'barcode' not in requestParams \
-				or (dbSession.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).count() == 0):
-			productType = dbSession \
-				.query(ProductType) \
-				.filter(ProductType.productName == "undefined product type") \
-				.first()
-			stockItem.productType = productType.id
-			stockItem.quantityRemaining = productType.initialQuantity
-			stockItem.price = productType.expectedPrice
+		logging.info(f"Adding item with ID number {requestParams['idString']}")
 
-			if 'quantityCheckingIn' in requestParams:
-				stockItem.quantityRemaining = decimal.Decimal(requestParams['quantityCheckingIn'])
+		# check if the ID is already in use. If it is, check if it is a particular (non-bulk) item. If so, error out.
+		# Also see if the barcode corresponds to a bulk stock item. If it does, create an alias record for the new ID to the
+		# existing stock item ID, and then continue
+		stockItem = dbSession.query(StockItem).filter(StockItem.idString == requestParams['idString']).first()
+		productType = dbSession.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).first()
+		checkInRecord = CheckInRecord()
+
+		if stockItem is None:
+			# barcode might correspond to an existing bulk stock item. If so, fetch this item, add the new stock,
+			# and make an alias record
+			if productType is not None and productType.tracksAllItemsOfProductType:
+				stockItem = dbSession.query(StockItem).filter(StockItem.productType == productType.id).first()
+
+				if stockItem is not None:
+					# check if the idString has already been used. If it has, error out
+					existingAliasRecord = dbSession.query(IdAlias)\
+						.filter(IdAlias.idString == requestParams['idString'])\
+						.first()
+					if existingAliasRecord is not None:
+						logging.error("Got an idString that is already aliased to a stock item")
+						return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+
+					aliasRecord = IdAlias(idString=requestParams['idString'], stockItemAliased=stockItem.id)
+					dbSession.add(aliasRecord)
+
+					# update itemId table so that the new ID won't get reused elsewhere
+					itemId = dbSession.query(ItemId).filter(ItemId.idString == requestParams['idString']).first()
+					itemId.isPendingAssignment = False
+					itemId.isAssigned = True
+
+		# if we not have a stockItem record, it should be a bulk entry, so update it.
+		if stockItem is not None:
+			if productType.tracksSpecificItems or not productType.tracksAllItemsOfProductType:
+				logging.error("Got an ID number that exists for a non-bulk product")
+				return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+
+			# stockItem is an existing bulk stock entry with a matching ID
+			bulkItemCount = 1
+			if 'bulkItemCount' in requestParams:
+				bulkItemCount = int(requestParams['bulkItemCount'])
+			stockItem.quantityRemaining += productType.initialQuantity * bulkItemCount
+			checkInRecord.quantityCheckedIn = productType.initialQuantity * bulkItemCount
+			# continues below ...
+
+		# itemID is not attached to a stock item. Create one.
 		else:
-			stockItem.productType = productType.id
-			if 'quantityCheckingIn' in requestParams:
-				stockItem.quantityRemaining = decimal.Decimal(requestParams['quantityCheckingIn'])
-			elif productType.tracksAllItemsOfProductType and 'bulkItemCount' in requestParams:
-				stockItem.quantityRemaining = productType.initialQuantity * int(requestParams['bulkItemCount'])
-			else:
+			stockItem = StockItem()
+			dbSession.add(stockItem)
+			itemId = dbSession.query(ItemId).filter(ItemId.idString == requestParams['idString']).first()
+			itemId.isPendingAssignment = False
+			itemId.isAssigned = True
+			stockItem.idString = requestParams['idString']
+			stockItem.addedTimestamp = func.now()
+			stockItem.isCheckedIn = True
+
+			if 'barcode' not in requestParams \
+					or (dbSession.query(ProductType).filter(ProductType.barcode == requestParams['barcode']).count() == 0):
+				productType = dbSession \
+					.query(ProductType) \
+					.filter(ProductType.productName == "undefined product type") \
+					.first()
+				stockItem.productType = productType.id
 				stockItem.quantityRemaining = productType.initialQuantity
+				stockItem.price = productType.expectedPrice
 
-			if productType.canExpire:
-				if 'expiryDate' in requestParams:
-					stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
+				if 'quantityCheckingIn' in requestParams:
+					stockItem.quantityRemaining = decimal.Decimal(requestParams['quantityCheckingIn'])
+			else:
+				stockItem.productType = productType.id
+				if 'quantityCheckingIn' in requestParams:
+					stockItem.quantityRemaining = decimal.Decimal(requestParams['quantityCheckingIn'])
+				elif productType.tracksAllItemsOfProductType and 'bulkItemCount' in requestParams:
+					stockItem.quantityRemaining = productType.initialQuantity * int(requestParams['bulkItemCount'])
 				else:
-					dbSession.rollback()
-					return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+					stockItem.quantityRemaining = productType.initialQuantity
 
-			stockItem.price = productType.expectedPrice
+				if productType.canExpire:
+					if 'expiryDate' in requestParams:
+						stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
+					else:
+						dbSession.rollback()
+						return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+
+				stockItem.price = productType.expectedPrice
+	except Exception as e:
+		print(e)
+
 
 	dbSession.flush()
 

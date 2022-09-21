@@ -13,13 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
+from datetime import datetime
 
 from flask import (
-    Blueprint, render_template, make_response
+    Blueprint, render_template, make_response, jsonify, request
 )
 from werkzeug.utils import secure_filename
 
-from .auth import login_required, admin_access_required
+from auth import login_required, admin_access_required
+from db import getDbSession
+from dbSchema import Settings
+from scheduledTasks import scheduleDatabaseBackup
 
 bp = Blueprint('systemSettings', __name__)
 
@@ -30,3 +34,76 @@ def getSystemSettingsPage():
     return render_template("systemSettings.html")
 
 
+@bp.route('/loadSettings')
+@admin_access_required
+def getSystemSettings():
+    settings = getDbSession().query(Settings).first()
+    return make_response(jsonify(settings.toDict()), 200)
+
+
+@bp.route('/saveSettings', methods=("POST",))
+@admin_access_required
+def saveSystemSettings():
+    dbSession = getDbSession()
+    settings = dbSession.query(Settings).filter(Settings.id == request.json.get("id")).first()
+
+    rescheduleDbBackup = False
+
+    if "stickerSheetPageHeight_mm" in request.json:
+        settings.stickerSheetPageHeight_mm = request.json.get("stickerSheetPageHeight_mm")
+    if "stickerSheetPageWidth_mm" in request.json:
+        settings.stickerSheetPageWidth_mm = request.json.get("stickerSheetPageWidth_mm")
+    if "stickerSheetStickersHeight_mm" in request.json:
+        settings.stickerSheetStickersHeight_mm = request.json.get("stickerSheetStickersHeight_mm")
+    if "stickerSheetStickersWidth_mm" in request.json:
+        settings.stickerSheetStickersWidth_mm = request.json.get("stickerSheetStickersWidth_mm")
+    if "stickerSheetDpi" in request.json:
+        settings.stickerSheetDpi = request.json.get("stickerSheetDpi")
+    if "stickerSheetRows" in request.json:
+        settings.stickerSheetRows = request.json.get("stickerSheetRows")
+    if "stickerSheetColumns" in request.json:
+        settings.stickerSheetColumns = request.json.get("stickerSheetColumns")
+    if "stickerPadding_mm" in request.json:
+        settings.stickerPadding_mm = request.json.get("stickerPadding_mm")
+    if "idCardHeight_mm" in request.json:
+        settings.idCardHeight_mm = request.json.get("idCardHeight_mm")
+    if "idCardWidth_mm" in request.json:
+        settings.idCardWidth_mm = request.json.get("idCardWidth_mm")
+    if "idCardDpi" in request.json:
+        settings.idCardDpi = request.json.get("idCardDpi")
+    if "idCardPadding_mm" in request.json:
+        settings.idCardPadding_mm = request.json.get("idCardPadding_mm")
+    if "displayIdCardName" in request.json:
+        settings.displayIdCardName = request.json.get("displayIdCardName")
+    if "displayJobIdCardName" in request.json:
+        settings.displayJobIdCardName = request.json.get("displayJobIdCardName")
+    if "idCardFontSize_px" in request.json:
+        settings.idCardFontSize_px = request.json.get("idCardFontSize_px")
+    if "displayBinIdCardName" in request.json:
+        settings.displayBinIdCardName = request.json.get("displayBinIdCardName")
+    if "emailSmtpServerName" in request.json:
+        settings.emailSmtpServerName = request.json.get("emailSmtpServerName")
+    if "emailSmtpServerPort" in request.json:
+        settings.emailSmtpServerPort = request.json.get("emailSmtpServerPort")
+    if "emailAccountName" in request.json:
+        settings.emailAccountName = request.json.get("emailAccountName")
+    if "emailAccountPassword" in request.json:
+        settings.emailAccountPassword = request.json.get("emailAccountPassword")
+    if "emailSecurityMethod" in request.json:
+        settings.emailSecurityMethod = request.json.get("emailSecurityMethod")
+    if "sendEmails" in request.json:
+        settings.sendEmails = request.json.get("sendEmails")
+    if "dbNumberOfBackups" in request.json:
+        settings.dbNumberOfBackups = int(request.json.get("dbNumberOfBackups"))
+        rescheduleDbBackup = True
+    if "dbBackupAtTime" in request.json:
+        settings.dbBackupAtTime = datetime.datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
+        rescheduleDbBackup = True
+    if "dbMakeBackups" in request.json:
+        settings.dbMakeBackups = request.json.get("dbMakeBackups")
+        rescheduleDbBackup = True
+
+    dbSession.commit()
+
+
+    return make_response(200)

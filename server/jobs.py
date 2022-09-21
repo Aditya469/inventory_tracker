@@ -248,10 +248,12 @@ def getJob(jobId):
 
 def getTotalStockUsedOnJob(job):
 	# the stock used is calculated as the total checked out for each item minus the total checked in.
+	dbSession = getDbSession()
 	stockUsedTotals = {}
 	totalCost = decimal.Decimal()
 	# get total checked out first, per product
-	for checkOutRecord in job.associatedStockCheckouts:
+	checkOutRecords = dbSession.query(CheckOutRecord).filter(CheckOutRecord.jobId == job.id).all()
+	for checkOutRecord in checkOutRecords:
 		productType = checkOutRecord.associatedStockItem.associatedProduct
 
 		if productType.productName not in stockUsedTotals:
@@ -271,7 +273,8 @@ def getTotalStockUsedOnJob(job):
 					 * checkOutRecord.associatedStockItem.price
 
 	# then subtract what was checked back in
-	for checkInRecord in job.associatedStockCheckins:
+	checkInRecords = dbSession.query(CheckInRecord).filter(CheckInRecord.jobId == job.id).all()
+	for checkInRecord in checkInRecords:
 		productTypeName = checkInRecord.associatedStockItem.associatedProduct.productName
 
 		if productTypeName not in stockUsedTotals:
