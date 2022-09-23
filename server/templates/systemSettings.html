@@ -43,9 +43,21 @@ limitations under the License.
                     <input class="form-control align-self-start" id="dbNumberOfBackups" type="number" onchange="saveSettings()">
                 </div>
             </div>
-            <input type="button" class="col-9 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
-            <input type="button" class="col-9 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup">
+            <input id="initiateBackupBtn" type="button" class="col-9 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
+            <input id="restoreBackupBtn" type="button" class="col-9 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup...">
         </div>
     </div>
+</div>
+<div id="greyout" hidden class="position-fixed row top-0 start-0 vw-100 vh-100" onclick="closePanels()"></div>
+<div id="restoreDbFromBackupPanel" hidden class="container w-50 h-75 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+    <nav id="nav" class="navbar bg-light navbar-light w-100">
+        <h1>Restore From Database Backup</h1>
+        <input class="btn-close" id="closeRestoreDbPanelBtn" type="button" onclick="closePanels()"/>
+    </nav>
+    <div class="col" id="dbBackupNamesContainer">
+        <h2>Available Backups</h2>
+        <div id="dbBackupNamesList"></div>
+    </div>
+    <input type="button" class="btn btn-primary" value="Restore Selected Backup" onclick="restoreBackup()">
 </div>
 {% endblock %}

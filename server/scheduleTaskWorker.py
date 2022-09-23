@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '''
 import datetime
+import sys
 import time
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -22,6 +23,7 @@ from backup import backUpDatabase
 from db import getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
 from dbSchema import Settings
 
+import logging
 
 def setUpScheduler():
 	'''
@@ -30,13 +32,14 @@ def setUpScheduler():
 	'''
 	scheduler = BackgroundScheduler()
 	scheduler.start()
-	#scheduler.add_job(findAndRunScheduledTasks, 'interval', seconds=60)
-	scheduler.add_job(findAndRunScheduledTasks, 'date')
+	logging.info("Created background scheduler")
+	scheduler.add_job(findAndRunScheduledTasks, 'interval', seconds=60)
+	logging.info("Added job to run database scheduled tasks")
 	return scheduler
 
 
 def findAndRunScheduledTasks():
-	print("Looking for scheduled tasks")
+	logging.debug("Running findAndRunScheduledTasks")
 	session = getDbSessionWithoutApplicationContext()
 	settings = session.query(Settings).first()
 	currentTimeFull = datetime.datetime.now().time()
@@ -44,22 +47,25 @@ def findAndRunScheduledTasks():
 
 	# since some tasks require the DB to be locked, this function compiles a list of tasks to run
 	# and then runs them
-	runDbBackup = False
+	functionsToBeRun = []
 
 	# DB backup
 	if settings.dbBackupAtTime == currentTimeTrunc:
-		runDbBackup = True
+		logging.info("Database backup needs to be run")
+		functionsToBeRun.append(backUpDatabase)
 
 	# other tasks go here...
 
 	closeDbSessionWithoutApplicationContext(session)
 
-	# npw start running tasks
-	if runDbBackup:
-		backUpDatabase()
+	# now start running tasks
+	for i in range(len(functionsToBeRun)):
+		functionsToBeRun[i]()
 
 
 def main():
+	logging.basicConfig(filename="scheduleTaskWorker.log", level=logging.DEBUG, format='%(asctime)s %(message)s')
+	logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 	scheduler = setUpScheduler()
 
 	while(True):

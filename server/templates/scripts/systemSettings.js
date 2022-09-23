@@ -38,45 +38,72 @@ function saveSettings(){
 }
 
 function initiateBackup(){
-    $("#initiateBackupBtn").prop("enabled", false).val("");
+    $("#initiateBackupBtn").prop("enabled", false).val("Backup In Progress");
     $.ajax({
         url: "{{ url_for('backup.startBackupCommand')}}",
         type: "POST",
         success: function(){
-            $("#initiateBackupBtn").val("Backup In Progress...");
-            setTimeout(onBackupButtonUpdateTimer, 1000);
+            // the delays are to allow the button to be read by the user before it changes
+            setTimeout(function(){$("#initiateBackupBtn").val("Backup Successful");}, 3000);
+            setTimeout(function(){$("#initiateBackupBtn").prop("disabled", false).val("Initiate Backup Now");}, 6000);
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
-            $("#initiateBackupBtn").prop("enabled", false).val("An Error Occured");
-            setTimeout(function(){$("#initiateBackupBtn").prop("enabled", true).val("Initiate Backup Now");}, 5000);
-        }
-    });
-}
-
-function onBackupButtonUpdateTimer(){
-    $.ajax({
-        url: "{{ url_for('backup.getBackupStatus') }}",
-        type: "GET",
-        success:function(statusJson){
-            // if not finished, update status, otherwise reset button
-            if(!statusJson.isDone){
-                $("#initiateBackupBtn").val(statusJson.status)
-                setTimeout(onBackupButtonUpdateTimer, 1000);
-            }
-            else
-            {
-                $("#initiateBackupBtn").val("Backup Successful");
-                setTimeout(function(){$("#initiateBackupBtn").prop("enabled", true).val("Initiate Backup Now");}, 5000);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText);
-            $("#initiateBackupBtn").prop("enabled", false).val("An Error Occured");
-            setTimeout(function(){$("#initiateBackupBtn").prop("enabled", true).val("Initiate Backup Now");}, 5000);
+            $("#initiateBackupBtn").val(jqXHR.responseText);
+            setTimeout(function(){$("#initiateBackupBtn").prop("disabled", false).val("Initiate Backup Now");}, 5000);
         }
     });
 }
 
 function showRestoreBackupPanel(){
+    $("#greyout").prop("hidden", false);
+    $("#restoreDbFromBackupPanel").prop("hidden", false);
+    $("#dbBackupNamesList").empty();
+
+    $.ajax({
+        url: "{{ url_for('backup.getAvailableBackupNames') }}",
+        type: "GET",
+        datatype: "JSON",
+        success: function(namesList){
+            for(var i = 0; i < namesList.length; i++){
+                var radioButton = $("<input type='radio' name='backupNameOption' class='form-check-input'>");
+                radioButton.prop("value", namesList[i]);
+                var label = $("<label class='form-check-label'>").html(namesList[i]);
+                var containingDiv = $("<div class='form-check'>");
+                containingDiv.append(radioButton);
+                containingDiv.append(label);
+                $("#dbBackupNamesList").append(containingDiv);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#initiateBackupBtn").val(jqXHR.responseText);
+            setTimeout(function(){$("#initiateBackupBtn").prop("disabled", false).val("Initiate Backup Now");}, 5000);
+        }
+    });
+}
+
+function closePanels(){
+    $("#greyout").prop("hidden", true);
+    $("#restoreDbFromBackupPanel").prop("hidden", true);
+}
+
+function restoreBackup(){
+    var backupName = $("input[name='backupNameOption']:checked").val();
+    if(confirm("Restore the Database from " + backupName + "?")){
+        $.ajax({
+            url: "{{ url_for('backup.restoreDbFromBackup') }}",
+            type: "POST",
+            data: JSON.stringify({"backupFileName": backupName}),
+            contentType: "application/json",
+            datatype: "JSON",
+            success: function(){
+                alert("Database restored");
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR.responseText);
+                alert("Database Restoration Failed");
+            }
+        });
+    }
 }

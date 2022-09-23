@@ -27,62 +27,68 @@ import db
 from stockManagement import updateNewStockWithNewProduct
 from auth import login_required, admin_access_required,create_access_required,edit_access_required
 from dbSchema import ProductType, StockItem, User, Settings
-from db import getDbSession, dbLock, dbPath, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
+from db import getDbSession, dbLock, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext, close_db
 from sqlalchemy import select, or_, func
 import decimal
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
 from filelock import Timeout, FileLock
 from datetime import datetime
-from shutil import copy2
-from paths import dbBackupStatusFilePath, dbBackupDirPath
+from shutil import copy
+from paths import dbBackupStatusFilePath, dbBackupDirPath, dbPath
 
 bp = Blueprint('backup', __name__)
 
 @bp.route("/initiateBackup", methods=("POST",))
 @admin_access_required
 def startBackupCommand():
-	threading.Thread(target=backUpDatabase).start()
-	return make_response("Backup started", 200)
+	close_db()
+	statusMessage, backupSucceeded = backUpDatabase()
+	if backupSucceeded:
+		return make_response(statusMessage, 200)
+	else:
+		return make_response(statusMessage, 500)
 
 
-@bp.route("/getBackupStatus")
+@bp.route("/getAvailableBackupNames")
 @admin_access_required
-def getBackupStatus():
-	attempts = 5
-	status = {"isDone": False}
-	while (attempts > 0):
-		try:
-			f = open(dbBackupStatusFilePath, 'r')
-			status["statusMessage"] = f.readline()
-			f.close()
-			if status["statusMessage"] == "Backup Complete":
-				status["isDone"] = True
-			break
-		except IOError:
-			time.sleep(1)
-			attempts -= 1
+def getAvailableBackupNames():
+	backupNames = sorted(os.listdir(dbBackupDirPath))
+	return make_response(jsonify(backupNames), 200)
 
-	return make_response(status, 200)
+
+@bp.route("/restoreDatabaseFromBackup", methods=("POST",))
+@admin_access_required
+def restoreDbFromBackup():
+	close_db() # necessary to allow DB lock to be obtained
+	error = None
+	try:
+		dbLock.acquire(timeout=10)
+		if 'backupFileName' not in request.json:
+			error = "No backup file name provided"
+		else:
+			backupFilePath = os.path.join(dbBackupDirPath, request.json.get("backupFileName"))
+			if os.path.exists(dbPath):
+				os.remove(dbPath)
+			if not copy(backupFilePath, dbPath):
+				error = "Failed to restore database"
+	except Timeout:
+		error = "Database is Locked"
+	except IOError:
+		error = "IO Error"
+	finally:
+		dbLock.release()
+
+	if error:
+		return make_response(error, 500)
+	else:
+		return make_response("Database Restored", 200)
 
 
 def backUpDatabase():
-	def updateStatus(StatusString):
-		''' Simple function to write status updates to a file '''
-		attempts = 5
-		while(attempts > 0):
-			try:
-				f = open(dbBackupStatusFilePath, 'w')
-				f.write(StatusString)
-				f.close()
-				break
-			except:
-				time.sleep(1)
-				attempts -= 1
 	'''
 	Moves each existing backup up one number, and then copies the existing database to the newly cleared position.
 	'''
-	updateStatus("Preparing Backup")
 	backupFileNames = []
 	dbSession = getDbSessionWithoutApplicationContext()
 	backupCount = dbSession.query(Settings.dbNumberOfBackups).first()[0]
@@ -105,18 +111,22 @@ def backUpDatabase():
 
 	dbLock.acquire(timeout=10)
 	try:
-		updateStatus("Copying")
 		now = datetime.now()
-		filename = f"inventory_tracker_db_backup_{now.year}-{now.month:0>2}-{now.day:0>2}_{now.hour:0>2}:{now.minute:0>2}:{now.second:0>2}.sqlite"
+		filename = f"db_backup_{now.year}-{now.month:0>2}-{now.day:0>2}_{now.hour:0>2}:{now.minute:0>2}:{now.second:0>2}.sqlite"
 		backupFilePath = os.path.join(dbBackupDirPath, filename)
-		if copy2(dbPath, backupFilePath):
-			updateStatus("Backup Complete")
+		if copy(dbPath, backupFilePath):
+			status = "Backup Complete"
+			backupSucceeded = True
 	except Timeout as e:
-		updateStatus("Backup Failed")
+		status = "Backup Failed - Database is locked"
+		backupSucceeded = False
+		print(e)
 	except IOError as e:
-		updateStatus("Backup Failed")
+		status = "Backup Failed - IO Error"
+		backupSucceeded = False
+		print(e)
 	finally:
 		dbLock.release()
 
-
+	return status, backupSucceeded
 
