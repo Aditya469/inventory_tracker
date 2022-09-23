@@ -25,10 +25,39 @@ limitations under the License.
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
-    <div class="row">
+    <input type="hidden" id="settingsId">
+    <div class="row ">
         <div class="col-sm-12 col-md-6 offset-md-3" id="backupSettings">
-
+            <h1>Database Backup</h1>
+            <label class="col-6 form-check-label" for="dbMakeBackups">Make Automatic Backups</label>
+            <input class="col-6 form-check-input align-self-start" id="dbMakeBackups" type="checkbox" onchange="saveSettings()">
+            <div class="row co-12">
+                <label class="col-6" for="dbBackupAtTime">Nightly Backup Time</label>
+                <div class="col-auto">
+                    <input class="form-control align-self-start" id="dbBackupAtTime" type="time" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-6" for="dbNumberOfBackups">Number Of Backups To Keep</label>
+                <div class="col-3">
+                    <input class="form-control align-self-start" id="dbNumberOfBackups" type="number" onchange="saveSettings()">
+                </div>
+            </div>
+            <input id="initiateBackupBtn" type="button" class="col-9 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
+            <input id="restoreBackupBtn" type="button" class="col-9 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup...">
         </div>
     </div>
+</div>
+<div id="greyout" hidden class="position-fixed row top-0 start-0 vw-100 vh-100" onclick="closePanels()"></div>
+<div id="restoreDbFromBackupPanel" hidden class="container w-50 h-75 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+    <nav id="nav" class="navbar bg-light navbar-light w-100">
+        <h1>Restore From Database Backup</h1>
+        <input class="btn-close" id="closeRestoreDbPanelBtn" type="button" onclick="closePanels()"/>
+    </nav>
+    <div class="col" id="dbBackupNamesContainer">
+        <h2>Available Backups</h2>
+        <div id="dbBackupNamesList"></div>
+    </div>
+    <input type="button" class="btn btn-primary" value="Restore Selected Backup" onclick="restoreBackup()">
 </div>
 {% endblock %}

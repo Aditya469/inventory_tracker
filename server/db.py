@@ -13,11 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
-from decimal import getcontext
+
 
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
+from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 
@@ -28,10 +29,14 @@ from sqlalchemy.sql import func
 
 from dbSchema import Base, User, ProductType, StockItem, Settings, ItemId, Bin
 
+from filelock import FileLock, Timeout
+from paths import dbPath, dbLockFilePath
+
+dbLock = FileLock(dbLockFilePath, timeout=1)
 
 def initApp(app):
 	# engine = create_engine('postgresql://server:server@localhost:5432/inventorydb')
-	engine = create_engine('sqlite:///inventoryDB.sqlite', echo=True)  # temporary for dev use
+	engine = create_engine(f'sqlite:///{dbPath}', echo=True)  # temporary for dev use
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine, future=True)
@@ -66,9 +71,13 @@ def initApp(app):
 
 def getDbSession():
 	if 'dbSession' not in g:
-		engine = create_engine('sqlite:///inventoryDB.sqlite', echo=False)
-		Session = sessionmaker(bind=engine)
-		g.dbSession = Session()
+		try:
+			dbLock.acquire()
+			engine = create_engine(f'sqlite:///{dbPath}', echo=False)
+			Session = sessionmaker(bind=engine)
+			g.dbSession = Session()
+		except Timeout:
+			abort("Database is locked", 500)
 
 	return g.dbSession
 
@@ -76,6 +85,18 @@ def getDbSession():
 # TODO: test that this works
 def close_db(e=None):
 	db = g.pop('dbSession', None)
-
 	if db is not None:
 		db.close()
+	dbLock.release()
+
+
+def getDbSessionWithoutApplicationContext():
+	dbLock.acquire()
+	engine = create_engine(f'sqlite:///{dbPath}', echo=False)
+	Session = sessionmaker(bind=engine)
+	return Session()
+
+
+def closeDbSessionWithoutApplicationContext(Session):
+	Session.close()
+	dbLock.release()
