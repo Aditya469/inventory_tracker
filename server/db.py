@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 '''
-
+import sqlite3
 
 import click
 from flask import current_app, g
@@ -86,8 +86,12 @@ def getDbSession():
 def close_db(e=None):
 	db = g.pop('dbSession', None)
 	if db is not None:
-		db.close()
-	dbLock.release()
+		try:
+			db.close()
+		except sqlite3.ProgrammingError as e:
+			print(e)
+		finally:
+			dbLock.release()
 
 
 def getDbSessionWithoutApplicationContext():
