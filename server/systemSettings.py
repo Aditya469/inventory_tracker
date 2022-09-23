@@ -96,6 +96,8 @@ def saveSystemSettings():
         settings.dbBackupAtTime = datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
     if "dbMakeBackups" in request.json:
         settings.dbMakeBackups = request.json.get("dbMakeBackups")
+    if "stockLevelReorderCheckAtTime" in request.json:
+        settings.stockLevelReorderCheckAtTime = datetime.strptime(request.json.get("stockLevelReorderCheckAtTime"), "%H:%M").time()
 
     dbSession.commit()
 

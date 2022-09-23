@@ -13,6 +13,7 @@ function loadSettings(){
             $("#dbMakeBackups").prop("checked", settings.dbMakeBackups);
             $("#dbBackupAtTime").val(settings.dbBackupAtTime);
             $("#dbNumberOfBackups").val(settings.dbNumberOfBackups);
+            $("#stockLevelReorderCheckAtTime").val(settings.stockLevelReorderCheckAtTime);
         }
     });
 }
@@ -23,6 +24,7 @@ function saveSettings(){
     newSettings.dbMakeBackups = $("#dbMakeBackups").is(":checked");
     newSettings.dbBackupAtTime = $("#dbBackupAtTime").val();
     newSettings.dbNumberOfBackups = $("#dbNumberOfBackups").val();
+    newSettings.stockLevelReorderCheckAtTime = $("#stockLevelReorderCheckAtTime").val()
 
     $.ajax({
         url: "{{ url_for('systemSettings.saveSystemSettings')}}",

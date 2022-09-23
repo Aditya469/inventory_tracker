@@ -22,6 +22,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from backup import backUpDatabase
 from db import getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
 from dbSchema import Settings
+from productManagement import findAndMarkProductsToReorder
 
 import logging
 
@@ -53,6 +54,10 @@ def findAndRunScheduledTasks():
 	if settings.dbBackupAtTime == currentTimeTrunc:
 		logging.info("Database backup needs to be run")
 		functionsToBeRun.append(backUpDatabase)
+
+	if settings.stockLevelReorderCheckAtTime == currentTimeTrunc:
+		logging.info("Database stock level reorder check needs to be run")
+		functionsToBeRun.append(findAndMarkProductsToReorder)
 
 	# other tasks go here...
 

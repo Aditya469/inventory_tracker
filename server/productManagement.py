@@ -20,9 +20,9 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 from stockManagement import updateNewStockWithNewProduct
-from .auth import login_required, admin_access_required,create_access_required,edit_access_required
+from auth import login_required, admin_access_required,create_access_required,edit_access_required
 from dbSchema import ProductType, StockItem, User
-from db import getDbSession
+from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
 from sqlalchemy import select, or_, func
 import decimal
 from emailNotification import sendEmail
@@ -182,43 +182,39 @@ def updateProductFromRequestForm(session, product):
 
 	return None, product
 
-
-@bp.route("/startReorderCheck")
-def startReorderCheck():
-	findAndMarkProductsToReorder()
-	return make_response("", 200)
-
-
 '''
 Function to run periodically which finds products that are below the 
 reorder level and marks them appropriately in the database
 '''
 def findAndMarkProductsToReorder():
-	dbSession = getDbSession()
+	dbSession = getDbSessionWithoutApplicationContext()
+	try:
 
-	productList = dbSession.query(ProductType)\
-		.filter(ProductType.reorderLevel != None) \
-		.filter(ProductType.reorderLevel != "None") \
-		.all()
-	reorderNotificationIds = []
+		productList = dbSession.query(ProductType)\
+			.filter(ProductType.reorderLevel != None) \
+			.filter(ProductType.reorderLevel != "None") \
+			.all()
+		reorderNotificationIds = []
 
-	for product in productList:
-		stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
-			.filter(StockItem.productType == product.id)\
-			.first()[0]
+		for product in productList:
+			stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
+				.filter(StockItem.productType == product.id)\
+				.first()[0]
 
-		if stockQty is None or stockQty <= product.reorderLevel:
-			if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
-				product.needsReordering = True
-				if product.sendStockNotifications:
-					reorderNotificationIds.append(product.id)
-		else:
-			product.needsReordering = False
+			if stockQty is None or stockQty <= product.reorderLevel:
+				if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
+					product.needsReordering = True
+					if product.sendStockNotifications:
+						reorderNotificationIds.append(product.id)
+			else:
+				product.needsReordering = False
 
-	if len(reorderNotificationIds) > 0:
-		emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
-		message = getStockNeedsReorderingMessage(reorderNotificationIds)
-		sendEmail(emailAddressList, "Stock needs reordering", message)
+		if len(reorderNotificationIds) > 0:
+			emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
+			message = getStockNeedsReorderingMessage(reorderNotificationIds)
+			sendEmail(emailAddressList, "Stock needs reordering", message)
 
-	dbSession.commit()
+		dbSession.commit()
+	finally:
+		closeDbSessionWithoutApplicationContext(dbSession)
 

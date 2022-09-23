@@ -310,6 +310,7 @@ class Settings(Base):
 	dbNumberOfBackups = Column(Integer, default=5)
 	dbBackupAtTime = Column(Time(timezone=True))
 	dbMakeBackups = Column(Boolean, default=True)
+	stockLevelReorderCheckAtTime = Column(Time(timezone=True))
 
 	def toDict(self):
 		dataDict = {
@@ -343,6 +344,12 @@ class Settings(Base):
 			dataDict["dbBackupAtTime"] = None
 		else:
 			dataDict["dbBackupAtTime"] = self.dbBackupAtTime.strftime("%H:%M")
+
+		if self.stockLevelReorderCheckAtTime is None:
+			dataDict["stockLevelReorderCheckAtTime"] = None
+		else:
+			dataDict["stockLevelReorderCheckAtTime"] = self.stockLevelReorderCheckAtTime.strftime("%H:%M")
+
 
 		return dataDict
 

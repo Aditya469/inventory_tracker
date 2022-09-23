@@ -28,7 +28,7 @@ limitations under the License.
     <input type="hidden" id="settingsId">
     <div class="row ">
         <div class="col-sm-12 col-md-6 offset-md-3" id="backupSettings">
-            <h1>Database Backup</h1>
+            <h2>Database Backup</h2>
             <label class="col-6 form-check-label" for="dbMakeBackups">Make Automatic Backups</label>
             <input class="col-6 form-check-input align-self-start" id="dbMakeBackups" type="checkbox" onchange="saveSettings()">
             <div class="row co-12">
@@ -45,6 +45,15 @@ limitations under the License.
             </div>
             <input id="initiateBackupBtn" type="button" class="col-9 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
             <input id="restoreBackupBtn" type="button" class="col-9 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup...">
+        </div>
+        <div class="col-sm-12 col-md-6 offset-md-3" id="stockAutomaticFunctionsSettings">
+            <h2>Stock Management Functions</h2>
+            <div class="row co-12">
+                <label class="col-6" for="stockLevelReorderCheckAtTime">Time to Check For Stock Needing Reorder</label>
+                <div class="col-auto">
+                    <input class="form-control align-self-start" id="stockLevelReorderCheckAtTime" type="time" onchange="saveSettings()">
+                </div>
+            </div>
         </div>
     </div>
 </div>
