@@ -231,13 +231,16 @@ function openProductDetailsPanel(prodId){
                     $("#sendStockNotifications").prop("checked", false);
                 if(responseData.needsReordering){
                     $("#newStockOrdered").prop("hidden", false);
+                    $("#newStockOrderedLabel").prop("hidden", false);
                     if(responseData.stockReordered)
                         $("#newStockOrdered").prop("checked",true);
                     else
                         $("#newStockOrdered").prop("checked",false);
                 }
-                else
+                else{
                     $("#newStockOrdered").prop("hidden", true);
+                    $("#newStockOrderedLabel").prop("hidden", true);
+                }
                 $("#addedTimestamp").html(responseData.addedTimestamp);
             },
             error: function(jqXHR, textStatus, errorThrown){
@@ -355,5 +358,6 @@ function closeProductDetailsPanel(){
     $("#addedTimestamp").html("");
     $("#greyout").prop("hidden", true);
     $("#editProductPanel").prop("hidden", true);
-    $("#markReorderedButton").prop("hidden", true);
+    $("#newStockOrderedLabel").prop("hidden", true);
+    $("#newStockOrdered").prop("hidden", true);
 }
