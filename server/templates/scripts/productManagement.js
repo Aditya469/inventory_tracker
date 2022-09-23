@@ -47,9 +47,9 @@ function updateProductsTable(){
                 if(responseData[i].needsReordering == true)
                 {
                     if(responseData[i].stockReordered == true)
-                        tr.addClass("table-info");
+                        tr.addClass("productOnReorder");
                     else
-                        tr.addClass("table-warning");
+                        tr.addClass("productNeedsReorder");
                 }
                 tr.append($("<td>" + responseData[i].productName + "</td>"));
                 tr.append($("<td>" + responseData[i].barcode + "</td>"));
@@ -125,10 +125,6 @@ function updateNewStockTable(){
         }
     });
 }
-
-//function openProductEditPanel(ProductId){
-//    console.log("Open panel for product id " + ProductId);
-//}
 
 function onNewStockSelectCheckboxClicked(){
     if($(".newStockSelectCheckbox:checked").length == $(".newStockSelectCheckbox").length){
