@@ -57,3 +57,25 @@ def getStockNeedsReorderingMessage(productIdList):
     message += f"\nThis is an automated email. This inbox is not monitored"
 
     return message
+
+
+def getDatabaseBackupSuccessNotificationMessage(newDatabaseBackupName):
+    message = f"Hi, \n\n" \
+        f"This is a notification regarding the database backup of the inventory tracking system.\n\n" \
+        f"The database has been backed up successfully. The new backup name is:\n\n\t{newDatabaseBackupName}\n\n" \
+        f"This is an automated email. This inbox is not monitored"
+
+    return message
+
+
+def getDatabaseBackupFailureNotificationMessage(error):
+    message = f"ATTENTION REQUIRED, \n\n" \
+        f"This is a notification regarding the database backup of the inventory tracking system.\n\n" \
+        f"The backup of the database failed.\n"
+
+    if error:
+        message += f"The error message is {error}\n"
+
+    f"\nThis is an automated email. This inbox is not monitored"
+
+    return message

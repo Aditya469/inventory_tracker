@@ -31,7 +31,7 @@ from db import getDbSession, dbLock, getDbSessionWithoutApplicationContext, clos
 from sqlalchemy import select, or_, func
 import decimal
 from emailNotification import sendEmail
-from messages import getStockNeedsReorderingMessage
+from messages import getDatabaseBackupSuccessNotificationMessage, getDatabaseBackupFailureNotificationMessage
 from filelock import Timeout, FileLock
 from datetime import datetime
 from shutil import copy
@@ -42,7 +42,7 @@ bp = Blueprint('backup', __name__)
 @bp.route("/initiateBackup", methods=("POST",))
 @admin_access_required
 def startBackupCommand():
-	close_db()
+	close_db() # necessary to allow DB lock to be obtained
 	statusMessage, backupSucceeded = backUpDatabase()
 	if backupSucceeded:
 		return make_response(statusMessage, 200)
@@ -112,8 +112,8 @@ def backUpDatabase():
 	dbLock.acquire(timeout=10)
 	try:
 		now = datetime.now()
-		filename = f"db_backup_{now.year}-{now.month:0>2}-{now.day:0>2}_{now.hour:0>2}:{now.minute:0>2}:{now.second:0>2}.sqlite"
-		backupFilePath = os.path.join(dbBackupDirPath, filename)
+		newBackupFilename = f"db_backup_{now.year}-{now.month:0>2}-{now.day:0>2}_{now.hour:0>2}:{now.minute:0>2}:{now.second:0>2}.sqlite"
+		backupFilePath = os.path.join(dbBackupDirPath, newBackupFilename)
 		if copy(dbPath, backupFilePath):
 			status = "Backup Complete"
 			backupSucceeded = True
@@ -127,6 +127,22 @@ def backUpDatabase():
 		print(e)
 	finally:
 		dbLock.release()
+
+	# check if an email should be sent
+	dbSession = getDbSessionWithoutApplicationContext()
+	settings = dbSession.query(Settings).first()
+	if settings.sendEmails:
+		emailAddressList = [row[0] for row in
+							dbSession.query(User.emailAddress)
+								.filter(User.receiveDbStatusNotifications == True)
+								.all()
+							]
+		if backupSucceeded:
+			message = getDatabaseBackupSuccessNotificationMessage(newBackupFilename)
+			sendEmail(emailAddressList, "Inventory tracker database backup succeeded", message)
+		else:
+			message = getDatabaseBackupFailureNotificationMessage(status)
+			sendEmail(emailAddressList, "ATTENTION REQUIRED. Inventory Tracker database backup failed", message)
 
 	return status, backupSucceeded
 

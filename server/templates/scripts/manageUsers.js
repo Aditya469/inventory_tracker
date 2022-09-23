@@ -30,7 +30,8 @@ function updateUsersTable(){
             var headerRow = $("<tr>");
             headerRow.append($("<th>Username</th>"));
             headerRow.append($("<th>Access Level</th>"));
-            headerRow.append($("<th>Receives Notifications</th>"));
+            headerRow.append($("<th>Receives Stock Notifications</th>"));
+            headerRow.append($("<th>Receives Database Status Notifications</th>"));
             headerRow.append($("<th>Email Address</th>"));
             headerRow.append($("<th>Reset Password</th>"));
             headerRow.append($("<th>Delete User</th>"));
@@ -79,6 +80,14 @@ function updateUsersTable(){
 
                 row.append($("<td class='text-center'>").append(receiveStockNotificationsCheckbox))
 
+                var receiveDbStatusNotificationsCheckbox = $("<input type='checkbox' class='receiveDbStatusNotificationsCheckbox'>");
+                receiveDbStatusNotificationsCheckbox.on("change", function(){onUserConfigChanged(this);});
+                if(responseData[i]['receiveDbStatusNotifications'])
+                    receiveDbStatusNotificationsCheckbox.prop("checked", true);
+                else
+                    receiveDbStatusNotificationsCheckbox.prop("checked", false);
+
+                row.append($("<td class='text-center'>").append(receiveDbStatusNotificationsCheckbox))
 
                 var emailAddressInput = $("<input type='text' class='emailAddress'>");
                 emailAddressInput.on("change", function(){onUserConfigChanged(this);});
@@ -122,6 +131,7 @@ function addNewUser(){
     formData.append("accessLevel", $("#accessLevel").val());
     formData.append("emailAddress", $("#emailAddress").val());
     formData.append("receiveStockNotifications", $("#receiveStockNotifications").is(":checked"));
+    formData.append("receiveDbStatusNotifications", $("#receiveDbStatusNotifications").is(":checked"));
 
     $.ajax({
         url: "{{ url_for("users.addUser") }}",
@@ -138,6 +148,7 @@ function addNewUser(){
             $("#accessLevel").val("0");
             $("#emailAddress").val("");
             $("#receiveStockNotifications").prop("checked", false);
+            $("#receiveDbStatusNotifications").prop("checked", false);
             $("#newUserFeedback").html("New User " + $("#newUsername").val() + " added");
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -200,6 +211,7 @@ function onUserConfigChanged(element){
     requestJson["accessLevel"] = row.find(".accessLevelSelector").val();
     requestJson["emailAddress"] = row.find(".emailAddress").val();
     requestJson["receiveStockNotifications"] = row.find(".receiveStockNotificationsCheckbox").is(":checked");
+    requestJson["receiveDbStatusNotifications"] = row.find(".receiveDbStatusNotificationsCheckbox").is(":checked");
 
     $.ajax({
         url: "{{ url_for("users.updateUser") }}",

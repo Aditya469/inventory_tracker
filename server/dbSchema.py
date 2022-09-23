@@ -268,7 +268,7 @@ class User(Base):
 	accessLevel = Column(Integer, default=0)  # 0 = read-only, 1 = edit, 2 = create, 3 = admin
 	emailAddress = Column(Text)
 	receiveStockNotifications = Column(Boolean, default=False)
-	receiveDbBackupNotifications = Column(Boolean, default=False)
+	receiveDbStatusNotifications = Column(Boolean, default=False)
 
 	def toDict(self):
 		return{
@@ -277,7 +277,7 @@ class User(Base):
 			"accessLevel": self.accessLevel,
 			"emailAddress": self.emailAddress,
 			"receiveStockNotifications": self.receiveStockNotifications,
-			"receiveDbBackupNotifications": self.receiveDbBackupNotifications
+			"receiveDbStatusNotifications": self.receiveDbStatusNotifications
 		}
 
 
