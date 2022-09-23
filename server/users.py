@@ -38,16 +38,12 @@ def manageUsers():
 @admin_access_required
 def getUsers():
     dbSession = getDbSession()
-    userData = dbSession.query(User).order_by(User.username.asc()).filter(User.username == "admin").all()
-    userData += dbSession.query(User).order_by(User.username.asc()).filter(User.username != "admin").all()
-    userDataList = [{
-            "username": user.username,
-            "emailAddress": user.emailAddress,
-            "accessLevel": user.accessLevel,
-            "receiveStockNotifications": user.receiveStockNotifications
-        }
-        for user in userData]
-    return make_response(jsonify(userDataList), 200)
+    users = dbSession.query(User).order_by(User.username.asc()).filter(User.username == "admin").all()
+    users += dbSession.query(User).order_by(User.username.asc()).filter(User.username != "admin").all()
+    userList = [user.toDict() for user in users]
+    for i in range(len(userList)):
+        userList[i].pop("passwordHash")
+    return make_response(jsonify(userList), 200)
 
 
 @bp.route("/addUser", methods=("POST",))
@@ -63,7 +59,8 @@ def addUser():
         passwordHash=generate_password_hash(request.form['newPassword']),
         accessLevel=request.form["accessLevel"],
         emailAddress=request.form["emailAddress"],
-        receiveStockNotifications=request.form["receiveStockNotifications"] == "true"
+        receiveStockNotifications=request.form["receiveStockNotifications"] == "true",
+        receiveDbStatusNotifications=request.form["receiveDbStatusNotifications"] == "true"
     )
 
     dbSession.add(newUser)
@@ -126,7 +123,9 @@ def updateUser():
     user = dbSession.query(User).filter(User.username == request.json["username"]).first()
     user.accessLevel = request.json["accessLevel"]
     user.receiveStockNotifications = request.json["receiveStockNotifications"]
+    user.receiveDbStatusNotifications = request.json["receiveDbStatusNotifications"]
     user.emailAddress = request.json["emailAddress"]
+
 
     dbSession.commit()
 
