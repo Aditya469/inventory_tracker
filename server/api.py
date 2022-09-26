@@ -220,6 +220,9 @@ def processAddStockRequest():
 				stockItem.price = productType.expectedPrice
 	except Exception as e:
 		print(e)
+		# a positive response is returned even in the case of an error, as the app MUST remove the
+		# request from its list, otherwise it'll just keep coming back
+		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
 
 	dbSession.flush()
