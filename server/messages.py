@@ -79,3 +79,11 @@ def getDatabaseBackupFailureNotificationMessage(error):
     f"\nThis is an automated email. This inbox is not monitored"
 
     return message
+
+
+def getTestEmailMessage():
+    message = "This is a test email from the DigitME2 Inventory Tracking system.\n\n" \
+              "If you're reading this, it worked!\n\n" \
+              "This is an automated email. This inbox is not monitored"
+
+    return message

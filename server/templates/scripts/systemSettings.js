@@ -14,6 +14,12 @@ function loadSettings(){
             $("#dbBackupAtTime").val(settings.dbBackupAtTime);
             $("#dbNumberOfBackups").val(settings.dbNumberOfBackups);
             $("#stockLevelReorderCheckAtTime").val(settings.stockLevelReorderCheckAtTime);
+            $("#sendEmails").prop("checked", settings.sendEmails);
+            $("#emailSmtpServerName").val(settings.emailSmtpServerName);
+            $("#emailSmtpServerPort").val(settings.emailSmtpServerPort);
+            $("#emailAccountName").val(settings.emailAccountName);
+            $("#emailAccountPassword").val(settings.emailAccountPassword);
+            $("#emailSecurityMethod").children("[value=" + settings.emailSecurityMethod + "]").prop("selected",true);
         }
     });
 }
@@ -25,6 +31,12 @@ function saveSettings(){
     newSettings.dbBackupAtTime = $("#dbBackupAtTime").val();
     newSettings.dbNumberOfBackups = $("#dbNumberOfBackups").val();
     newSettings.stockLevelReorderCheckAtTime = $("#stockLevelReorderCheckAtTime").val()
+    newSettings.sendEmails = $("#sendEmails").is(":checked");
+    newSettings.emailSmtpServerName = $("#emailSmtpServerName").val();
+    newSettings.emailSmtpServerPort = $("#emailSmtpServerPort").val();
+    newSettings.emailAccountName = $("#emailAccountName").val();
+    newSettings.emailAccountPassword = $("#emailAccountPassword").val();
+    newSettings.emailSecurityMethod = $("#emailSecurityMethod").val();
 
     $.ajax({
         url: "{{ url_for('systemSettings.saveSystemSettings')}}",
@@ -108,4 +120,21 @@ function restoreBackup(){
             }
         });
     }
+}
+
+function sendTestEmail(){
+    $.ajax({
+        url: "{{ url_for('systemSettings.sendTestEmail') }}",
+        type: "POST",
+        data: JSON.stringify({"testEmailRecipientAddress": $("#testEmailRecipientAddress").val()}),
+        contentType: "application/json",
+        datatype: "JSON",
+        success: function(){
+            $("#sendTestEmailButton").val("Test Email Sent").prop("disabled", true);
+            setTimeout(function(){ $("#sendTestEmailButton").val("Send Test Email").prop("disabled", false); }, 5000)
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+        }
+    });
 }

@@ -23,6 +23,8 @@ from werkzeug.utils import secure_filename
 from auth import login_required, admin_access_required
 from db import getDbSession
 from dbSchema import Settings
+from messages import getTestEmailMessage
+from emailNotification import sendEmail
 
 bp = Blueprint('systemSettings', __name__)
 
@@ -93,12 +95,23 @@ def saveSystemSettings():
     if "dbNumberOfBackups" in request.json:
         settings.dbNumberOfBackups = int(request.json.get("dbNumberOfBackups"))
     if "dbBackupAtTime" in request.json:
-        settings.dbBackupAtTime = datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
+        if request.json.get("dbBackupAtTime") != "":
+            settings.dbBackupAtTime = datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
     if "dbMakeBackups" in request.json:
         settings.dbMakeBackups = request.json.get("dbMakeBackups")
     if "stockLevelReorderCheckAtTime" in request.json:
-        settings.stockLevelReorderCheckAtTime = datetime.strptime(request.json.get("stockLevelReorderCheckAtTime"), "%H:%M").time()
+        if request.json.get("stockLevelReorderCheckAtTime") != "":
+            settings.stockLevelReorderCheckAtTime = datetime.strptime(request.json.get("stockLevelReorderCheckAtTime"), "%H:%M").time()
 
     dbSession.commit()
 
     return make_response("Settings updated", 200)
+
+
+@bp.route("/sendTestEmail", methods=("POST",))
+@admin_access_required
+def sendTestEmail():
+    message = getTestEmailMessage()
+    recipient = request.json.get("testEmailRecipientAddress")
+    sendEmail(receiverAddressList=[recipient], subject="DigitME2 Inventory Tracker Test Email", emailBody=message)
+    return make_response("Test Email Sent", 200)
