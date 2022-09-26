@@ -20,10 +20,11 @@ $(document).ready(function(){
 });
 
 function updateProductsTable(){
+    var productSearchParams = {"searchTerm": $("#productsSearchBar").val()};
     $.ajax({
         url: "{{ url_for('productManagement.getProducts') }}",
         type: "GET",
-        data: {"searchTerm": $("#productsSearchBar").val()},
+        data: productSearchParams,
         success: function(responseData){
             var table = $("<table id='productsTable' class='table'>");
             var thead = $("<thead>");
@@ -70,6 +71,11 @@ function updateProductsTable(){
             console.log(jqXHR.responseText);
         }
     });
+
+    var url = new URL("http://" + document.location.host + "{{ url_for('productManagement.getProductsCsvFile') }}");
+    for (key in productSearchParams)
+        url.searchParams.append(key, productSearchParams[key]);
+    $("#productsCsvDownloadLink").prop("href", url);
 }
 
 function updateNewStockTable(){

@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '''
 
+import csv
 import decimal
 import json
 
@@ -26,7 +27,7 @@ from auth import login_required, admin_access_required, create_access_required, 
 from db import getDbSession, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin
-
+from utilities import writeDataToCsvFile
 from sqlalchemy import select, delete, func, or_, update, and_
 
 bp = Blueprint('stockManagement', __name__)
@@ -35,7 +36,6 @@ bp = Blueprint('stockManagement', __name__)
 @bp.route('/stockManagement')
 @login_required
 def getStockPage():
-
     return render_template("stockManagement.html")
 
 
@@ -81,6 +81,11 @@ def getItemStickerSheet(idQty):
 @bp.route('/getStock')
 @login_required
 def getStock():
+    stockList = getStockDataFromRequest()
+    return make_response(jsonify(stockList), 200)
+
+
+def getStockDataFromRequest():
     session = getDbSession()
     stmt = select(
         StockItem.id,
@@ -173,7 +178,7 @@ def getStock():
         rowDict["quantityUnit"] = row[8]
         stockList.append(rowDict)
 
-    return make_response(jsonify(stockList), 200)
+    return stockList
 
 
 @bp.route('/getStockDetails/<stockId>')
@@ -262,21 +267,26 @@ def getStockItemById(stockId):
 @bp.route('/getStockOverview')
 @login_required
 def getStockOverview():
-    overviewType = request.args.get('overviewType', default='totalStock')
-
-    if overviewType == "totalStock":
-        stockList = getStockOverviewTotals()
-    elif overviewType == "availableStock":
-        stockList = getAvailableStockTotals()
-    elif overviewType == "nearExpiry":
-        stockList = getStockNearExpiry()
-    elif overviewType == "expired":
-        stockList = getExpiredStock()
-
+    stockList = getStockOverviewDataFromRequest()
     return make_response(jsonify(stockList), 200)
 
 
-def getStockOverviewTotals():
+def getStockOverviewDataFromRequest():
+    overviewType = request.args.get('overviewType', default='totalStock')
+
+    if overviewType == "totalStock":
+        stockList = getStockOverviewTotalsDataFromRequest()
+    elif overviewType == "availableStock":
+        stockList = getAvailableStockTotalsDataFromRequest()
+    elif overviewType == "nearExpiry":
+        stockList = getStockNearExpiryDataFromRequest()
+    elif overviewType == "expired":
+        stockList = getExpiredStockDataFromRequest()
+
+    return stockList
+
+
+def getStockOverviewTotalsDataFromRequest():
     session = getDbSession()
     if "searchTerm" in request.args:
         searchTerm = "%" + request.args.get("searchTerm") + "%"
@@ -326,7 +336,7 @@ def getStockOverviewTotals():
     return productList
 
 
-def getAvailableStockTotals():
+def getAvailableStockTotalsDataFromRequest():
     session = getDbSession()
     if "searchTerm" in request.args:
         searchTerm = "%" + request.args.get("searchTerm") + "%"
@@ -393,7 +403,7 @@ def getAvailableStockTotals():
     return productList
 
 
-def getStockNearExpiry():
+def getStockNearExpiryDataFromRequest():
     session = getDbSession()
     if "searchTerm" in request.args:
         searchTerm = "%" + request.args.get("searchTerm") + "%"
@@ -454,7 +464,7 @@ def getStockNearExpiry():
     return productList
 
 
-def getExpiredStock():
+def getExpiredStockDataFromRequest():
     session = getDbSession()
     if "searchTerm" in request.args:
         searchTerm = "%" + request.args.get("searchTerm") + "%"
@@ -710,3 +720,41 @@ def deleteNewlyAddedStock():
     session.commit()
 
     return make_response("WIP", 200)
+
+
+@bp.route("/getStockCsvFile", methods=("GET",))
+@login_required
+def getStockCsvFile():
+    stockData = getStockDataFromRequest()
+    headingDictList = [
+        {"heading": "Product Name", "dataName": "productName"},
+        {"heading": "Quantity Remaining", "dataName": "quantityRemaining"},
+        {"heading": "Expires?", "dataName": "canExpire"},
+        {"heading": "Expiry Date", "dataName": "expiryDate"},
+        {"heading": "Cost at Purchase", "dataName": "price"},
+        {"heading": "Barcode", "dataName": "productBarcode"},
+        {"heading": "Identifier", "dataName": "idNumber"},
+    ]
+    csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=stockData)
+
+    return send_file(csvPath, as_attachment=True, download_name="StockInfo.csv", mimetype="text/csv")
+
+
+@bp.route("/getStockOverviewCsvFile", methods=("GET",))
+@login_required
+def getStockOverviewCsvFile():
+    stockOverviewData = getStockOverviewDataFromRequest()
+    headingDictList = [
+        {"heading": "Product Name", "dataName": "productName"},
+        {"heading": "Quantity", "dataName": "stockAmount"},
+        {"heading": "Bulk Item?", "dataName": "isBulk"},
+        {"heading": "Descriptor 1", "dataName": "descriptor1"},
+        {"heading": "Descriptor 2", "dataName": "descriptor2"},
+        {"heading": "Descriptor 3", "dataName": "descriptor3"},
+    ]
+    csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=stockOverviewData)
+
+    return send_file(csvPath, as_attachment=True, download_name="StockOverviewInfo.csv", mimetype="text/csv")
+
+
+

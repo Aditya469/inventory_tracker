@@ -26,12 +26,11 @@ $(document).ready(function(){
 function updateJobsTable(){
     // fetch jobs table data and populate
     var searchTerm = $("#jobSearchBar").val();
+    var jobSearchParams = {"searchTerm": searchTerm};
     $.ajax({
         url: "{{ url_for('jobs.getJobs') }}",
         type: "GET",
-        data: {
-            "searchTerm": searchTerm
-        },
+        data: jobSearchParams,
         success:function(responseData){
             console.log(responseData);
 
@@ -62,6 +61,10 @@ function updateJobsTable(){
             console.log(jqXHR.responseText);
         }
     });
+    var url = new URL("http://" + document.location.host + "{{ url_for('jobs.getJobsCsvFile') }}");
+    for (key in jobSearchParams)
+        url.searchParams.append(key, jobSearchParams[key]);
+    $("#jobsOverviewCsvDownloadLink").prop("href", url);
 }
 
 function updateStockTables(){
@@ -69,10 +72,11 @@ function updateStockTables(){
     var searchTerm = $("#stockSearchBar").val();
 
     // make a bunch of ajax requests and bring all the tables up to date
+    var totalStockParams = { "searchTerm": searchTerm, "overviewType": "totalStock" };
     $.ajax({
         url: "{{ url_for('stockManagement.getStockOverview') }}",
         type: "GET",
-        data: { "searchTerm": searchTerm, "overviewType": "totalStock" },
+        data: totalStockParams,
         success:function(responseData){
             console.log(responseData);
             var table = generateOverviewStockTable(responseData);
@@ -84,10 +88,11 @@ function updateStockTables(){
         }
     });
 
+    var availableStockParams = { "searchTerm": searchTerm, "overviewType": "availableStock" };
     $.ajax({
         url: "{{ url_for('stockManagement.getStockOverview') }}",
         type: "GET",
-        data: { "searchTerm": searchTerm, "overviewType": "availableStock" },
+        data: availableStockParams,
         success:function(responseData){
             console.log(responseData);
             var table = generateOverviewStockTable(responseData);
@@ -99,10 +104,15 @@ function updateStockTables(){
         }
     });
 
+    var expiringStockParams = {
+        "searchTerm": searchTerm,
+        "overviewType": "nearExpiry",
+        "dayCountLimit": $("#stockDaysNearExpiry").val()
+    };
     $.ajax({
         url: "{{ url_for('stockManagement.getStockOverview') }}",
         type: "GET",
-        data: { "searchTerm": searchTerm, "overviewType": "nearExpiry", "dayCountLimit": $("#stockDaysNearExpiry").val() },
+        data: expiringStockParams,
         success:function(responseData){
             console.log(responseData);
             var table = generateOverviewStockTable(responseData);
@@ -114,10 +124,11 @@ function updateStockTables(){
         }
     });
 
+    var expiredStockParams = { "searchTerm": searchTerm, "overviewType": "expired" };
     $.ajax({
         url: "{{ url_for('stockManagement.getStockOverview') }}",
         type: "GET",
-        data: { "searchTerm": searchTerm, "overviewType": "expired" },
+        data: expiredStockParams,
         success:function(responseData){
             console.log(responseData);
             var table = generateOverviewStockTable(responseData);
@@ -128,6 +139,26 @@ function updateStockTables(){
             console.log(jqXHR.responseText);
         }
     });
+
+    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    for (key in totalStockParams)
+        url.searchParams.append(key, totalStockParams[key]);
+    $("#totalStockCsvDownloadLink").prop("href", url);
+
+    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    for (key in availableStockParams)
+        url.searchParams.append(key, availableStockParams[key]);
+    $("#availableStockCsvDownloadLink").prop("href", url);
+
+    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    for (key in expiringStockParams)
+        url.searchParams.append(key, expiringStockParams[key]);
+    $("#oldStockCsvDownloadLink").prop("href", url);
+
+    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    for (key in expiredStockParams)
+        url.searchParams.append(key, expiredStockParams[key]);
+    $("#expiredStockCsvDownloadLink").prop("href", url);
 }
 
 function generateOverviewStockTable(stockData)

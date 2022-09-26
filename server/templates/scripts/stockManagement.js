@@ -65,6 +65,12 @@ function updateStockTable(){
         }
     });
 
+    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockCsvFile') }}");
+    for (key in requestParams){
+        url.searchParams.append(key, requestParams[key]);
+    }
+    $("#stockCsvDownloadLink").prop("href", url);
+
 }
 
 function generateStockTable(stockData){

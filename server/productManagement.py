@@ -15,7 +15,7 @@ limitations under the License.
 '''
 
 from flask import (
-	Blueprint, render_template, request, make_response, jsonify
+	Blueprint, render_template, request, make_response, jsonify, send_file
 )
 from werkzeug.utils import secure_filename
 
@@ -27,6 +27,7 @@ from sqlalchemy import select, or_, func
 import decimal
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
+from utilities import writeDataToCsvFile
 
 bp = Blueprint('productManagement', __name__)
 
@@ -40,6 +41,10 @@ def getProductManagementPage():
 @bp.route('/getProducts')
 @login_required
 def getProducts():
+	productList = getProductsDataFromRequest()
+	return make_response(jsonify(productList), 200)
+
+def getProductsDataFromRequest():
 	session = getDbSession()
 	stmt = select(ProductType).where(ProductType.productName != "undefined product type")
 
@@ -63,7 +68,7 @@ def getProducts():
 	results = session.execute(stmt).scalars().all()
 	productList = [row.toDict() for row in results]
 
-	return make_response(jsonify(productList), 200)
+	return productList
 
 
 @bp.route('/getProduct/<productId>')
@@ -218,3 +223,19 @@ def findAndMarkProductsToReorder():
 	finally:
 		closeDbSessionWithoutApplicationContext(dbSession)
 
+
+@bp.route("/getProductsCsvFile", methods=("GET",))
+@login_required
+def getProductsCsvFile():
+	productData = getProductsDataFromRequest()
+	headingDictList = [
+		{"heading": "Product Name", "dataName": "productName"},
+		{"heading": "Barcode", "dataName": "barcode"},
+		{"heading": "Is Bulk?", "dataName": "tracksAllItemsOfProductType"},
+		{"heading": "Descriptor 1", "dataName": "productDescriptor1"},
+		{"heading": "Descriptor 2", "dataName": "productDescriptor2"},
+		{"heading": "Descriptor 3", "dataName": "productDescriptor3"},
+	]
+	csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=productData)
+
+	return send_file(csvPath, as_attachment=True, download_name="ProductInfo.csv", mimetype="text/csv")

@@ -36,6 +36,7 @@ limitations under the License.
 				<label class="col col-auto" id="jobSearchBarLabel" for="jobSearchBar">Search Term</label>
 				<input class="col" id="jobSearchBar" placeholder="start typing..." oninput="updateJobsTable()">
 			</div>
+			<a href="" id="jobsOverviewCsvDownloadLink">Download this data as a CSV file</a>
 			<div id="jobsTableContainer">
 			</div>
 		</div>
@@ -63,12 +64,15 @@ limitations under the License.
 				</ul>
 				<div id="stockOverviewTableContainer" class="tab-content overflow-auto">
 					<div class="tab-pane fade show active" id="totalStockPanel">
+						<a href="" id="totalStockCsvDownloadLink">Download this data as a CSV file</a>
 						<div id="totalStockTableContainer"></div>
 					</div>
 					<div class="tab-pane fade" id="availableStockPanel">
+						<a href="" id="availableStockCsvDownloadLink">Download this data as a CSV file</a>
 						<div id="availableStockTableContainer"></div>
 					</div>
 					<div class="tab-pane fade" id="oldStockPanel">
+						<a href="" id="oldStockCsvDownloadLink">Download this data as a CSV file</a>
 						<div>
 							<label id="stockDaysNearExpiryLabel" for="stockDaysNearExpiry">Show stock expiring in this many days</label>
 							<input id="stockDaysNearExpiry" type="number" size="2">
@@ -76,6 +80,7 @@ limitations under the License.
 						<div id="oldStockTableContainer"></div>
 					</div>
 					<div class="tab-pane fade" id="expiredStockPanel">
+						<a href="" id="expiredStockCsvDownloadLink">Download this data as a CSV file</a>
 						<div id="expiredStockTableContainer"></div>
 					</div>
 				</div>

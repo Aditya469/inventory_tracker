@@ -19,7 +19,8 @@ import functools
 import logging
 import os
 from flask import (
-	Blueprint, flash, g, redirect, render_template, request, url_for, request, make_response, jsonify,current_app
+	Blueprint, flash, g, redirect, render_template, request, url_for, request, make_response, jsonify, current_app,
+	send_file
 )
 from sqlalchemy import select, func
 from werkzeug.exceptions import abort
@@ -29,6 +30,8 @@ from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord
 import json
 from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
+from utilities import writeDataToCsvFile
+
 bp = Blueprint('jobs', __name__)
 
 
@@ -185,6 +188,11 @@ def generateJobIdQrCodeLabel(QrCodeString, JobName, DbSession):
 @bp.route("/getJobs")
 @login_required
 def getJobs():
+	jobList = getJobsDataFromRequest()
+	return make_response(jsonify(jobList), 200)
+
+
+def getJobsDataFromRequest():
 	session = getDbSession()
 	stmt = select(Job)
 	if "searchTerm" in request.args:
@@ -209,7 +217,7 @@ def getJobs():
 		jobList.append(d)
 
 	session.close()
-	return make_response(jsonify(jobList),  200)
+	return jobList
 
 
 @bp.route("/getJob/<jobId>")
@@ -340,3 +348,17 @@ def deleteAssignedStock():
 
 	return make_response("Items deleted", 200)
 
+
+@bp.route("/getJobsCsvFile", methods=("GET",))
+@login_required
+def getJobsCsvFile():
+    jobsData = getJobsDataFromRequest()
+    headingDictList = [
+        {"heading": "Job Name", "dataName": "jobName"},
+        {"heading": "Created Timestamp", "dataName": "addedTimestamp"},
+        {"heading": "Cumulative Cost", "dataName": "totalCost"},
+
+    ]
+    csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=jobsData)
+
+    return send_file(csvPath, as_attachment=True, download_name="jobsInfo.csv", mimetype="text/csv")
