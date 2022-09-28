@@ -57,7 +57,7 @@ abstract class UpdateableServerDataManager<T> {
                     fetchUpdatedItemList();
             }
         };
-        mTimer.scheduleAtFixedRate(mTimerTask, 60000, 60000);
+        mTimer.scheduleAtFixedRate(mTimerTask, 10000, 10000);
     }
 
     public boolean isInitialised(){

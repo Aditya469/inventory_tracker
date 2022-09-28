@@ -30,8 +30,9 @@ function updateUsersTable(){
             var headerRow = $("<tr>");
             headerRow.append($("<th>Username</th>"));
             headerRow.append($("<th>Access Level</th>"));
-            headerRow.append($("<th>Receives Stock Notifications</th>"));
-            headerRow.append($("<th>Receives Database Status Notifications</th>"));
+            headerRow.append($("<th>ID Card</th>"));
+            headerRow.append($("<th>Stock Alerts</th>"));
+            headerRow.append($("<th>Database Alerts</th>"));
             headerRow.append($("<th>Email Address</th>"));
             headerRow.append($("<th>Reset Password</th>"));
             headerRow.append($("<th>Delete User</th>"));
@@ -70,6 +71,15 @@ function updateUsersTable(){
                     accessLevelSel.append($("<option value='3'>Admin</option>"));
 
                 row.append($("<td>").append(accessLevelSel));
+
+                if(responseData[i].username != "admin") // special case
+                {
+                    var idCardLink = $("<a>Download ID card</>")
+                    idCardLink.prop("href", "{{ url_for("users.getUserIdCard", username='')}}/" + responseData[i].username);
+                    row.append($("<th>").append(idCardLink));
+                }
+                else
+                    row.append($("<th>"));
 
                 var receiveStockNotificationsCheckbox = $("<input type='checkbox' class='receiveStockNotificationsCheckbox'>");
                 receiveStockNotificationsCheckbox.on("change", function(){onUserConfigChanged(this);});
@@ -133,6 +143,10 @@ function addNewUser(){
     formData.append("receiveStockNotifications", $("#receiveStockNotifications").is(":checked"));
     formData.append("receiveDbStatusNotifications", $("#receiveDbStatusNotifications").is(":checked"));
 
+    var newUserId = $("#newUserId").val();
+    if(newUserId != "")
+        formData.append("newUserId", newUserId);
+
     $.ajax({
         url: "{{ url_for("users.addUser") }}",
         type: "POST",
@@ -144,6 +158,7 @@ function addNewUser(){
             console.log(responseData);
             updateUsersTable();
             $("#newUsername").val("");
+            $("#newUserId").val("");
             $("#newPassword").val("");
             $("#accessLevel").val("0");
             $("#emailAddress").val("");

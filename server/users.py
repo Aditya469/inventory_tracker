@@ -15,15 +15,18 @@ limitations under the License.
 '''
 
 import functools
+import os
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, request, make_response, jsonify
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, request, make_response, jsonify,
+    current_app, send_file
 )
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import delete, update
-from .db import getDbSession, User
-from .auth import login_required, admin_access_required, userHasAdminAccess
+from db import getDbSession, User
+from auth import login_required, admin_access_required, userHasAdminAccess
+from qrCodeFunctions import generateIdCard
 
 bp = Blueprint('users', __name__)
 
@@ -62,6 +65,11 @@ def addUser():
         receiveStockNotifications=request.form["receiveStockNotifications"] == "true",
         receiveDbStatusNotifications=request.form["receiveDbStatusNotifications"] == "true"
     )
+
+    if "newUserId" in request.form:
+        newUser.idString = request.form["newUserId"]
+    else:
+        newUser.idString = "user_" + request.form['newUsername']
 
     dbSession.add(newUser)
     dbSession.commit()
@@ -130,3 +138,15 @@ def updateUser():
     dbSession.commit()
 
     return make_response("changes saved", 200)
+
+
+@bp.route("/getUserIdCard/<username>")
+@admin_access_required
+def getUserIdCard(username):
+    dbSession = getDbSession()
+    userIdString = dbSession.query(User.idString).filter(User.username == username).first()[0]
+    idCard = generateIdCard(idString=userIdString, label=username, labelFontSize=30, totalWidth=400, totalHeight=200)
+    filepath = os.path.join(current_app.instance_path, "user_id.png")
+    idCard.save(filepath)
+
+    return send_file(filepath, as_attachment=True, download_name=f"{username} ID card.png")

@@ -53,6 +53,7 @@
     <string name="label_check_stock_item_id">Item QR Code:</string>
     <string name="label_check_stock_product_name">Product Type:</string>
     <string name="label_check_stock_product_barcode">Product Barcode:</string>
+    <string name="label_check_stock_user">User:</string>
     <string name="label_check_stock_location">Location:</string>
     <string name="label_check_stock_quantity">Quantity:</string>
     <string name="label_check_stock_job">Job:</string>
@@ -62,8 +63,12 @@
     <string name="label_check_stock_item_checked_out">Item has been Checked Out</string>
 
     <string name="prompt_check_stock_scan_item_id">Scan an Item ID QR Code</string>
-    <string name="prompt_check_stock_set_amount_or_check_out">Set Qty. to Check In/Out or Check Out Item</string>
+    <string name="prompt_check_stock_set_amount_scan_user_or_check_out">Set Qty. to Check In/Out, scan a user, or Check Out Item</string>
+    <string name="prompt_check_stock_set_amount_or_check_out">Set Qty. to Check In/Out, or Check Out Item</string>
     <string name="prompt_check_stock_ready">This Item Can Now Be Checked In/Out</string>
+
+    <string name="error_check_stock_product_name_unknown">The item\'s name has not been fetched</string>
+    <string name="error_check_stock_product_barcode_unknown">The item\'s barcode has not been fetched</string>
 
 
     <!-- keys for shared prefs. Ideally should be in a separate XML file, but I'm having trouble
@@ -80,9 +85,10 @@
 
     <!--    System keywords. Kept here rather than have a list of repeated and typo-sensitive keys
             distrubuted through the codebase -->
-    <string name="sys_prefix_item">item_</string>
-    <string name="sys_prefix_location">bin_</string>
-    <string name="sys_prefix_job">job_</string>
+    <string name="sys_prefix_item" translatable="false">item_</string>
+    <string name="sys_prefix_location" translatable="false">bin_</string>
+    <string name="sys_prefix_job" translatable="false">job_</string>
+    <string name="sys_prefix_user" translatable="false">user_</string>
 
 
 

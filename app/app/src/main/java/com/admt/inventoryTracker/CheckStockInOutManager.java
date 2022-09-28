@@ -21,6 +21,8 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
             requestJson.put("jobIdString", Request.JobId);
         if(Request.BinId != null)
             requestJson.put("binIdString", Request.BinId);
+        if(Request.UserId != null)
+            requestJson.put("userIdString", Request.UserId);
         if(Request.CheckRequestType == CheckStockInOutRequestParameters.CheckingType.CHECK_IN) {
             if (Request.QuantityChecking != null)
                 requestJson.put("quantityCheckedIn", Request.QuantityChecking);
@@ -41,15 +43,17 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
             parameters.IdString = JsonObject.getString("idString");
         if(JsonObject.has("timestamp"))
             parameters.Timestamp = JsonObject.getString("timestamp");
-        if(JsonObject.has("jobId"))
-            parameters.JobId = JsonObject.getString("jobId");
-        if(JsonObject.has("binId"))
-            parameters.BinId = JsonObject.getString("binId");
+        if(JsonObject.has("jobIdString"))
+            parameters.JobId = JsonObject.getString("jobIdString");
+        if(JsonObject.has("binIdString"))
+            parameters.BinId = JsonObject.getString("binIdString");
+        if(JsonObject.has("userIdString"))
+            parameters.UserId = JsonObject.getString("userIdString");
         if(JsonObject.has("checkRequestType")){
             if(JsonObject.getString("checkRequestType").equals("checkIn")){
                 parameters.CheckRequestType = CheckStockInOutRequestParameters.CheckingType.CHECK_IN;
                 if(JsonObject.has("quantityCheckedIn"))
-                    parameters.QuantityChecking = JsonObject.getDouble("quantityCheckingIn");
+                    parameters.QuantityChecking = JsonObject.getDouble("quantityCheckedIn");
             }
             else if(JsonObject.getString("checkRequestType").equals("checkOut")){
                 parameters.CheckRequestType = CheckStockInOutRequestParameters.CheckingType.CHECK_OUT;

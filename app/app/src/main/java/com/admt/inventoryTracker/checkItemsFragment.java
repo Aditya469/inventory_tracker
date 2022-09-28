@@ -30,6 +30,7 @@ public class checkItemsFragment extends Fragment {
     CheckStockInOutManager mCheckStockInOutManager;
     ItemIdLookUpDataManager mItemIdLookUpDataManager;
     JobLookupDataManager mJobLookupDataManager;
+    UserDataManager mUserDataManager;
 
     StockInteractionHandlingCallbacks mStockInteractionHandlingCallbacks;
     CheckStockInOutRequestParameters mCurrentCheckingRequest;
@@ -40,7 +41,10 @@ public class checkItemsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public checkItemsFragment(ProductDataManager PDM, LocationDataManager LDM, CheckStockInOutManager CSM, ItemIdLookUpDataManager ILDM, JobLookupDataManager JDM){
+    public checkItemsFragment(
+            ProductDataManager PDM, LocationDataManager LDM, CheckStockInOutManager CSM,
+            ItemIdLookUpDataManager ILDM, JobLookupDataManager JDM, UserDataManager UDM)
+    {
         MainActivity mainActivity = (MainActivity)getActivity();
         mStockInteractionHandlingCallbacks = mainActivity;
 
@@ -49,6 +53,7 @@ public class checkItemsFragment extends Fragment {
         mCheckStockInOutManager = CSM;
         mItemIdLookUpDataManager = ILDM;
         mJobLookupDataManager = JDM;
+        mUserDataManager = UDM;
 
         mCurrentCheckingRequest = new CheckStockInOutRequestParameters();
     }
@@ -165,20 +170,28 @@ public class checkItemsFragment extends Fragment {
 
             // get the itemLookup for this ID and retreive the product name and barcode
             ItemIdBarcodeLookup itemIdBarcodeLookup = mItemIdLookUpDataManager.get(BarcodeData);
-            Product productType = mProductDataManger.get(itemIdBarcodeLookup.Barcode);
+            Product productType = null;
 
+            if(itemIdBarcodeLookup != null)
+                productType = mProductDataManger.get(itemIdBarcodeLookup.Barcode);
+
+            final Product finalProductType = productType;
             runnable = new Runnable() {
                 @Override
                 public void run() {
                     EditText etItemId = (EditText) getActivity().findViewById(R.id.etCheckStockItemId);
                     etItemId.setText(BarcodeData);
 
-                    if(productType != null){
-                        EditText etProdName = (EditText) getActivity().findViewById(R.id.etCheckStockProductName);
-                        etProdName.setText(productType.Name);
+                    EditText etProdName = (EditText) getActivity().findViewById(R.id.etCheckStockProductName);
+                    EditText etBarcode = (EditText) getActivity().findViewById(R.id.etCheckStockProductBarcode);
 
-                        EditText etBarcode = (EditText) getActivity().findViewById(R.id.etCheckStockProductBarcode);
-                        etBarcode.setText(productType.Barcode);
+                    if (finalProductType != null) {
+                        etProdName.setText(finalProductType.Name);
+                        etBarcode.setText(finalProductType.Barcode);
+                    }
+                    else {
+                        etProdName.setText(getString(R.string.error_check_stock_product_name_unknown));
+                        etBarcode.setText(R.string.error_check_stock_product_barcode_unknown);
                     }
                 }
             };
@@ -214,6 +227,22 @@ public class checkItemsFragment extends Fragment {
                     public void run() {
                         EditText etLocationId = (EditText) getActivity().findViewById(R.id.etCheckStockLocationName);
                         etLocationId.setText(location.LocationName);
+                    }
+                };
+                mainHandler.post(runnable);
+            }
+        }
+        else if(BarcodeData.startsWith(getString(R.string.sys_prefix_user))){
+            mCurrentCheckingRequest.UserId = BarcodeData;
+            User user = mUserDataManager.get(BarcodeData);
+            if(user == null)
+                error = "User not known";
+            else {
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        EditText etUsername = (EditText) getActivity().findViewById(R.id.etCheckStockUserName);
+                        etUsername.setText(user.Username);
                     }
                 };
                 mainHandler.post(runnable);
@@ -267,12 +296,7 @@ public class checkItemsFragment extends Fragment {
                 public void run() {
                     // update prompt
                     TextView tvPrompt = (TextView) getActivity().findViewById(R.id.tvCheckItemsPrompt);
-                    if (mCurrentCheckingRequest.IdString == null)
-                        tvPrompt.setText(getString(R.string.prompt_check_stock_scan_item_id));
-                    else if (mCurrentCheckingRequest.QuantityChecking == null)
-                        tvPrompt.setText(getString(R.string.prompt_check_stock_set_amount_or_check_out));
-                    else if (isValidCheckInRequest() && isValidCheckOutRequest())
-                        tvPrompt.setText(getString(R.string.prompt_check_stock_ready));
+                    tvPrompt.setText(getStatusPrompt());
 
                     if (isValidCheckInRequest())
                         enableCheckInButton();
@@ -282,6 +306,11 @@ public class checkItemsFragment extends Fragment {
             };
             mainHandler.post(runnable);
         }
+    }
+
+    private String getStatusPrompt()
+    {
+        return "Prompt to be determined";
     }
 
     private void resetDisplay()
@@ -294,6 +323,8 @@ public class checkItemsFragment extends Fragment {
         etBarcode.setText("");
         EditText etLocationId = (EditText) getActivity().findViewById(R.id.etCheckStockLocationName);
         etLocationId.setText("");
+        EditText etUsername = (EditText) getActivity().findViewById(R.id.etCheckStockUserName);
+        etUsername.setText("");
         EditText etQty = (EditText) getActivity().findViewById(R.id.etCheckStockQuantity);
         etQty.setText("");
         EditText etJobId = (EditText) getActivity().findViewById(R.id.etCheckStockJobName);

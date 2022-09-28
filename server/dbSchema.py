@@ -167,6 +167,7 @@ class CheckInRecord(Base):
 	quantityCheckedIn = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
 	jobId = Column(Integer, ForeignKey("jobs.id"))
+	userId = Column(Integer, ForeignKey("users.id"))
 	associatedStockItem = relationship("StockItem", backref="checkInRecords")
 	createdByRequestId = Column(String)
 
@@ -190,6 +191,7 @@ class CheckOutRecord(Base):
 	quantityCheckedOut = Column(Numeric)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
+	userId = Column(Integer, ForeignKey("users.id"))
 	associatedStockItem = relationship("StockItem", backref="checkOutRecords")
 	createdByRequestId = Column(String)
 
@@ -263,7 +265,9 @@ class AssignedStock(Base):
 class User(Base):
 	__tablename__ = "users"
 
-	username = Column(Text, primary_key=True, unique=True)
+	id = Column(Integer, primary_key=True, unique=True)
+	username = Column(Text)
+	idString = Column(Text)
 	passwordHash = Column(Text)
 	accessLevel = Column(Integer, default=0)  # 0 = read-only, 1 = edit, 2 = create, 3 = admin
 	emailAddress = Column(Text)

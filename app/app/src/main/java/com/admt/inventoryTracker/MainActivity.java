@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity
     private static LocationDataManager mLocationDataManger = null;
     private static ItemIdLookUpDataManager mItemIdLookUpDataManager = null;
     private static JobLookupDataManager mJobLookupDataManager = null;
+    private static UserDataManager mUserDataManager = null;
 
     private static AddStockManager mAddStockManager = null;
     private static CheckStockInOutManager mCheckStockInOutManager = null;
@@ -40,9 +41,7 @@ public class MainActivity extends AppCompatActivity
     private Timer mSendDataTimer;
     private TimerTask mSendDataTimerTask;
 
-    private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK}
-
-    ;
+    private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK};
     private CurrentState mCurrentState;
 
     public void onBarcodeRead(String barcodeValue) {
@@ -98,6 +97,8 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        // create all of the data managers that fetch lists of data from the server. These are all
+        // based on the same abstract class, and all work the same way.
         if (mProductDataManager == null)
             mProductDataManager = new ProductDataManager(getApplication());
 
@@ -116,6 +117,9 @@ public class MainActivity extends AppCompatActivity
         if (mJobLookupDataManager == null)
             mJobLookupDataManager = new JobLookupDataManager(getApplication());
 
+        if (mUserDataManager == null)
+            mUserDataManager = new UserDataManager(getApplication());
+
         mModeSelectFragment = new modeSelectorFragment();
 
         // As this app is expected to only have intermittent access to the network
@@ -123,41 +127,40 @@ public class MainActivity extends AppCompatActivity
         mSendDataTimerTask = new TimerTask() {
             @Override
             public void run() {
-                Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
-                Runnable runnable;
-                if (Utilities.isWifiConnected(getApplicationContext())) {
-                    if (mAddStockManager != null) {
-                        if (mAddStockManager.hasPending()) {
-                            Utilities.showDebugMessage(getApplicationContext(),"Begin sending addStock requests");
-                            mAddStockManager.SendAllRequests();
-                            while (mAddStockManager.hasPending()) {
-                                try {
+                try {
+                    Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+                    Runnable runnable;
+                    if (Utilities.isWifiConnected(getApplicationContext())) {
+                        if (mAddStockManager != null) {
+                            if (mAddStockManager.hasPending()) {
+                                Utilities.showDebugMessage(getApplicationContext(), "Begin sending addStock requests");
+                                mAddStockManager.SendAllRequests();
+                                while (mAddStockManager.hasPending()) {
                                     Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
                                 }
+                                Utilities.showDebugMessage(getApplicationContext(), "addStock requests processed");
                             }
-                            Utilities.showDebugMessage(getApplicationContext(),"addStock requests processed");
                         }
-                    }
 
-                    if (mCheckStockInOutManager != null) {
-                        if (mCheckStockInOutManager.hasPending()) {
-                            Utilities.showDebugMessage(getApplicationContext(),"Begin send checkStock requests");
-                            mCheckStockInOutManager.SendAllRequests();
-                            while (mCheckStockInOutManager.hasPending()) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                        if (mCheckStockInOutManager != null) {
+                            if (mCheckStockInOutManager.hasPending()) {
+                                Utilities.showDebugMessage(getApplicationContext(), "Begin send checkStock requests");
+                                mCheckStockInOutManager.SendAllRequests();
+                                while (mCheckStockInOutManager.hasPending()) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                                Utilities.showDebugMessage(getApplicationContext(), "checkStock requests processed");
                             }
-                            Utilities.showDebugMessage(getApplicationContext(),"checkStock requests processed");
                         }
+                    } else {
+                        Utilities.showDebugMessage(getApplicationContext(), "Wifi is not connected");
                     }
-                }
-                else {
-                    Utilities.showDebugMessage(getApplicationContext(),"Wifi is not connected");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity
 
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragmentContainer1, mModeSelectFragment).commit();
+                .add(R.id.fragmentContainer2, mModeSelectFragment).commit();
         mCurrentState = CurrentState.MODE_SELECT;
 
         // since this works by swapping fragments around, the back button is overridden to
@@ -220,13 +223,15 @@ public class MainActivity extends AppCompatActivity
         if(mCurrentState == CurrentState.ADD_STOCK) {
             getSupportFragmentManager().beginTransaction()
                     .remove(mAddNewStockFragment)
-                    .replace(R.id.fragmentContainer1, mModeSelectFragment)
+                    .remove(mCameraFragment)
+                    .replace(R.id.fragmentContainer2, mModeSelectFragment)
                     .commit();
         }
         else if(mCurrentState == CurrentState.CHECK_STOCK) {
             getSupportFragmentManager().beginTransaction()
                     .remove(mCheckItemsFragment)
-                    .replace(R.id.fragmentContainer1, mModeSelectFragment)
+                    .remove(mCameraFragment)
+                    .replace(R.id.fragmentContainer2, mModeSelectFragment)
                     .commit();
         }
         mCurrentState = CurrentState.MODE_SELECT;
@@ -275,7 +280,8 @@ public class MainActivity extends AppCompatActivity
                     mLocationDataManger,
                     mCheckStockInOutManager,
                     mItemIdLookUpDataManager,
-                    mJobLookupDataManager
+                    mJobLookupDataManager,
+                    mUserDataManager
             );
 
         getSupportFragmentManager().beginTransaction()

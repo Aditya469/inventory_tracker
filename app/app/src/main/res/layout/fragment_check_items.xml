@@ -123,6 +123,31 @@
             </TableRow>
 
             <TableRow
+                android:id="@+id/trCheckStockUserName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelCheckStockUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_check_stock_user" />
+
+                <EditText
+                    android:id="@+id/etCheckStockUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:gravity="right" />
+
+            </TableRow>
+
+            <TableRow
                 android:id="@+id/trCheckStockLocationName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
