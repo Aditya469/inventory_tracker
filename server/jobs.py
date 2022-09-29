@@ -273,11 +273,11 @@ def getTotalStockUsedOnJob(job):
 				'quantityUnit': productType.quantityUnit
 			}
 
-		stockUsedTotals[productType.productName]['qtyOfProductUsed'] += checkOutRecord.quantityCheckedOut
+		stockUsedTotals[productType.productName]['qtyOfProductUsed'] += checkOutRecord.quantity
 		stockUsedTotals[productType.productName]['costOfProductUsed'] += \
-			(checkOutRecord.quantityCheckedOut / productType.initialQuantity) * checkOutRecord.associatedStockItem.price
+			(checkOutRecord.quantity / productType.initialQuantity) * checkOutRecord.associatedStockItem.price
 
-		totalCost += (checkOutRecord.quantityCheckedOut / productType.initialQuantity)\
+		totalCost += (checkOutRecord.quantity / productType.initialQuantity)\
 					 * checkOutRecord.associatedStockItem.price
 
 	# then subtract what was checked back in
@@ -292,11 +292,11 @@ def getTotalStockUsedOnJob(job):
 			)
 			continue
 
-		stockUsedTotals[productTypeName]['qtyOfProductUsed'] -= checkInRecord.quantityCheckedIn
+		stockUsedTotals[productTypeName]['qtyOfProductUsed'] -= checkInRecord.quantity
 		stockUsedTotals[productTypeName]['costOfProductUsed'] -= \
-			(checkInRecord.quantityCheckedIn / productType.initialQuantity) * checkInRecord.associatedStockItem.price
+			(checkInRecord.quantity / productType.initialQuantity) * checkInRecord.associatedStockItem.price
 
-		totalCost -= (checkInRecord.quantityCheckedIn / productType.initialQuantity) * checkInRecord.associatedStockItem.price
+		totalCost -= (checkInRecord.quantity / productType.initialQuantity) * checkInRecord.associatedStockItem.price
 
 	for key in stockUsedTotals.keys():
 		stockUsedTotals[key]['costOfProductUsed'] = round(stockUsedTotals[key]['costOfProductUsed'], 2)

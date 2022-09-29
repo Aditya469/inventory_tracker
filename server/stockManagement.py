@@ -26,7 +26,8 @@ import datetime
 from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from db import getDbSession, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
-from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin
+from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
+    User, Job
 from utilities import writeDataToCsvFile
 from sqlalchemy import select, delete, func, or_, update, and_
 
@@ -186,41 +187,78 @@ def getStockDataFromRequest():
 def getStockItemById(stockId):
     session = getDbSession()
     stockItem = session.query(
-            StockItem.id,
-            StockItem.idString,
-            StockItem.productType,
-            StockItem.addedTimestamp,
-            StockItem.expiryDate,
-            ProductType.canExpire,
-            StockItem.quantityRemaining,
-            ProductType.quantityUnit,
-            StockItem.price,
-            StockItem.isCheckedIn,
-            ProductType.productName,
-            ProductType.productDescriptor1,
-            ProductType.productDescriptor2,
-            ProductType.productDescriptor3,
-            ProductType.tracksAllItemsOfProductType,
-            ProductType.tracksSpecificItems
-        )\
-        .filter(StockItem.id == stockId)\
+        StockItem.id,
+        StockItem.idString,
+        StockItem.productType,
+        StockItem.addedTimestamp,
+        StockItem.expiryDate,
+        ProductType.canExpire,
+        StockItem.quantityRemaining,
+        ProductType.quantityUnit,
+        StockItem.price,
+        StockItem.isCheckedIn,
+        ProductType.productName,
+        ProductType.productDescriptor1,
+        ProductType.productDescriptor2,
+        ProductType.productDescriptor3,
+        ProductType.tracksAllItemsOfProductType,
+        ProductType.tracksSpecificItems
+    ) \
+        .filter(StockItem.id == stockId) \
         .join(ProductType, ProductType.id == StockItem.productType) \
         .first()
 
-    checkinRecord = session.query(CheckInRecord)\
-        .filter(CheckInRecord.stockItem == stockId)\
-        .order_by(CheckInRecord.checkInTimestamp.desc())\
-        .first()
+    lastSeenBinId = session.query(CheckInRecord.binId) \
+        .filter(CheckInRecord.stockItem == stockId) \
+        .order_by(CheckInRecord.timestamp.desc()) \
+        .first()[0]
 
-    if checkinRecord:
-        binId = checkinRecord.binId
+    if lastSeenBinId:
+        binId = lastSeenBinId
     else:
         binId = None
+
 
     if stockItem[4]: # expiry date
         expiryDate = stockItem[4].strftime("%Y-%m-%d")
     else:
         expiryDate = ""
+
+
+    # get a dictionary of all check-ins and -outs, formatted into a nice table-friendly structure, in reverse
+    # chronological order
+    checkInRecords = session.query(CheckInRecord).filter(CheckInRecord.stockItem == stockId).all()
+    movementRecordsDict = {int(record.timestamp.timestamp()): record for record in checkInRecords}
+    checkOutRecords = session.query(CheckOutRecord).filter(CheckOutRecord.stockItem == stockId).all()
+    movementRecordsDict.update({int(record.timestamp.timestamp()): record for record in checkOutRecords})
+
+    movementKeys = sorted(movementRecordsDict.keys(), reverse=True)
+
+    movementList = []
+    for key in movementKeys:
+        record = movementRecordsDict[key]
+        recordDict = record.toDict()
+
+        if record.userId != None:
+            recordDict["username"] = session.query(User.username).filter(User.id == record.userId).scalar()
+        else:
+            recordDict["username"] = ""
+
+        if record.jobId != None:
+            recordDict["jobName"] = session.query(Job.jobName).filter(Job.id == record.jobId).scalar()
+        else:
+            recordDict["jobName"] = ""
+
+        if record.binId != None:
+            recordDict["binName"] = session.query(Bin.locationName).filter(Bin.id == record.binId).scalar()
+        else:
+            recordDict["binName"] = ""
+
+        if type(record) == CheckInRecord:
+            recordDict["type"] = "Check In"
+        elif type(record) == CheckOutRecord:
+            recordDict["type"] = "Check Out"
+        movementList.append(recordDict)
 
     if stockItem:
         itemDict = {
@@ -239,16 +277,17 @@ def getStockItemById(stockId):
             "productDescriptor2": stockItem[12],
             "productDescriptor3": stockItem[13],
             "isBulk": stockItem[14],
-            "bin": binId
+            "bin": binId,
+            "movementRecords": movementList
         }
 
-        bins = session.query(Bin)\
-            .filter(Bin.locationName != "undefined location")\
-            .order_by(Bin.locationName.asc())\
+        bins = session.query(Bin) \
+            .filter(Bin.locationName != "undefined location") \
+            .order_by(Bin.locationName.asc()) \
             .all()
-        products = session.query(ProductType)\
-            .filter(ProductType.productName != "undefined product type")\
-            .order_by(ProductType.productName.asc())\
+        products = session.query(ProductType) \
+            .filter(ProductType.productName != "undefined product type") \
+            .order_by(ProductType.productName.asc()) \
             .all()
 
         placeholderBin = session.query(Bin).filter(Bin.id == -1).scalar()
@@ -619,7 +658,7 @@ def getNewlyAddedStock():
             ProductType.productName,
             ProductType.quantityUnit,
             CheckInRecord.id,
-            CheckInRecord.quantityCheckedIn
+            CheckInRecord.quantity
         )\
         .filter(VerificationRecord.isVerified == False)\
         .filter(ProductType.productName.ilike(searchTerm))\
@@ -642,7 +681,7 @@ def getNewlyAddedStock():
             "productName": row[3],
             "productQuantityUnit": row[4],
             "checkInRecordId": row[5],
-            "quantityCheckedIn": row[6]
+            "quantity": row[6]
         })
 
     return make_response(jsonify(results), 200)
@@ -687,7 +726,7 @@ def updateNewStockWithNewProduct(newProductType):
         .all()
 
     for checkinRecord in checkinRecords:
-        checkinRecord.quantityCheckedIn = newProductType.initialQuantity
+        checkinRecord.quantity = newProductType.initialQuantity
 
     session.commit()
 
@@ -711,7 +750,7 @@ def deleteNewlyAddedStock():
             .filter(CheckInRecord.id == verificationRecord.associatedCheckInRecord).first()
         productType = session.query(ProductType).filter(ProductType.id == StockItem.productType).first()
         if productType.tracksAllItemsOfProductType:
-            stockItem.quantityRemaining -= checkinRecord.quantityCheckedIn
+            stockItem.quantityRemaining -= checkinRecord.quantity
         if productType.tracksSpecificItems:
             session.delete(stockItem)
         session.delete(checkinRecord)

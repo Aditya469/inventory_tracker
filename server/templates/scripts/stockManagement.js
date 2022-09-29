@@ -16,6 +16,8 @@ limitations under the License.
 
 $(document).ready(function (){
     updateStockTable();
+    setStockItemTableSizes();
+    $(window).resize(function(){ setStockItemTableSizes(); });
 });
 
 function updateStockTable(){
@@ -208,10 +210,10 @@ function onDeleteSelectedButtonClicked(){
 }
 
 function closeStockItemPanel(){
-    $("#greyout").prop("hidden", true);
-    $("#editStockItemPanel").prop("hidden", true);
+    $("#editStockItemPanelContainer").prop("hidden", true);
     $(".editStockPanelInput").val("");
     $(".editStockPanelInput").empty();
+    $("#stockMovementTableBody").empty();
 }
 
 function openStockItemPanel(stockItemId){
@@ -226,8 +228,8 @@ function openStockItemPanel(stockItemId){
             var bins = responseData.bins;
             var stockItemDetails = responseData.stockItemDetails;
 
-            $("#greyout").prop("hidden", false);
-            $("#editStockItemPanel").prop("hidden", false);
+            $("#editStockItemPanelContainer").prop("hidden", false);
+            setStockItemTableSizes();
             var i;
             // populate bin select
             for(i = 0; i < bins.length; i++){
@@ -266,12 +268,34 @@ function openStockItemPanel(stockItemId){
             else
                 $("#stockItemExpires").prop("checked", false);
 
+            // generate stock movement table body
+            for(var i = 0; i < stockItemDetails.movementRecords.length; i++){
+                var checkingRecord = stockItemDetails.movementRecords[i];
+                var row = $("<tr>");
+                row.append($("<td>").append(checkingRecord.timestamp));
+                row.append($("<td>").append(checkingRecord.type));
+                row.append($("<td>").append(checkingRecord.quantity + " " + stockItemDetails.quantityUnit));
+                row.append($("<td>").append(checkingRecord.binName));
+                row.append($("<td>").append(checkingRecord.username));
+                row.append($("<td>").append(checkingRecord.jobName));
+                $("#stockMovementTableBody").append(row);
+            }
 
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
         }
     });
+}
+
+// sets the maximum height of the stock item panel table(s) to allow overflow to work correctly
+function setStockItemTableSizes(){
+    var stockMovementContainerHeight = $("#editStockItemPanel").height() - (
+        $("#stockItemPanelNav").outerHeight() +
+        $("#commitButtonsContainer").outerHeight()
+    );
+    var newHeightStyling = "height: " + stockMovementContainerHeight + "px;";
+    $("#stockMovementTableContainer").prop("style", newHeightStyling);
 }
 
 function onLocationUpdated(){
@@ -333,3 +357,4 @@ function deleteStockItem(){
         });
     }
 }
+

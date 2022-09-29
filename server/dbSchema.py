@@ -80,16 +80,19 @@ class StockItem(Base):
 	associatedProduct = relationship("ProductType", back_populates="associatedStock")
 
 	def toDict(self):
-		return {
+		dataDict = {
 			"id": self.id,
 			"idNumber": self.idString,
 			"productType": self.productType,
-			"addedTimestamp": self.addedTimestamp,
+			"addedTimestamp": "",
 			"expiryDate": self.expiryDate,
 			"quantityRemaining": self.quantityRemaining,
 			"price": self.price,
 			"isCheckedIn": self.isCheckedIn
 		}
+		if self.addedTimestamp:
+			dataDict["addedTimestamp"] = self.addedTimestamp.strftime("%d/%m/%y %H:%M")
+
 
 
 class VerificationRecord(Base):
@@ -163,8 +166,8 @@ class CheckInRecord(Base):
 
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
-	checkInTimestamp = Column(DateTime(timezone=True), server_default=func.now())
-	quantityCheckedIn = Column(Numeric, default=0)
+	timestamp = Column(DateTime(timezone=True), server_default=func.now())
+	quantity = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	userId = Column(Integer, ForeignKey("users.id"))
@@ -172,14 +175,19 @@ class CheckInRecord(Base):
 	createdByRequestId = Column(String)
 
 	def toDict(self):
-		return {
+		dataDict = {
 			"id": self.id,
 			"stockItem": self.stockItem,
-			"checkinTimestamp": self.checkinTimestamp,
-			"quantityCheckedIn": self.quantityCheckedIn,
+			"timestamp": "",
+			"quantity": self.quantity,
 			"binId": self.binId,
-			"jobId": self.jobId
+			"jobId": self.jobId,
+			"userId": self.userId
 		}
+		if self.timestamp:
+			dataDict["timestamp"] = self.timestamp.strftime("%d/%m/%y %H:%M")
+
+		return dataDict
 
 
 class CheckOutRecord(Base):
@@ -187,8 +195,8 @@ class CheckOutRecord(Base):
 
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
-	checkOutTimestamp = Column(DateTime(timezone=True), server_default=func.now())
-	quantityCheckedOut = Column(Numeric)
+	timestamp = Column(DateTime(timezone=True), server_default=func.now())
+	quantity = Column(Numeric)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	userId = Column(Integer, ForeignKey("users.id"))
@@ -196,14 +204,19 @@ class CheckOutRecord(Base):
 	createdByRequestId = Column(String)
 
 	def toDict(self):
-		return{
+		dataDict = {
 			"id": self.id,
 			"stockItem": self.stockItem,
-			"checkOutTimestamp": self.checkOutTimestamp,
-			"quantityCheckedOut": self.quantityCheckedOut,
+			"timestamp": "",
+			"quantity": self.quantity,
 			"binId": self.binId,
-			"jobId": self.jobId
+			"jobId": self.jobId,
+			"userId": self.userId
 		}
+		if self.timestamp:
+			dataDict["timestamp"] = self.timestamp.strftime("%d/%m/%y %H:%M")
+
+		return dataDict
 
 
 class Bin(Base):
@@ -236,12 +249,17 @@ class Job(Base):
 	associatedAssignedStock = relationship("AssignedStock", backref="Job")
 
 	def toDict(self):
-		return {
+		dataDict = {
 			"id": self.id,
-			"addedTimestamp": self.addedTimestamp,
+			"addedTimestamp": "",
 			"qrCodeName": self.qrCodeName,
 			"jobName": self.jobName
 		}
+		if self.addedTimestamp:
+			dataDict["addedTimestamp"] = self.addedTimestamp.strftime("%d/%m/%y %H:%M")
+		return dataDict
+
+
 
 
 class AssignedStock(Base):

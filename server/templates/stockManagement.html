@@ -23,6 +23,7 @@ limitations under the License.
 {% block additionalHeadMaterial %}
 <script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stockManagement.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='stockManagement.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -132,71 +133,77 @@ limitations under the License.
         </div>
     </div>
 </div>
-<div id="greyout" hidden class="position-fixed top-0 start-0 vw-100 vh-100" onclick="closeStockItemPanel()"></div>
-<div id="editStockItemPanel" hidden class="container w-75 h-75 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
-	<nav id="nav" class="navbar bg-light navbar-light w-100">
-		<h1>Stock Item Details</h1>
-		<input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closeStockItemPanel()"/>
-	</nav>
-	<div class="row">
-		<input id="stockId" type="hidden" class="editStockPanelInput">
-        <div class="col row">
-            <div class="col-12 row">
-                <label class="col col-form-label" for="productTypeName">Product Type:</label>
-                <span class="col editStockPanelInput" id="productTypeName"></span>
-            </div>
-            <div class="col-12 row">
-                <label class="col col-form-label" for="quantityRemaining">Quantity Remaining:</label>
-                <div class="col input-group">
-                    <input class="form-control editStockPanelInput" id="quantityRemaining" type="number" value="">
-                    <span class="input-group-text col-form-label editStockPanelInput" id="quantityUnitDisplay">Units</span>
+<div id="editStockItemPanelContainer" hidden class="row">
+    <div class="greyout col-1 vh-100" onclick="closeStockItemPanel()"></div>
+    <div id="editStockItemPanel"  class="col-10 container border bg-body">
+        <nav id="stockItemPanelNav" class="navbar bg-light navbar-light w-100">
+            <h1>Stock Item Details</h1>
+            <input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closeStockItemPanel()"/>
+        </nav>
+        <div class="row ">
+            <input id="stockId" type="hidden" class="editStockPanelInput">
+            <div class="col-5">
+                <div class="row">
+                    <label class="col-6 col-form-label" for="productTypeName">Product Type:</label>
+                    <span class="col-6 editStockPanelInput" id="productTypeName"></span>
+
+                    <label class="col-6 col-form-label" for="quantityRemaining">Quantity Remaining:</label>
+                    <div class="col-6">
+                        <div class="input-group">
+                            <input class="form-control editStockPanelInput" id="quantityRemaining" type="number" value="">
+                            <span class="input-group-text col-form-label editStockPanelInput" id="quantityUnitDisplay">Units</span>
+                        </div>
+                    </div>
+
+                    <label class="col-6 form-label" for="isBulk">Is bulk product?:</label>
+                    <span class="col-6 editStockPanelInput py-1" id="isBulk"></span>
+
+                    <label class="col-6" for="isCheckedIn">Is item checked in?:</label>
+                    <span class="col-6 editStockPanelInput py-1" id="isCheckedIn"></span>
+
+                    <label class="col-6" for="price">Cost of this item:</label>
+                    <div class="col-6">
+                        <input class="form-control editStockPanelInput" type="number" id="price">
+                    </div>
+
+                    <label class="col-6" for="location">Location:</label>
+                    <div class="col-6">
+                        <select class="form-select editStockPanelInput" id="location" oninput="onLocationUpdated()"></select>
+                    </div>
+
+                    <label class="col-6 col-form-label" for="expiryDate">Expiry Date:</label>
+                    <div class="col-6">
+                        <input class="form-control form-control-sm editStockPanelInput" type="date" id="expiryDate">
+                    </div>
                 </div>
             </div>
-            <div class="col-12 row">
-                <label class="col form-label" for="isBulk">Is bulk product?:</label>
-                <span class="col editStockPanelInput" id="isBulk"></span>
+            <div class="col-7 row">
+                <div id="stockMovementTableContainer" class="overflow-auto">
+                    <table id="stockMovementTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Location</th>
+                                <th>Person</th>
+                                <th>Job</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockMovementTableBody">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="col-12 row">
-                <label class="col" for="isCheckedIn">Is item checked in?:</label>
-                <span class="col editStockPanelInput" id="isCheckedIn"></span>
-            </div>
-            <div class="col-12 row">
-                <label class="col" for="price">Cost of this item:</label>
-                <input class="col form-control editStockPanelInput" type="number" id="price">
-            </div>
-            <div class="col-12 row">
-                <label class="col" for="location">Location:</label>
-                <select class="col form-select editStockPanelInput" id="location" oninput="onLocationUpdated()"></select>
+            <div class="col-10 row p-4 position-absolute bottom-0" id="commitButtonsContainer">
+                <div class="row">
+                    <input class="col col-md-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteStockItem()" value="Delete This Stock Item">
+                    <span class="col col-md-3 offset-md-3" id="saveStockItemFeedbackSpan"></span>
+                    <input class="col col-md-3 btn btn-primary" id="saveButton" type="button" onclick="saveStockItemDetails()" value="Save">
+                </div>
             </div>
         </div>
-        <div class="col row">
-            <div class="col-12 row">
-                <label class="col-auto" for="productDescriptor1">Descriptor 1:</label>
-                <span class="col editStockPanelInput" id="productDescriptor1"></span>
-            </div>
-            <div class="col-12 row">
-                <label class="col-auto" for="productDescriptor2">Descriptor 2:</label>
-                <span class="col editStockPanelInput" id="productDescriptor2"></span>
-            </div>
-            <div class="col-12 row">
-                <label class="col-auto" for="productDescriptor3">Descriptor 3:</label>
-                <span class="col editStockPanelInput" id="productDescriptor3"></span>
-            </div>
-            <div class="col-12 align-middle input-group row">
-                <label class="col-4 col-form-label" for="stockItemExpires">Expires?:</label>
-                <input class="col-auto form-check editStockPanelInput" type="checkbox" id="stockItemExpires"></input>
-                <div class="row col-auto">
-                    <input class="form-control form-control-sm editStockPanelInput" type="date" id="expiryDate">
-                </div>
-            </div>
-            </div>
-		<div class="col col-md-12 p-4	">
-			<div class="row">
-				<input class="col col-md-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteStockItem()" value="Delete This Stock Item">
-                <span class="col col-md-3 offset-md-3" id="saveStockItemFeedbackSpan"></span>
-				<input class="col col-md-3 btn btn-primary" id="saveButton" type="button" onclick="saveStockItemDetails()" value="Save">
-			</div>
-		</div>
-	</div>
-</div>
+    </div>
+    <div class="greyout col-1 vh-100" onclick="closeStockItemPanel()"></div>
 {% endblock %}
