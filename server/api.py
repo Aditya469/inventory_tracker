@@ -184,7 +184,7 @@ def processAddStockRequest():
 			if 'bulkItemCount' in requestParams:
 				bulkItemCount = int(requestParams['bulkItemCount'])
 			stockItem.quantityRemaining += productType.initialQuantity * bulkItemCount
-			checkInRecord.quantityCheckedIn = productType.initialQuantity * bulkItemCount
+			checkInRecord.quantity = productType.initialQuantity * bulkItemCount
 			# continues below ...
 
 		# itemID is not attached to a stock item. Create one.
@@ -238,8 +238,8 @@ def processAddStockRequest():
 
 	# this section is common to all request types
 	checkInRecord.stockItem = stockItem.id
-	checkInRecord.checkInTimestamp = func.now()
-	checkInRecord.quantityCheckedIn = productType.initialQuantity
+	checkInRecord.timestamp = func.now()
+	checkInRecord.quantity = productType.initialQuantity
 	checkInRecord.createdByRequestId = requestParams['requestId']
 
 	if 'binIdString' in requestParams:
@@ -307,13 +307,13 @@ def processCheckStockInRequest():
 			logging.error("Attempting to check in specific item that is already checked in")
 			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
-		if "quantityCheckedIn" not in requestParams:
-			logging.error("Failed to check in stock item. quantityCheckedIn must be provided")
+		if "quantity" not in requestParams:
+			logging.error("Failed to check in stock item. quantity must be provided")
 			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
 
 		checkInRecord = CheckInRecord()
 		dbSession.add(checkInRecord)
-		checkInRecord.quantityCheckedIn = decimal.Decimal(requestParams['quantityCheckedIn'])
+		checkInRecord.quantity = decimal.Decimal(requestParams['quantity'])
 		checkInRecord.stockItem = stockItem.id
 		checkInRecord.createdByRequestId = requestParams["requestId"]
 
@@ -330,7 +330,7 @@ def processCheckStockInRequest():
 			checkInRecord.userId = \
 				dbSession.query(User.id).filter(User.idString == requestParams["userIdString"]).first()[0]
 
-		stockItem.quantityRemaining += decimal.Decimal(requestParams['quantityCheckedIn'])
+		stockItem.quantityRemaining += decimal.Decimal(requestParams['quantity'])
 		stockItem.isCheckedIn = True
 		dbSession.commit()
 	except Exception as e:
@@ -396,12 +396,12 @@ def processCheckStockOutRequest():
 		checkOutRecord = CheckOutRecord()
 		dbSession.add(checkOutRecord)
 		checkOutRecord.stockItem = stockItem.id
-		checkOutRecord.checkOutTimestamp = func.now()
+		checkOutRecord.timestamp = func.now()
 		checkOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
 		checkOutRecord.createdByRequestId = requestParams['requestId']
 
 		if 'timestamp' in requestParams:
-			checkOutRecord.checkOutTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
+			checkOutRecord.timestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
 		if "jobIdString" in requestParams:
 			checkOutRecord.jobId = dbSession.query(Job.id).filter(Job.idString == requestParams['jobIdString']).first()[0]
@@ -413,16 +413,16 @@ def processCheckStockOutRequest():
 			checkOutRecord.userId = \
 				dbSession.query(User.id).filter(User.idString == requestParams["userIdString"]).first()[0]
 
-		if 'quantityCheckedOut' in requestParams:
-			checkOutRecord.quantityCheckedOut = decimal.Decimal(requestParams['quantityCheckedOut'])
+		if 'quantity' in requestParams:
+			checkOutRecord.quantity = decimal.Decimal(requestParams['quantity'])
 		else:
 			if dbSession.query(ProductType.tracksSpecificItems).filter(ProductType.id == stockItem.productType).first()[0] is False:
 				logging.info(
 					"Bulk or non-specific stock item checked out without specifying quantity. Assuming all."
 				)
-			checkOutRecord.quantityCheckedOut = stockItem.quantityRemaining  # assumed to be specific items
+			checkOutRecord.quantity = stockItem.quantityRemaining  # assumed to be specific items
 
-		stockItem.quantityRemaining -= checkOutRecord.quantityCheckedOut
+		stockItem.quantityRemaining -= checkOutRecord.quantity
 
 		if isSpecificItem:
 			stockItem.isCheckedIn = False
