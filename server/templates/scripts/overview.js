@@ -178,6 +178,13 @@ function generateOverviewStockTable(stockData)
     var tbody = $("<tbody>");
     for(i=0; i<stockData.length; i++){
         tr = $("<tr>");
+        tr.data("productName", stockData[i].productName);
+        tr.on("click", function(){
+            searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+            searchUrl.searchParams.append("productName",$(this).data("productName"));
+            window.location.href = searchUrl.href;
+        });
+
         tr.append($("<td>" + stockData[i].productName + "</td>"));
         tr.append($("<td>" + stockData[i].stockAmount + " " + stockData[i].quantityUnit + "</td>"));
         if(stockData[i].isBulk)

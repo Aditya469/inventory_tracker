@@ -37,7 +37,8 @@ bp = Blueprint('stockManagement', __name__)
 @bp.route('/stockManagement')
 @login_required
 def getStockPage():
-    return render_template("stockManagement.html")
+    productName = request.args.get("productName", default=None)
+    return render_template("stockManagement.html", productName=productName)
 
 
 @bp.route('/getIdStickerSheet/<int:idQty>')
