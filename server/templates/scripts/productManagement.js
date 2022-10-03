@@ -115,7 +115,7 @@ function updateNewStockTable(){
                 tr.append(
                     $(
                         "<td>" +
-                        responseData[i].quantityCheckedIn + " " +
+                        responseData[i].quantity + " " +
                         (responseData[i].productQuantityUnit ? responseData[i].productQuantityUnit : "") +
                         "</td>"
                     )
