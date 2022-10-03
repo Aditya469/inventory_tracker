@@ -260,6 +260,35 @@ class Job(Base):
 		return dataDict
 
 
+class JobTemplate(Base):
+	__tablename__ = "jobTemplates"
+
+	id = Column(Integer, primary_key=True)
+	templateName = Column(String)
+	associatedTemplateStockAssignments = relationship("TemplateStockAssignment", backref="JobTemplate")
+
+	def toDict(self):
+		return{
+			"id": self.id,
+			"templateName": self.templateName,
+		}
+
+
+class TemplateStockAssignment(Base):
+	__tablename__ = "templateStockAssignment"
+
+	id = Column(Integer, primary_key=True)
+	jobTemplateId = Column(Integer, ForeignKey("jobTemplates.id"))
+	productId = Column(Integer, ForeignKey("productTypes.id"))
+	quantity = Column(Numeric)
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"jobTemplateId": self.jobTemplateId,
+			"productId": self.productId,
+			"quantity": self.quantity
+		}
 
 
 class AssignedStock(Base):

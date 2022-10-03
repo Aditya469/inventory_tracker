@@ -26,7 +26,8 @@ from sqlalchemy import select, func
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import getDbSession
-from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType
+from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType, JobTemplate, \
+	TemplateStockAssignment
 import json
 from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
@@ -111,6 +112,76 @@ def deleteJob(jobId):
 	dbSession.commit()
 
 	return make_response("job deleted", 200)
+
+
+@bp.route("/processJobTemplate", methods=("POST",))
+@create_access_required
+def processJobTemplate():
+	"""
+	Create a job template, or update an existing one based on ID
+	"""
+	dbSession = getDbSession()
+
+	template = dbSession.query(JobTemplate).filter(JobTemplate.id == request.json["templateId"]).first()
+	if template is None:
+		template = JobTemplate()
+		dbSession.add(template)
+
+	template.templateName = request.json["templateName"]
+	dbSession.flush()
+
+	existingAssignments = dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.jobTemplateId == template.id).all()
+	for assignment in existingAssignments:
+		dbSession.delete(assignment)
+
+	for row in request.json["templateStockAssignments"]:
+		stockAssignment = TemplateStockAssignment(
+			jobTemplateId=template.id,
+			productId=row["productId"],
+			quantity=decimal.Decimal(row["quantity"])
+		)
+		dbSession.add(stockAssignment)
+
+	dbSession.commit()
+
+	return make_response(jsonify({"templateId": template.id}), 200)
+
+
+@bp.route("/getTemplateList")
+@login_required
+def getTemplateList():
+	dbSession = getDbSession()
+	searchTerm = f"%{request.args.get('searchTerm', default='')}%"
+
+	templates = dbSession.query(JobTemplate) \
+		.filter(JobTemplate.templateName.ilike(searchTerm))\
+		.order_by(JobTemplate.templateName.asc())\
+		.all()
+	templateList = [template.toDict() for template in templates]
+	return make_response(jsonify(templateList), 200)
+
+
+@bp.route("/getTemplateStockAssignment")
+@login_required
+def getTemplateStockAssignment():
+	dbSession = getDbSession()
+
+	stockAssignments = dbSession.query(
+			ProductType.productName,
+			ProductType.id,
+			ProductType.quantityUnit,
+			TemplateStockAssignment.quantity
+		)\
+		.join(TemplateStockAssignment)\
+		.order_by(ProductType.productName)\
+		.all()
+
+	stockAssignmentList = [
+			{"productName": row[0], "productId": row[1], "quantityUnit": row[2], "quantity": row[3]} \
+			for row in stockAssignments
+		]
+
+	return make_response(jsonify(stockAssignmentList), 200)
 
 
 # process changes from overview page job panel. Encapsulted for reusability

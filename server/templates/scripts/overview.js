@@ -61,7 +61,7 @@ function updateJobsTable(){
             console.log(jqXHR.responseText);
         }
     });
-    var url = new URL("http://" + document.location.host + "{{ url_for('jobs.getJobsCsvFile') }}");
+    var url = new URL(window.location.href + "{{ url_for('jobs.getJobsCsvFile') }}");
     for (key in jobSearchParams)
         url.searchParams.append(key, jobSearchParams[key]);
     $("#jobsOverviewCsvDownloadLink").prop("href", url);
@@ -140,22 +140,22 @@ function updateStockTables(){
         }
     });
 
-    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in totalStockParams)
         url.searchParams.append(key, totalStockParams[key]);
     $("#totalStockCsvDownloadLink").prop("href", url);
 
-    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in availableStockParams)
         url.searchParams.append(key, availableStockParams[key]);
     $("#availableStockCsvDownloadLink").prop("href", url);
 
-    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in expiringStockParams)
         url.searchParams.append(key, expiringStockParams[key]);
     $("#oldStockCsvDownloadLink").prop("href", url);
 
-    var url = new URL("http://" + document.location.host + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in expiredStockParams)
         url.searchParams.append(key, expiredStockParams[key]);
     $("#expiredStockCsvDownloadLink").prop("href", url);
@@ -180,7 +180,7 @@ function generateOverviewStockTable(stockData)
         tr = $("<tr>");
         tr.data("productName", stockData[i].productName);
         tr.on("click", function(){
-            searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+            searchUrl = new URL(window.location.href + "{{ url_for("stockManagement.getStockPage")}}");
             searchUrl.searchParams.append("productName",$(this).data("productName"));
             window.location.href = searchUrl.href;
         });
@@ -213,13 +213,16 @@ function closePanels(){
 function openJobDetailsPanel(jobId){
     $("#greyout").prop("hidden",false);
     $("#editJobPanel").prop("hidden",false);
+    $("#templateId").val("");
     // trigger a few handlers to get data loaded into elements on screen
+    setJobStockTableSizes();
     onRequiredStockSearchBarInput();
     assignedStockIdsToDelete = [];
     if(jobId != -1){
         $("#jobQrCodeLink").prop("hidden", false);
         $("#stockUsedContainer").prop("hidden", false);
         $("#deleteButton").prop("hidden", false);
+        $("#saveTemplateButton").prop("hidden", true);
         $("#jobName").val("");
 
         var url = "{{ url_for( 'jobs.getJob', jobId='')}}" + jobId;
@@ -240,12 +243,12 @@ function openJobDetailsPanel(jobId){
         $("#jobQrCodeLink").prop("hidden", true);
         $("#stockUsedContainer").prop("hidden", true);
         $("#deleteButton").prop("hidden", true);
+        $("#saveTemplateButton").prop("hidden", false);
         $("#jobName").val("");
     }
 }
 
 function populateJobPanel(jobData){
-    setJobStockTableSizes();
     assignedStockIdsToDelete = [];
     $("#jobId").val(jobData.id);
     $("#jobName").val(jobData.jobName);
@@ -321,28 +324,33 @@ function onKnownProductSelectChange(){
     $("#quantityUnitDisplay").html($("#knownProductDropdown").children("option:selected").first().data("qtyUnit"));
 }
 
-function addStockToAssignedList(){
-    var row = $("<tr>");
-    var checkbox = $("<input type='checkbox' class='assignedStockSelectCheckbox'>");
-    checkbox.on("click", function(){ onAssignedStockSelectCheckboxClicked() });
-
+function onAddStockButtonClicked(){
     var quantity = $("#quantityToAssign").val();
     var selectedProductOption = $("#knownProductDropdown").children("option:selected").first();
     var productName = selectedProductOption.html();
     var productId = selectedProductOption.val();
     var productQtyUnit = selectedProductOption.data("qtyUnit");
 
+    addStockToAssignedList(productName, productId, quantity, productQtyUnit);
+}
+
+function addStockToAssignedList(ProductName, ProductId, ProductQuantity, ProductQtyUnit){
+    var row = $("<tr>");
+    var checkbox = $("<input type='checkbox' class='assignedStockSelectCheckbox'>");
+    checkbox.on("click", function(){ onAssignedStockSelectCheckboxClicked() });
+
     row.addClass("newAssignedQty")
-    row.data("productId", productId);
+    row.addClass("stockAssignmentRow")
+    row.data("productId", ProductId);
 
     row.append($("<td>").append(checkbox));
-    row.append($("<td>").html(productName));
+    row.append($("<td>").html(ProductName));
 
     var qtyContainerDiv = $("<div class='input-group'>");
     var numberInput = $("<input type='number' class='assignedStockQuantity form-control'>");
-    numberInput.val(quantity)
+    numberInput.val(ProductQuantity)
     var numberUnitSpan = $("<span class='input-group-text'>");
-    numberUnitSpan.html(productQtyUnit);
+    numberUnitSpan.html(ProductQtyUnit);
 
     qtyContainerDiv.append(numberInput);
     qtyContainerDiv.append(numberUnitSpan);
@@ -388,21 +396,40 @@ function onRemoveAssignedStockButtonClicked(){
 
 function saveJobDetails(){
     // this needs a list of newly assigned stock, a list of deleted assignments,
-    // and a list of changed assignments, as well as the name and ID of the job
+    // and a list of changed assignments, as well as the name and ID of the job.
+    // validate inputs as we go
+    var dataValid = true;
+
     var changedStockAssignments = [];
     var changedRows = $(".changedAssignedQty");
     for(var i = 0; i < changedRows.length; i++){
         var assignmentId = $(changedRows[i]).data("assignedStockRecordId");
-        var newQty = $(changedRows[i]).find(".assignedStockQuantity").first().val();
+        var qtyInput = $(changedRows[i]).find(".assignedStockQuantity").first();
+        var newQty = qtyInput.val();
+        if(Number(newQty) == NaN || Number(newQty) == 0 || newQty == ""){
+            dataValid = false;
+            qtyInput.addClass('is-invalid');
+        }
+        else
+            qtyInput.removeClass('is-invalid');
         changedStockAssignments.push({"assignmentId": assignmentId,"newQuantity": newQty});
     }
+
     var newStockAssignments = [];
     var newRows = $(".newAssignedQty");
     for(var i = 0; i < newRows.length; i++){
         var productId = $(newRows[i]).data("productId");
-        var newQty =  $(newRows[i]).find(".assignedStockQuantity").first().val();
+        var qtyInput = $(newRows[i]).find(".assignedStockQuantity").first();
+        var newQty =  qtyInput.val();
+        if(Number(newQty) == NaN || Number(newQty) == 0 || newQty == ""){
+            dataValid = false;
+            qtyInput.addClass('is-invalid');
+        }
+        else
+            qtyInput.removeClass('is-invalid');
         newStockAssignments.push({"productId": productId,"quantity": newQty});
     }
+
 
     requestArgs = {};
     requestArgs["jobId"] = $("#jobId").val();
@@ -411,6 +438,17 @@ function saveJobDetails(){
     requestArgs["changedStockAssignments"] = changedStockAssignments;
     requestArgs["deletedStockAssignments"] = assignedStockIdsToDelete;
 
+    if(requestArgs["jobName"] == ""){
+        dataValid = false;
+        $("#jobName").addClass("is-invalid");
+    }
+    else
+        $("#jobName").removeClass("is-invalid");
+
+    if(dataValid == false){
+        $("#saveJobFeedbackSpan").html("Please fill in the required fields");
+        return;
+    }
 
     if($("#jobId").val() == "-1")
         url = "{{ url_for('jobs.createJob') }}";
@@ -456,8 +494,66 @@ function deleteJob(){
     }
 }
 
+function saveJobTemplate(){
+    // this needs a list of newly assigned stock, a list of deleted assignments,
+    // and a list of changed assignments, as well as the name and ID of the job.
+    // validate inputs as we go
+    var dataValid = true;
+
+    var newStockAssignments = [];
+    var newRows = $(".stockAssignmentRow");
+    for(var i = 0; i < newRows.length; i++){
+        var productId = $(newRows[i]).data("productId");
+        var qtyInput = $(newRows[i]).find(".assignedStockQuantity").first();
+        var newQty =  qtyInput.val();
+        if(Number(newQty) == NaN || Number(newQty) == 0 || newQty == ""){
+            dataValid = false;
+            qtyInput.addClass('is-invalid');
+        }
+        else
+            qtyInput.removeClass('is-invalid');
+        newStockAssignments.push({"productId": productId,"quantity": newQty});
+    }
+
+    requestArgs = {};
+    requestArgs["templateId"] = $("#templateId").val();
+    requestArgs["templateName"] = $("#jobName").val();
+    requestArgs["templateStockAssignments"] = newStockAssignments;
+
+    if(requestArgs["jobName"] == ""){
+        dataValid = false;
+        $("#jobName").addClass("is-invalid");
+    }
+    else
+        $("#jobName").removeClass("is-invalid");
+
+    if(dataValid == false){
+        $("#saveJobFeedbackSpan").html("Please fill in the required fields");
+        return;
+    }
+
+    url = "{{ url_for('jobs.processJobTemplate') }}";
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: JSON.stringify(requestArgs),
+        processData: false,
+        contentType: "application/json",
+        cache: false,
+        success: function(responseData){
+            $("#saveJobFeedbackSpan").html("template saved");
+            $("#templateId").val(responseData.templateId);
+            setTimeout(function(){$("#saveJobFeedbackSpan").empty();}, 5000);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(jqXHR.responseText);
+        }
+    });
+}
+
 function setJobStockTableSizes(){
-    // calculate the height of the required stock adn stock used table containers and set
+    // calculate the height of the required stock and stock used table containers and set
     var stockUsedContainerHeight = $("#editJobPanel").height() - (
         $("#jobPanelNav").outerHeight() +
         $("#jobNameContainer").outerHeight() +
@@ -475,4 +571,72 @@ function setJobStockTableSizes(){
     );
     newHeightStyling = "height: " + assignedStockContainerHeight + "px;";
     $("#assignedStockTableContainer").prop("style", newHeightStyling);
+}
+
+function onOpenTemplatePanelButtonClicked(){
+    $("#templatesGreyout").prop("hidden", false);
+    $("#templatesPanel").prop("hidden", false);
+    populateTemplateNameList();
+}
+
+function closeTemplatePanel(){
+    $("#templatesGreyout").prop("hidden", true);
+    $("#templatesPanel").prop("hidden", true);
+}
+
+function populateTemplateNameList(){
+    url = new URL(window.location.href + "{{ url_for('jobs.getTemplateList') }}");
+    url.searchParams.append("searchTerm", $("#templatesSearchBox").val());
+    $.ajax({
+        type: "GET",
+        url: url,
+        datatype: "json",
+        success: function(templateNameList){
+            $("#templateSelect").empty();
+            for(var i = 0; i < templateNameList.length; i++){
+                var nameOption = $("<option>");
+                nameOption.val(templateNameList[i].id);
+                nameOption.html(templateNameList[i].templateName);
+                $("#templateSelect").append(nameOption);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+        }
+    });
+}
+
+function onApplyTemplateButtonClicked(){
+    if($("#assignedStockTableBody").children().length > 0){
+        if(!confirm("Clear current stock assigment?"))
+            return;
+    }
+    setAssignedStockFromTemplate($("#templateSelect").val());
+    $("#templatesGreyout").prop("hidden", true);
+    $("#templatesPanel").prop("hidden", true);
+}
+
+function setAssignedStockFromTemplate(templateId){
+    $("#assignedStockTableBody").empty();
+    url = new URL(window.location.href + "{{ url_for('jobs.getTemplateStockAssignment') }}");
+    url.searchParams.append("templateId", templateId);
+    $.ajax({
+        type: "GET",
+        url: url,
+        datatype: "json",
+        success: function(templateAssignmentsList){
+            for(var i = 0; i < templateAssignmentsList.length; i++){
+                addStockToAssignedList(
+                    templateAssignmentsList[i].productName,
+                    templateAssignmentsList[i].productId,
+                    templateAssignmentsList[i].quantity,
+                    templateAssignmentsList[i].quantityUnit
+                );
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            alert(jqXHR.responseText);
+        }
+    });
 }

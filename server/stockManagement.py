@@ -644,7 +644,6 @@ def deleteMultipleStockItems():
 @login_required
 def getNewlyAddedStock():
     session = getDbSession()
-    # TODO: implement this using verificationRecords to pull in bulk stock
     # newly added stock list includes product name, stock item id number, quantity added.
     # as always, a text search is available.
     if "searchTerm" in request.args:

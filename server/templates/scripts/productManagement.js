@@ -72,7 +72,7 @@ function updateProductsTable(){
         }
     });
 
-    var url = new URL("http://" + document.location.host + "{{ url_for('productManagement.getProductsCsvFile') }}");
+    var url = new URL(window.location.href + "{{ url_for('productManagement.getProductsCsvFile') }}");
     for (key in productSearchParams)
         url.searchParams.append(key, productSearchParams[key]);
     $("#productsCsvDownloadLink").prop("href", url);
