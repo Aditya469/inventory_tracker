@@ -184,6 +184,23 @@ def getTemplateStockAssignment():
 	return make_response(jsonify(stockAssignmentList), 200)
 
 
+@bp.route("/deleteTemplate", methods=("POST",))
+@create_access_required
+def deleteTemplate():
+	dbSession = getDbSession()
+	templateId = request.args.get("templateId")
+	template = dbSession.query(JobTemplate).filter(JobTemplate.id == templateId).one()
+	dbSession.query(TemplateStockAssignment)\
+		.filter(TemplateStockAssignment.jobTemplateId == templateId)\
+		.delete()
+
+	dbSession.delete(template)
+
+	dbSession.commit()
+
+	return make_response("Template deleted", 200)
+
+
 # process changes from overview page job panel. Encapsulted for reusability
 def updateJobFromRequest(jobId, dbSession):
 	error = None

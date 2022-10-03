@@ -206,6 +206,7 @@ function closePanels(){
     $("#editJobPanel").prop("hidden",true);
     $(".editJobInput").val("");
     $(".editJobInput").empty();
+    $(".editJobInput").removeClass('is-invalid');
     $("#stockUsedTableBody").empty();
     $("#assignedStockTableBody").empty();
 }
@@ -579,7 +580,7 @@ function onOpenTemplatePanelButtonClicked(){
     populateTemplateNameList();
 }
 
-function closeTemplatePanel(){
+function closeTemplatesPanel(){
     $("#templatesGreyout").prop("hidden", true);
     $("#templatesPanel").prop("hidden", true);
 }
@@ -637,6 +638,18 @@ function setAssignedStockFromTemplate(templateId){
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
             alert(jqXHR.responseText);
+        }
+    });
+}
+
+function deleteSelectedTemplate(){
+    url = new URL(window.location.href + "{{ url_for('jobs.deleteTemplate') }}");
+    url.searchParams.append("templateId", $("#templateSelect").val());
+    $.ajax({
+        url: url,
+        type: "POST",
+        success: function(){
+            populateTemplateNameList();
         }
     });
 }

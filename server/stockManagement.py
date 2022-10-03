@@ -214,7 +214,7 @@ def getStockItemById(stockId):
         .order_by(CheckInRecord.timestamp.desc()) \
         .first()[0]
 
-    if lastSeenBinId:
+    if lastSeenBinId is not None:
         binId = lastSeenBinId
     else:
         binId = None
