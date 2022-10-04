@@ -23,15 +23,17 @@ limitations under the License.
 {% block additionalHeadMaterial %}
 <script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stockManagement.js') }}"></script>
 <script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stockItemPanel.js') }}"></script>
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stickerSheetPanel.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='stockManagement.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='stickerSheetPanel.css') }}">
 {% endblock %}
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
     <div class="d-flex flex-row justify-content-between align-items-center">
         <h1>Items of Stock</h1>
-        <a href="{{ url_for('stockManagement.getItemStickerSheet', idQty=18) }}">Get ID sticker sheet (temporary)</a>
+        <input type="button" id="openStickerSheetPanelButton" class="btn btn-primary" onclick="openStickerSheetPanel()" value="Get ID Sticker Sheet">
     </div>
     <div id="displayControlsContainer">
         <div id="displayControls" class="row">
@@ -135,5 +137,5 @@ limitations under the License.
     </div>
 </div>
 {% include "stockItemPanel.html" %}
-{% include stickerSheetPanel.html" %}
+{% include "stickerSheetPanel.html" %}
 {% endblock %}

@@ -41,9 +41,9 @@ def getStockPage():
     return render_template("stockManagement.html", productName=productName)
 
 
-@bp.route('/getIdStickerSheet/<int:idQty>')
+@bp.route('/getIdStickerSheet')
 @create_access_required
-def getItemStickerSheet(idQty):
+def getItemStickerSheet():
     dbSession = getDbSession()
     pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()[0]
     pageHeight_mm = dbSession.query(Settings.stickerSheetPageHeight_mm).first()[0]
@@ -61,6 +61,11 @@ def getItemStickerSheet(idQty):
     stickerRows = dbSession.query(Settings.stickerSheetRows).first()[0]
     stickerColumns = dbSession.query(Settings.stickerSheetColumns).first()[0]
 
+    if "idQty" in request.args:
+        idQty = request.args.get("idQty")
+    else:
+        idQty = stickerRows * stickerColumns
+
     # temporary limitation until I find a suitable python pdf library
     if idQty > (stickerRows * stickerColumns):
         return make_response(f"You may only request up to {stickerRows * stickerColumns} at a time")
@@ -77,7 +82,7 @@ def getItemStickerSheet(idQty):
     )
 
     sheets[0].save(f"{current_app.instance_path}/stickers.png")
-    return send_file(f"{current_app.instance_path}/stickers.png")
+    return send_file(f"{current_app.instance_path}/stickers.png", as_attachment=True, download_name="Item ID Sticker Sheet.png")
 
 
 @bp.route('/getStock')
