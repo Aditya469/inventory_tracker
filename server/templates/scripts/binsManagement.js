@@ -50,6 +50,7 @@ function addBin(){
 
 function deleteBin(binId){
     if(confirm("Delete this bin?")){
+        $(this).prop("disabled", true);
         $.ajax({
             url: "{{ url_for("bins.deleteBin", binId="") }}" + binId,
             type: "POST",
@@ -70,18 +71,7 @@ function updateBinsTable(){
         url: "{{ url_for('bins.getBins') }}",
         type: "GET",
         success: function(responseData){
-            var table = $("<table class='table'>");
-            table.append(
-                $("<thead>")
-                .append($("<tr>")
-                    .append($("<td>Location Name</td>"))
-                    .append($("<td>QR Code</td>"))
-                    .append($("<td>Delete</td>"))
-                )
-            );
-            var tbody = $("<tbody>");
-            table.append(tbody);
-
+            $("#binTableBody").empty()
             for(var i = 0; i < responseData.length; i++){
                 var row = $("<tr>");
                 row.append($("<td>").html(responseData[i].locationName));
@@ -96,10 +86,8 @@ function updateBinsTable(){
                 delBtn.data("binId", responseData[i].id);
                 delBtn.on("click", function(){ deleteBin($(this).data("binId")); });
                 row.append($("<td>").append(delBtn));
-                tbody.append(row);
+                $("#binTableBody").append(row);
             }
-
-            $("#binListContainer").empty().append(table);
         }
     });
 }

@@ -32,19 +32,30 @@ limitations under the License.
 			<h2>Add a New Bin</h2>
 			<div class="row">
 				<label class="col-auto" for="newBinName">New Bin Name:</label>
-				<input class="col" id="newBinName" type="text"/>
+				<input class="col form-control" id="newBinName" type="text"/>
 			</div>
-			<div class="row">
-				<input class="col-5 offset-7" value="Add New Bin" type="button" onclick="addBin()">
+			<div class="row py-2 ps-1 pe-2">
+				<input class="col-12 ms-2 btn btn-primary" value="Add New Bin" type="button" onclick="addBin()">
 			</div>
-			<div class="row">
-				<span class="col-5 offset-7" id="addBinFeedbackSpan"/>
+			<div class="row d-flex justify-content-end">
+				<span class="col-12" id="addBinFeedbackSpan"/>
 			</div>
 		</div>
 		<div class="col col-sm-12 col-md-8 col-lg-6 px-3" id="availableBins">
 			<h2>Available Bins</h2>
 			<div id="binListContainer">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Bin Name</th>
+							<th>Bin Label QR Code</th>
+							<th>Delete</th>
+						</tr>
+					</thead>
+					<tbody id="binTableBody">
 
+					</tbody>
+				</table>
 			</div>
 	</div>
 </div>

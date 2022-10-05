@@ -25,6 +25,7 @@ limitations under the License.
 }
 
 form{
+  margin-top: 10px;
   display: grid;
   row-gap: 5px;
 }
@@ -35,5 +36,4 @@ form{
   width: 100%;
   left: 0px;
   top: 0px;
-  background: darkgreen;
 }

@@ -57,7 +57,7 @@ function updateJobsTable(){
             console.log(jqXHR.responseText);
         }
     });
-    var url = new URL(window.location.href + "{{ url_for('jobs.getJobsCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('jobs.getJobsCsvFile') }}");
     for (key in jobSearchParams)
         url.searchParams.append(key, jobSearchParams[key]);
     $("#jobsOverviewCsvDownloadLink").prop("href", url);
@@ -136,22 +136,22 @@ function updateStockTables(){
         }
     });
 
-    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in totalStockParams)
         url.searchParams.append(key, totalStockParams[key]);
     $("#totalStockCsvDownloadLink").prop("href", url);
 
-    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in availableStockParams)
         url.searchParams.append(key, availableStockParams[key]);
     $("#availableStockCsvDownloadLink").prop("href", url);
 
-    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in expiringStockParams)
         url.searchParams.append(key, expiringStockParams[key]);
     $("#oldStockCsvDownloadLink").prop("href", url);
 
-    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockOverviewCsvFile') }}");
     for (key in expiredStockParams)
         url.searchParams.append(key, expiredStockParams[key]);
     $("#expiredStockCsvDownloadLink").prop("href", url);
@@ -176,7 +176,7 @@ function generateOverviewStockTable(stockData)
         tr = $("<tr>");
         tr.data("productName", stockData[i].productName);
         tr.on("click", function(){
-            searchUrl = new URL(window.location.href + "{{ url_for("stockManagement.getStockPage")}}");
+            searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
             searchUrl.searchParams.append("productName",$(this).data("productName"));
             window.location.href = searchUrl.href;
         });

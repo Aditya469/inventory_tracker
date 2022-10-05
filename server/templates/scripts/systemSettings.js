@@ -120,6 +120,10 @@ function closePanels(){
 
 function restoreBackup(){
     var backupName = $("input[name='backupNameOption']:checked").val();
+    if(backupName == undefined){
+        alert("Select a backup to restore from");
+        return;
+    }
     if(confirm("Restore the Database from " + backupName + "?")){
         $.ajax({
             url: "{{ url_for('backup.restoreDbFromBackup') }}",

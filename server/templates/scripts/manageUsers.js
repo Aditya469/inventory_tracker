@@ -48,7 +48,7 @@ function updateUsersTable(){
                 row.append($("<td>").html(responseData[i]['username']));
 
 
-                var accessLevelSel = $("<select class='accessLevelSelector'>");
+                var accessLevelSel = $("<select class='accessLevelSelector form-select'>");
                 accessLevelSel.on("change", function(){onUserConfigChanged(this);})
                 if(responseData[i]['accessLevel'] == "0")
                     accessLevelSel.append($("<option value='0' selected>Read-Only</option>"));
@@ -81,7 +81,7 @@ function updateUsersTable(){
                 else
                     row.append($("<th>"));
 
-                var receiveStockNotificationsCheckbox = $("<input type='checkbox' class='receiveStockNotificationsCheckbox'>");
+                var receiveStockNotificationsCheckbox = $("<input type='checkbox' class='receiveStockNotificationsCheckbox form-check-input'>");
                 receiveStockNotificationsCheckbox.on("change", function(){onUserConfigChanged(this);});
                 if(responseData[i]['receiveStockNotifications'])
                     receiveStockNotificationsCheckbox.prop("checked", true);
@@ -90,7 +90,7 @@ function updateUsersTable(){
 
                 row.append($("<td class='text-center'>").append(receiveStockNotificationsCheckbox))
 
-                var receiveDbStatusNotificationsCheckbox = $("<input type='checkbox' class='receiveDbStatusNotificationsCheckbox'>");
+                var receiveDbStatusNotificationsCheckbox = $("<input type='checkbox' class='receiveDbStatusNotificationsCheckbox form-check-input'>");
                 receiveDbStatusNotificationsCheckbox.on("change", function(){onUserConfigChanged(this);});
                 if(responseData[i]['receiveDbStatusNotifications'])
                     receiveDbStatusNotificationsCheckbox.prop("checked", true);
@@ -99,7 +99,7 @@ function updateUsersTable(){
 
                 row.append($("<td class='text-center'>").append(receiveDbStatusNotificationsCheckbox))
 
-                var emailAddressInput = $("<input type='text' class='emailAddress'>");
+                var emailAddressInput = $("<input type='text' class='emailAddress form-control'>");
                 emailAddressInput.on("change", function(){onUserConfigChanged(this);});
                 if(responseData[i]['emailAddress'] != null)
                     emailAddressInput.val(responseData[i]['emailAddress']);
@@ -107,13 +107,13 @@ function updateUsersTable(){
                     emailAddressInput.val("");
                 row.append($("<td>").append(emailAddressInput));
 
-                var resetPasswordBtn = $("<input class='button'>");
+                var resetPasswordBtn = $("<input class='button btn btn-secondary'>");
                 resetPasswordBtn.attr("type","button");
                 resetPasswordBtn.attr("value","Reset Password");
                 resetPasswordBtn.attr("onclick","resetPassword(\"" + responseData[i]['username'] + "\")");
                 row.append($("<td>").append(resetPasswordBtn));
 
-                var deleteUserBtn = $("<input class='button'>");
+                var deleteUserBtn = $("<input class='button btn btn-danger'>");
                 deleteUserBtn.attr("type","button");
                 deleteUserBtn.attr("value","Delete User");
                 deleteUserBtn.attr("onclick","deleteUser(\"" + responseData[i]['username'] + "\")");
@@ -136,12 +136,42 @@ function updateUsersTable(){
 
 function addNewUser(){
     var formData = new FormData();
-    formData.append("newUsername", $("#newUsername").val());
-    formData.append("newPassword", $("#newPassword").val());
+    var valid = true;
+    $("#newUsername").removeClass("is-invalid");
+    $("#newPassword").removeClass("is-invalid");
+    $("#emailAddress").removeClass("is-invalid");
+
+    var newUsername = $("#newUsername").val();
+    if(newUsername == ""){
+        $("#newUsername").addClass("is-invalid");
+        valid = false;
+    }
+
+    var newPassword = $("#newPassword").val();
+    if(newPassword == ""){
+        $("#newPassword").addClass("is-invalid");
+        valid = false;
+    }
+
+    var receiveStockNotifications = $("#receiveStockNotifications").is(":checked");
+    var receiveDbStatusNotifications = $("#receiveDbStatusNotifications").is(":checked");
+    var emailAddress = $("#emailAddress").val();
+    if(emailAddress == "" && (receiveStockNotifications || receiveDbStatusNotifications)){
+        $("#emailAddress").addClass("is-invalid");
+        valid = false;
+    }
+
+    if(!valid){
+        $("#newUserFeedback").html("Please fill all required fields");
+        return;
+    }
+
+    formData.append("newUsername", newUsername);
+    formData.append("newPassword", newPassword);
     formData.append("accessLevel", $("#accessLevel").val());
-    formData.append("emailAddress", $("#emailAddress").val());
-    formData.append("receiveStockNotifications", $("#receiveStockNotifications").is(":checked"));
-    formData.append("receiveDbStatusNotifications", $("#receiveDbStatusNotifications").is(":checked"));
+    formData.append("emailAddress", emailAddress);
+    formData.append("receiveStockNotifications", receiveStockNotifications);
+    formData.append("receiveDbStatusNotifications", receiveDbStatusNotifications);
 
     var newUserId = $("#newUserId").val();
     if(newUserId != "")
@@ -196,26 +226,28 @@ function resetPassword(username){
 }
 
 function deleteUser(username){
-    var formData = new FormData();
-    formData.append("username", username);
+    if(confirm("Delete User " + username + "?")){
+        var formData = new FormData();
+        formData.append("username", username);
 
-    $.ajax({
-        url: "{{ url_for("users.deleteUser") }}",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        cache: false,
-        success: function(responseData){
-            console.log(responseData);
-            updateUsersTable();
-            $("#currentUserFeedback").html("User deleted");
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR.responseText);
-            $("#currentUserFeedback").html(jqXHR.responseText);
-        }
-    });
+        $.ajax({
+            url: "{{ url_for("users.deleteUser") }}",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(responseData){
+                console.log(responseData);
+                updateUsersTable();
+                $("#currentUserFeedback").html("User deleted");
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR.responseText);
+                $("#currentUserFeedback").html(jqXHR.responseText);
+            }
+        });
+    }
 }
 
 function onUserConfigChanged(element){

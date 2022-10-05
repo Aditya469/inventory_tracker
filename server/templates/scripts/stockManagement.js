@@ -65,7 +65,7 @@ function updateStockTable(){
         }
     });
 
-    var url = new URL(window.location.href + "{{ url_for('stockManagement.getStockCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockCsvFile') }}");
     for (key in requestParams){
         url.searchParams.append(key, requestParams[key]);
     }

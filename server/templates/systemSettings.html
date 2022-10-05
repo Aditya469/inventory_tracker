@@ -24,71 +24,71 @@ limitations under the License.
 {% endblock %}
 
 {% block content %}
-<div id="contentContainer" class="container mt-2">
+<div id="contentContainer" class="row mt-2">
     <input type="hidden" id="settingsId">
-    <div class="row pb-5">
-        <div class="col-sm-12 col-md-6 offset-md-3" id="backupSettings">
+    <div class="row pb-5 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4 border borer-dark">
+        <div class="" id="backupSettings">
             <h2>Database Backup</h2>
-            <label class="col-6 form-check-label" for="dbMakeBackups">Make Automatic Backups</label>
-            <input class="col-6 form-check-input align-self-start" id="dbMakeBackups" type="checkbox" onchange="saveSettings()">
-            <div class="row co-12">
-                <label class="col-6" for="dbBackupAtTime">Nightly Backup Time</label>
-                <div class="col-auto">
+            <label class="col-7 form-check-label" for="dbMakeBackups">Make Automatic Backups</label>
+            <input class="col-5 form-check-input align-self-start" id="dbMakeBackups" type="checkbox" onchange="saveSettings()">
+            <div class="row col-12">
+                <label class="col-7" for="dbBackupAtTime">Nightly Backup Time</label>
+                <div class="col-5">
                     <input class="form-control align-self-start" id="dbBackupAtTime" type="time" onchange="saveSettings()">
                 </div>
             </div>
             <div class="row col-12">
-                <label class="col-6" for="dbNumberOfBackups">Number Of Backups To Keep</label>
-                <div class="col-3">
+                <label class="col-7" for="dbNumberOfBackups">Number Of Backups To Keep</label>
+                <div class="col-5">
                     <input class="form-control align-self-start" id="dbNumberOfBackups" type="number" onchange="saveSettings()">
                 </div>
             </div>
-            <input id="initiateBackupBtn" type="button" class="col-9 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
-            <input id="restoreBackupBtn" type="button" class="col-9 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup...">
+            <input id="initiateBackupBtn" type="button" class="col-12 my-2 btn btn-primary" onclick="initiateBackup()" value="Initiate Backup Now">
+            <input id="restoreBackupBtn" type="button" class="col-12 my-2 btn btn-secondary" onclick="showRestoreBackupPanel()" value="Restore From Backup...">
+            <hr class="col-12">
         </div>
-        <hr class="col-sm-12 col-md-6 offset-md-3">
-        <div class="col-sm-12 col-md-6 offset-md-3" id="stockAutomaticFunctionsSettings">
+        <div class="" id="stockAutomaticFunctionsSettings">
             <h2>Stock Management Functions</h2>
-            <div class="row co-12">
-                <label class="col-6" for="stockLevelReorderCheckAtTime">Time to Check For Stock Needing Reorder</label>
-                <div class="col-auto">
+            <div class="row col-12">
+                <label class="col-7" for="stockLevelReorderCheckAtTime">Time to Check For Stock Needing Reorder</label>
+                <div class="col-5">
                     <input class="form-control align-self-start" id="stockLevelReorderCheckAtTime" type="time" onchange="saveSettings()">
                 </div>
             </div>
+            <hr class="col-12">
         </div>
-        <hr class="col-sm-12 col-md-6 offset-md-3">
-        <div class="col-sm-12 col-md-6 offset-md-3" id="emailSettings">
+        <div class="" id="emailSettings">
             <h2>Email Configuration</h2>
             <label class="col-6 form-check-label" for="sendEmails">Send Email Notifications</label>
             <input class="col-6 form-check-input mx-2 align-self-start" id="sendEmails" type="checkbox" onchange="saveSettings()">
             <div class="row col-12">
                 <label class="col-6" for="emailSmtpServerName">Email SMPT Server Name</label>
-                <div class="col-6">
+                <div class="col-6 my-1">
                     <input class="form-control align-self-start" id="emailSmtpServerName" type="text" onchange="saveSettings()">
                 </div>
             </div>
             <div class="row col-12">
                 <label class="col-6" for="emailSmtpServerPort">Email SMPT Server Port</label>
-                <div class="col-6">
+                <div class="col-6 my-1">
                     <input class="form-control align-self-start" id="emailSmtpServerPort" type="text" onchange="saveSettings()">
                 </div>
             </div>
             <div class="row col-12">
                 <label class="col-6" for="emailAccountName">Email Account Name</label>
-                <div class="col-6">
+                <div class="col-6 my-1">
                     <input class="form-control align-self-start" id="emailAccountName" type="text" onchange="saveSettings()">
                 </div>
             </div>
             <div class="row col-12">
                 <label class="col-6" for="emailAccountPassword">Email Account Password</label>
-                <div class="col-6">
+                <div class="col-6 my-1">
                     <input class="form-control align-self-start" id="emailAccountPassword" type="text" onchange="saveSettings()">
                 </div>
             </div>
             <div class="row col-12">
                 <label class="col-6" for="emailSecurityMethod">Email Security Method</label>
-                <div class="col-auto">
-                    <select class="align-self-start" id="emailSecurityMethod" onchange="saveSettings()">
+                <div class="col-6">
+                    <select class="align-self-start form-select" id="emailSecurityMethod" onchange="saveSettings()">
                         <option value="SSL">SSL</option>
                         <option value="TLS">TLS (STARTTLS)</option>
                     </select>
@@ -99,7 +99,7 @@ limitations under the License.
                 <div class="col-6">
                     <input class="form-control" id="testEmailRecipientAddress" type="text">
                 </div>
-                <div class="col-6 offset-6 row py-1">
+                <div class="col-6 offset-6 row py-3">
                     <input class="col-12 btn btn-primary" type="button" id="sendTestEmailButton" value="Send Test Email" onclick="sendTestEmail()">
                 </div>
             </div>
@@ -107,15 +107,15 @@ limitations under the License.
     </div>
 </div>
 <div id="greyout" hidden class="position-fixed row top-0 start-0 vw-100 vh-100" onclick="closePanels()"></div>
-<div id="restoreDbFromBackupPanel" hidden class="container w-50 h-75 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+<div id="restoreDbFromBackupPanel" hidden class="container col-sm-8 col-md-6 col-xl-4 h-75 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
     <nav id="nav" class="navbar bg-light navbar-light w-100">
-        <h1>Restore From Database Backup</h1>
+        <h2>Restore Database Backup</h2>
         <input class="btn-close" id="closeRestoreDbPanelBtn" type="button" onclick="closePanels()"/>
     </nav>
     <div class="col" id="dbBackupNamesContainer">
-        <h2>Available Backups</h2>
-        <div id="dbBackupNamesList"></div>
+        <h3>Available Backups</h3>
+        <div id="dbBackupNamesList" minheight="50vh"></div>
     </div>
-    <input type="button" class="btn btn-primary" value="Restore Selected Backup" onclick="restoreBackup()">
+    <input type="button" class="btn btn-primary my-3" value="Restore Selected Backup" onclick="restoreBackup()">
 </div>
 {% endblock %}

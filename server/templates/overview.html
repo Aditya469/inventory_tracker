@@ -32,10 +32,9 @@ limitations under the License.
 	<div class="row row-cols-sm-1 row-cols-md-2	">
 		<div id="currentJobsContainer" class="col col-md-5 border">
 			<h1>Jobs</h1>
-			<div id="jobsContainerControls" class="row">
-				<input class="col col-12 button" id="addJobButton" type="button" value="Create New Job" onclick="openJobDetailsPanel(-1)">
-				<label class="col col-auto" id="jobSearchBarLabel" for="jobSearchBar">Search Term</label>
-				<input class="col" id="jobSearchBar" placeholder="start typing..." oninput="updateJobsTable()">
+			<div id="jobsContainerControls" class="row px-2">
+				<input class="col col-12 btn btn-primary" id="addJobButton" type="button" value="Create New Job" onclick="openJobDetailsPanel(-1)">
+				<input class="col form-control my-1" id="jobSearchBar" placeholder="start typing to search..." oninput="updateJobsTable()">
 			</div>
 			<a href="" id="jobsOverviewCsvDownloadLink">Download this data as a CSV file</a>
 			<div id="jobsTableContainer">
@@ -44,8 +43,7 @@ limitations under the License.
 		<div id="stockDisplayContainer" class="col col-md-7 border">
 			<h1>Stock</h1>
 			<div id="stockSearchControls pb-1">
-				<label id="stockSearchBarLabel" for="stockSearchBar">Search Term</label>
-				<input id="stockSearchBar" placeholder="start typing..." oninput="updateStockTables()">
+				<input id="stockSearchBar" class="form-control" placeholder="start typing to search..." oninput="updateStockTables()">
 			</div>
 			<br>
 			<div id="stockTableTabsContainer">

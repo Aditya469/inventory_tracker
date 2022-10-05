@@ -406,7 +406,7 @@ function closeTemplatesPanel(){
 }
 
 function populateTemplateNameList(){
-    url = new URL(window.location.href + "{{ url_for('jobs.getTemplateList') }}");
+    url = new URL(window.location.origin + "{{ url_for('jobs.getTemplateList') }}");
     url.searchParams.append("searchTerm", $("#templatesSearchBox").val());
     $.ajax({
         type: "GET",
@@ -439,7 +439,7 @@ function onApplyTemplateButtonClicked(){
 
 function setAssignedStockFromTemplate(templateId){
     $("#assignedStockTableBody").empty();
-    url = new URL(window.location.href + "{{ url_for('jobs.getTemplateStockAssignment') }}");
+    url = new URL(window.location.origin + "{{ url_for('jobs.getTemplateStockAssignment') }}");
     url.searchParams.append("templateId", templateId);
     $.ajax({
         type: "GET",
@@ -463,7 +463,7 @@ function setAssignedStockFromTemplate(templateId){
 }
 
 function deleteSelectedTemplate(){
-    url = new URL(window.location.href + "{{ url_for('jobs.deleteTemplate') }}");
+    url = new URL(window.location.origin + "{{ url_for('jobs.deleteTemplate') }}");
     url.searchParams.append("templateId", $("#templateSelect").val());
     $.ajax({
         url: url,

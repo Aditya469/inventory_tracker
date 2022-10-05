@@ -72,7 +72,7 @@ function updateProductsTable(){
         }
     });
 
-    var url = new URL(window.location.href + "{{ url_for('productManagement.getProductsCsvFile') }}");
+    var url = new URL(window.location.origin + "{{ url_for('productManagement.getProductsCsvFile') }}");
     for (key in productSearchParams)
         url.searchParams.append(key, productSearchParams[key]);
     $("#productsCsvDownloadLink").prop("href", url);
@@ -158,30 +158,32 @@ function onSelectAllCheckboxClicked(){
 }
 
 function deleteSelectedNewStockItems(){
-    var selectedCheckboxes = $(".newStockSelectCheckbox:checked");
-    var idList = [];
-    for(var i = 0; i < selectedCheckboxes.length; i++){
-        var id = $(selectedCheckboxes[i]).data("verificationRecordId");
-        console.log("Add verification record " + id + "to the list to delete");
-        idList.push(id);
-    }
-
-    var data = JSON.stringify(idList);
-
-    $.ajax({
-        url: "{{ url_for('stockManagement.deleteNewlyAddedStock') }}",
-        type: "POST",
-        data: data,
-        processData: false,
-        contentType: "application/json",
-        cache: false,
-        success: function(){
-            updateNewStockTable();
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            alert(jqXHR.responseText);
+    if(confirm("Delete the selected items?")){
+        var selectedCheckboxes = $(".newStockSelectCheckbox:checked");
+        var idList = [];
+        for(var i = 0; i < selectedCheckboxes.length; i++){
+            var id = $(selectedCheckboxes[i]).data("verificationRecordId");
+            console.log("Add verification record " + id + "to the list to delete");
+            idList.push(id);
         }
-    });
+
+        var data = JSON.stringify(idList);
+
+        $.ajax({
+            url: "{{ url_for('stockManagement.deleteNewlyAddedStock') }}",
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: "application/json",
+            cache: false,
+            success: function(){
+                updateNewStockTable();
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert(jqXHR.responseText);
+            }
+        });
+    }
 }
 
 function verifyAllNewStock(){

@@ -32,10 +32,9 @@ limitations under the License.
 	<div class="row row-cols-sm-1 row-cols-lg-2	">
 		<div id="productsContainer" class="col col-md-12 col-lg-6 border overflow-auto">
 			<h1>Known Products</h1>
-			<div id="productControls" class="row">
-				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12" onclick="openProductDetailsPanel(-1)"/>
-				<label id="productsBarLabel" for="productsSearchBar" class="col col-3">Search Term</label>
-				<input id="productsSearchBar" placeholder="start typing..." class="col col-9" oninput="updateProductsTable()">
+			<div id="productControls" class="row px-2">
+				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12 btn btn-primary" onclick="openProductDetailsPanel(-1)"/>
+				<input id="productsSearchBar" placeholder="Start typing to search..." class="col col-12 my-1 form-control" oninput="updateProductsTable()">
 			</div>
 			<a href="" id="productsCsvDownloadLink">Download this data as a CSV file</a>
 			<div id="productsTableContainer">
@@ -43,19 +42,18 @@ limitations under the License.
 		</div>
 		<div id="newStockDisplayContainer" class="col col-md-12 col-lg-6 border">
 			<h1>Newly Added Stock</h1>
-			<div id="stockSearchControls" class="pb-1 row">
-				<label id="stockSearchBarLabel" for="stockSearchBar" class="col col-3">Search Term</label>
-				<input id="stockSearchBar" placeholder="start typing..." class="col col-9" oninput="updateNewStockTable()">
-				<div class="col col-12">
-					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" onclick="updateNewStockTable()">
-					<label for="onlyShowUnknownProductsCheckbox">Only show stock with unknown product types</label>
+			<div id="stockSearchControls" class="pb-1 row px-2">
+				<input id="stockSearchBar" placeholder="Start typing to search..." class="col col-12 form-control" oninput="updateNewStockTable()">
+				<div class="col col-12 form-check">
+					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" class="form-check-input" onclick="updateNewStockTable()">
+					<label for="onlyShowUnknownProductsCheckbox" class="form-check-label">Only show stock with unknown product types</label>
 				</div>
-				<div class="col col-3">
-					<input id="selectAllCheckbox" type="checkbox" onclick="onSelectAllCheckboxClicked()">
-					<label for="selectAllCheckbox">Select all</label>
+				<div class="col col-12 form-check">
+					<input id="selectAllCheckbox" type="checkbox" class="form-check-input" onclick="onSelectAllCheckboxClicked()">
+					<label for="selectAllCheckbox" class="form-check-label">Select all</label>
 				</div>
-				<input type="button" id="deleteSelectedNewStockButton" value="Delete selected items" class="col col-4" disabled onclick="deleteSelectedNewStockItems()">
-				<input id="verifyAllButton" onclick="verifyAllNewStock()" class="col col-4 offset-1" value="Verify All New Stock" type="button"/>
+				<input type="button" id="deleteSelectedNewStockButton" value="Delete selected items" class="col col-4 btn btn-danger" disabled onclick="deleteSelectedNewStockItems()">
+				<input id="verifyAllButton" onclick="verifyAllNewStock()" class="col col-4 offset-4	 btn btn-primary" value="Verify All New Stock" type="button"/>
 			</div>
 			<div id="stockOverviewTableContainer" class="overflow-auto">
 
