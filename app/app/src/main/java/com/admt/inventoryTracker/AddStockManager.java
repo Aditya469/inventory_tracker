@@ -66,7 +66,7 @@ public class AddStockManager extends StockHandlingRequestManager<AddStockRequest
         if(JsonObject.has("binIdString"))
             addStockRequestParameters.LocationId = JsonObject.getString("binIdString");
         if(JsonObject.has("bulkItemCount"))
-            addStockRequestParameters.BulkItemCount = JsonObject.getInt("bulkItemCount");
+            addStockRequestParameters.BulkItemCount = JsonObject.getDouble("bulkItemCount");
         if(JsonObject.has("quantityCheckingIn"))
             addStockRequestParameters.ItemQuantityToAdd = JsonObject.getDouble("quantityCheckingIn");
         if(JsonObject.has("expiryDate"))

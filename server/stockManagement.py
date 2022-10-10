@@ -750,11 +750,12 @@ def deleteNewlyAddedStock():
 
     # loop through records to be deleted. If a stock item is a bulk product, remove the amount
     # that was checked in
-    for verificationRecord in verificationRecords:
+    for i in range(len(verificationRecords)):
+        verificationRecord = verificationRecords[i]
         stockItem = session.query(StockItem).filter(StockItem.id == verificationRecord.associatedStockItemId).first()
         checkinRecord = session.query(CheckInRecord)\
             .filter(CheckInRecord.id == verificationRecord.associatedCheckInRecord).first()
-        productType = session.query(ProductType).filter(ProductType.id == StockItem.productType).first()
+        productType = session.query(ProductType).filter(ProductType.id == stockItem.productType).first()
         if productType.tracksAllItemsOfProductType:
             stockItem.quantityRemaining -= checkinRecord.quantity
         if productType.tracksSpecificItems:

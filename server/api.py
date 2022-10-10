@@ -173,7 +173,7 @@ def processAddStockRequest():
 					itemId.isPendingAssignment = False
 					itemId.isAssigned = True
 
-		# if we not have a stockItem record, it should be a bulk entry, so update it.
+		# if we now have a stockItem record, it should be a bulk entry, so update it.
 		if stockItem is not None:
 			if productType.tracksSpecificItems or not productType.tracksAllItemsOfProductType:
 				logging.error("Got an ID number that exists for a non-bulk product")
@@ -240,7 +240,8 @@ def processAddStockRequest():
 	checkInRecord.stockItem = stockItem.id
 	checkInRecord.productType = productType.id
 	checkInRecord.timestamp = func.now()
-	checkInRecord.quantity = productType.initialQuantity
+	if checkInRecord.quantity is None:
+		checkInRecord.quantity = productType.initialQuantity
 	checkInRecord.createdByRequestId = requestParams['requestId']
 
 	if 'binIdString' in requestParams:

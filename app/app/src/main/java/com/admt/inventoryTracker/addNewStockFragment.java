@@ -128,7 +128,44 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             @Override
             public void afterTextChanged(Editable editable) {
                 try {
-                    mAddStockRequestParameters.ItemQuantityToAdd = Double.parseDouble(editable.toString());
+                    if(editable.toString() == "")
+                        mAddStockRequestParameters.ItemQuantityToAdd = null;
+                    else
+                        mAddStockRequestParameters.ItemQuantityToAdd = Double.parseDouble(editable.toString());
+                    if (isAddStockRequestValid()) {
+                        TextView tvPrompt = (TextView) (getActivity().
+                                findViewById(R.id.tvAddStockPrompt));
+                        tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
+
+                        enableSaveButton();
+                    }
+                }
+                catch (java.lang.NumberFormatException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        EditText etPackCount = (EditText) view.findViewById(R.id.etAddStockPacksToAdd);
+        etPackCount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if(editable.toString() == "")
+                        mAddStockRequestParameters.BulkItemCount = null;
+                    else
+                        mAddStockRequestParameters.BulkItemCount = Double.parseDouble(editable.toString());
                     if (isAddStockRequestValid()) {
                         TextView tvPrompt = (TextView) (getActivity().
                                 findViewById(R.id.tvAddStockPrompt));
@@ -288,7 +325,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             }
         }
 
-        else
+        else // assumed to be a product barcode at this point
         {
             mCurrentProduct = mProductDataManager.get(BarcodeData);
             if(mCurrentProduct == null)
@@ -427,7 +464,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         editText.setText("");
         editText = (EditText) getActivity().findViewById(R.id.etAddStockExpiryDate);
         editText.setText("");
-        editText = (EditText) getActivity().findViewById(R.id.etAddStockQtyToAdd);
+        editText = (EditText) getActivity().findViewById(R.id.etAddStockPacksToAdd);
         editText.setText("");
         editText = (EditText) getActivity().findViewById(R.id.etAddStockLocationName);
         editText.setText("");
