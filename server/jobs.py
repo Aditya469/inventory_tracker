@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import getDbSession
 from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType, JobTemplate, \
-	TemplateStockAssignment
+	TemplateStockAssignment, Bin
 import json
 from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
@@ -308,10 +308,11 @@ def getJobsDataFromRequest():
 	return jobList
 
 
-@bp.route("/getJob/<jobId>")
+@bp.route("/getJob")
 @login_required
-def getJob(jobId):
+def getJob():
 	session = getDbSession()
+	jobId = request.args.get("jobId")
 	job = session.query(Job).filter(Job.id == jobId).scalar()
 	if job is None:
 		return make_response("No such job", 404)
@@ -440,13 +441,95 @@ def deleteAssignedStock():
 @bp.route("/getJobsCsvFile", methods=("GET",))
 @login_required
 def getJobsCsvFile():
-    jobsData = getJobsDataFromRequest()
-    headingDictList = [
-        {"heading": "Job Name", "dataName": "jobName"},
-        {"heading": "Created Timestamp", "dataName": "addedTimestamp"},
-        {"heading": "Cumulative Cost", "dataName": "totalCost"},
+	jobsData = getJobsDataFromRequest()
+	headingDictList = [
+		{"heading": "Job Name", "dataName": "jobName"},
+		{"heading": "Created Timestamp", "dataName": "addedTimestamp"},
+		{"heading": "Cumulative Cost", "dataName": "totalCost"},
 
-    ]
-    csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=jobsData)
+	]
+	csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=jobsData)
 
-    return send_file(csvPath, as_attachment=True, download_name="jobsInfo.csv", mimetype="text/csv")
+	return send_file(csvPath, as_attachment=True, download_name="jobsInfo.csv", mimetype="text/csv")
+
+@bp.route("/getPickingList")
+@login_required
+def getPickingList():
+	'''
+	this can probably be improved, but it'll do for now
+	produces a simple text file. works to a maximum width of 80 characters
+
+	format of the file is
+
+	Picking list for <job name>
+
+	qty.        product name    barcode             bin
+	<qty> x     <product name>  <product barcode>   <some location>
+	<qty> x     <product name>  <product barcode>   <some location>
+
+	'''
+
+	pageWidth = 80
+	padWidth = 3
+	quantityWidth = 6
+	barcodeWidth = 16
+	binWidth = 20
+	# special as likely widest
+	productNameWidth = pageWidth - ((padWidth * 3) + quantityWidth + barcodeWidth + binWidth)
+
+	padChar = " "
+	quantityLabel = "Qty."
+	barcodeLabel = "Barcode"
+	binLabel = "Bin (last seen)"
+	productNameLabel = "Product Name"
+
+
+	dbSession = getDbSession()
+	jobId = request.args.get("jobId", default=None)
+	if jobId is None:
+		return make_response("jobId is required", 400)
+
+	pickingListDescription = []
+
+	job = dbSession.query(Job).filter(Job.id == jobId).first()
+
+	assignedStockRecords = dbSession.query(AssignedStock)\
+		.filter(AssignedStock.associatedJob == jobId)\
+		.order_by(AssignedStock.id)\
+		.all()
+
+	for assignedStockRecord in assignedStockRecords:
+		product = dbSession.query(ProductType).filter(ProductType.id == assignedStockRecord.productId).one()
+		lastCheckInRecord = dbSession.query(CheckInRecord).filter(CheckInRecord.productType == product.id).order_by(CheckInRecord.timestamp).first()
+
+		binName = "Location not recorded"
+		if lastCheckInRecord:
+			bin = dbSession.query(Bin).filter(Bin.id == lastCheckInRecord.binId).first()
+			if bin is not None:
+				binName = bin.locationName
+
+		rowDescription = {
+			"productName": product.productName,
+			"quantity": assignedStockRecord.quantity,
+			"binName": binName,
+			"barcode": product.barcode
+		}
+
+		pickingListDescription.append(rowDescription)
+
+	# generate file
+	filepath = os.path.join(current_app.instance_path, "pickingListFile.txt")
+	pickingListFile = open(filepath, "w")
+	pickingListFile.write(f"Picking List for {job.jobName}\n\n")
+	pickingListFile.write(
+		f"{quantityLabel:<{quantityWidth}}{padChar:{padWidth}}{productNameLabel:<{productNameWidth}}"
+		f"{padChar:{padWidth}}{barcodeLabel:<{barcodeWidth}}{padChar:{padWidth}}{binLabel:<{binWidth}}\n\n")
+
+	for row in pickingListDescription:
+		pickingListFile.write(
+			f"{row['quantity']:<{quantityWidth}}{padChar:{padWidth}}{row['productName']:<{productNameWidth}}"
+			f"{padChar:{padWidth}}{row['barcode']:<{barcodeWidth}}{padChar:{padWidth}}{row['binName']:<{binWidth}}\n\n")
+
+	pickingListFile.close()
+
+	return send_file(filepath, as_attachment=True, download_name=f"Picking List {job.jobName}.txt")

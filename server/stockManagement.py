@@ -602,6 +602,7 @@ def updateStock():
     if "binId" in request.form:
         session.add(CheckInRecord(
             stockItem = stockItem.id,
+            productType = stockItem.productType,
             quantityCheckedIn = 0,
             binId = request.form.get("binId")
         ))

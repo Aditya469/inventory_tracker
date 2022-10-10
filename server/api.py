@@ -238,6 +238,7 @@ def processAddStockRequest():
 
 	# this section is common to all request types
 	checkInRecord.stockItem = stockItem.id
+	checkInRecord.productType = productType.id
 	checkInRecord.timestamp = func.now()
 	checkInRecord.quantity = productType.initialQuantity
 	checkInRecord.createdByRequestId = requestParams['requestId']
@@ -315,6 +316,7 @@ def processCheckStockInRequest():
 		dbSession.add(checkInRecord)
 		checkInRecord.quantity = decimal.Decimal(requestParams['quantity'])
 		checkInRecord.stockItem = stockItem.id
+		checkInRecord.productType = stockItem.productType
 		checkInRecord.createdByRequestId = requestParams["requestId"]
 
 		if 'timestamp' in requestParams:
@@ -396,6 +398,7 @@ def processCheckStockOutRequest():
 		checkOutRecord = CheckOutRecord()
 		dbSession.add(checkOutRecord)
 		checkOutRecord.stockItem = stockItem.id
+		checkOutRecord.productType = stockItem.productType
 		checkOutRecord.timestamp = func.now()
 		checkOutRecord.qtyBeforeCheckout = stockItem.quantityRemaining
 		checkOutRecord.createdByRequestId = requestParams['requestId']

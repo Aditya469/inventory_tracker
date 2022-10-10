@@ -46,10 +46,15 @@ function openJobDetailsPanel(jobId){
         $("#saveTemplateButton").prop("hidden", true);
         $("#jobName").val("");
 
-        var url = "{{ url_for( 'jobs.getJob', jobId='')}}" + jobId;
+        var pickingListUrl = new URL(window.location.origin + '{{ url_for("jobs.getPickingList")}}');
+        pickingListUrl.searchParams.append("jobId", jobId);
+        $("#pickingListLink").prop("hidden", false).prop("href", pickingListUrl);
+
+        var jobDataUrl = new URL(window.location.origin + "{{ url_for( 'jobs.getJob')}}");
+        jobDataUrl.searchParams.append("jobId", jobId);
         $.ajax({
             type:"GET",
-            url: url,
+            url: jobDataUrl,
             success: function(jobData){
                 console.log(jobData);
                 populateJobPanel(jobData);
@@ -65,6 +70,7 @@ function openJobDetailsPanel(jobId){
         $("#stockUsedContainer").prop("hidden", true);
         $("#deleteButton").prop("hidden", true);
         $("#saveTemplateButton").prop("hidden", false);
+        $("#pickingListLink").prop("hidden", true);
         $("#jobName").val("");
     }
 }
@@ -153,6 +159,7 @@ function onAddStockButtonClicked(){
     var productQtyUnit = selectedProductOption.data("qtyUnit");
 
     addStockToAssignedList(productName, productId, quantity, productQtyUnit);
+    $("#pickingListLink").prop("hidden", true); // hide the picking link list until the job is saved
 }
 
 function addStockToAssignedList(ProductName, ProductId, ProductQuantity, ProductQtyUnit){
@@ -388,6 +395,7 @@ function setJobStockTableSizes(){
         $("#reqStockTitle").outerHeight() +
         $("#reqStockSearch").outerHeight() +
         $("#reqStockAssign").outerHeight() +
+        $("#pickingListLink").outerHeight() +
         $("#commitButtonsContainer").outerHeight()
     );
     newHeightStyling = "height: " + assignedStockContainerHeight + "px;";

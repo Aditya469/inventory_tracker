@@ -166,6 +166,7 @@ class CheckInRecord(Base):
 
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
+	productType = Column(Integer, ForeignKey("productTypes.id"))
 	timestamp = Column(DateTime(timezone=True), server_default=func.now())
 	quantity = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
@@ -195,6 +196,7 @@ class CheckOutRecord(Base):
 
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
+	productType = Column(Integer, ForeignKey("productTypes.id"))
 	timestamp = Column(DateTime(timezone=True), server_default=func.now())
 	quantity = Column(Numeric)
 	binId = Column(Integer, ForeignKey("bins.id"))
