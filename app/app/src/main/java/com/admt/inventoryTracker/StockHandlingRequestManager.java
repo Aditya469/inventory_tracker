@@ -3,6 +3,7 @@ package com.admt.inventoryTracker;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -10,8 +11,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,56 +25,76 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-public abstract class StockHandlingRequestManager<T>
-{
-    private HashMap<String, T> mRequestMap;
+public abstract class StockHandlingRequestManager<T> {
+    private class StockHandlingRequest {
+        Long requestId;
+        T requestParameters;
+
+        public StockHandlingRequest() {
+        }
+
+        public StockHandlingRequest(Long RequestId, T RequestParameters) {
+            requestId = RequestId;
+            requestParameters = RequestParameters;
+        }
+    }
+
+    private ArrayList<StockHandlingRequest> mStockHandlingRequestList;
     private Context mAppContextRef;
     private RequestQueue mRequestQueue;
-    private Semaphore mRequestMapAccessSem;
+    private Semaphore mRequestListAccessSem;
+    private static Semaphore mSendAllSyncSem; // used to synchronise sending requests
     protected String mJsonFileName;
 
     protected String TAG;
 
-    public StockHandlingRequestManager(Application application, String cacheFileName)
-    {
+    public StockHandlingRequestManager(Application application, String cacheFileName) {
+        TAG = "StockHandlingRequestManager";
         mAppContextRef = application.getApplicationContext();
-        mRequestMap = new HashMap<>();
+        mStockHandlingRequestList = new ArrayList<>();
         mRequestQueue = Volley.newRequestQueue(mAppContextRef);
         mRequestQueue.start();
-        mRequestMapAccessSem = new Semaphore(1);
+        mRequestListAccessSem = new Semaphore(1);
         mJsonFileName = cacheFileName;
-        readListFromJsonFile(); // load the list from file. This will exist if the app was
+        readListFromJsonFile(); // load the list from file. This will contain data if the app was
                                 // not able to send all requests before it closed/crashed
     }
 
     private void writeListToJsonFile() throws InterruptedException, JSONException, IOException {
-        JSONObject mapJson = new JSONObject();
+        JSONArray listJson = new JSONArray();
 
-        Set<String> requestIds = mRequestMap.keySet();
-        Iterator<String> requestIdIterator = requestIds.iterator();
+        for (int i = 0; i < mStockHandlingRequestList.size(); i++) {
+            StockHandlingRequest stockHandlingRequest = mStockHandlingRequestList.get(i);
 
-        while(requestIdIterator.hasNext()) {
-            String requestId = requestIdIterator.next();
+            JSONObject requestParametersJson = convertRequestParametersToJsonObject(stockHandlingRequest.requestParameters);
+            JSONObject requestJson = new JSONObject();
+            requestJson.put("requestId", stockHandlingRequest.requestId);
+            requestJson.put("requestParameters", requestParametersJson);
 
-            T request = (T)mRequestMap.get(requestId);
-            JSONObject requestJson = convertRequestToJsonObject(request);
-
-            mapJson.put(requestId, requestJson);
+            listJson.put(requestJson);
         }
 
         File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        bufferedWriter.write(mapJson.toString());
+        bufferedWriter.write(listJson.toString());
         bufferedWriter.close();
     }
 
-    void readListFromJsonFile(){
+    void readListFromJsonFile() {
         try {
             File file = new File(mAppContextRef.getFilesDir(), mJsonFileName);
             FileReader fileReader = new FileReader(file);
@@ -83,135 +107,137 @@ public abstract class StockHandlingRequestManager<T>
             }
             bufferedReader.close();
 
-            mRequestMapAccessSem.acquire();
-            JSONObject mapJsonObject = new JSONObject(stringBuilder.toString());
-            Iterator iterator = mapJsonObject.keys();
-            while(iterator.hasNext()){
-                String requestId = (String) iterator.next();
-                JSONObject entryJson = mapJsonObject.getJSONObject(requestId);
-                T request = convertJsonObjectToRequest(entryJson);
-
-                mRequestMap.put(requestId, request);
+            mRequestListAccessSem.acquire();
+            JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject requestJson = jsonArray.getJSONObject(i);
+                StockHandlingRequest stockHandlingRequest = new StockHandlingRequest();
+                stockHandlingRequest.requestId = requestJson.getLong("requestId");
+                stockHandlingRequest.requestParameters = convertJsonObjectToRequestParameters(
+                        requestJson.getJSONObject("requestParameters")
+                );
+                mStockHandlingRequestList.add(stockHandlingRequest);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException | JSONException | InterruptedException e) {
             e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        finally{
-            mRequestMapAccessSem.release();
+        } finally {
+            mRequestListAccessSem.release();
         }
     }
 
-    protected abstract JSONObject convertRequestToJsonObject(T Request) throws JSONException;
-    protected abstract T convertJsonObjectToRequest(JSONObject JsonObject) throws JSONException;
+    protected abstract JSONObject convertRequestParametersToJsonObject(T Request) throws JSONException;
 
-    public Boolean hasPending()
-    {
-        return !mRequestMap.isEmpty();
+    protected abstract T convertJsonObjectToRequestParameters(JSONObject JsonObject) throws JSONException;
+
+    public Boolean hasPending() {
+        return mStockHandlingRequestList.size() > 0;
     }
 
-    public void onPause()
-    {
+    public void onPause() {
         mRequestQueue.stop();
     }
 
-    public void onResume()
-    {
+    public void onResume() {
         mRequestQueue.start();
     }
 
-    public void QueueRequest(T NewRequest){
+    public void QueueRequest(T NewRequest) {
         try {
-            mRequestMapAccessSem.acquire();
-            String requestId = String.format("%d", System.currentTimeMillis());
-            mRequestMap.put(requestId, NewRequest);
+            mRequestListAccessSem.acquire();
+            Long requestId = System.currentTimeMillis();
+            mStockHandlingRequestList.add(new StockHandlingRequest(requestId, NewRequest));
             writeListToJsonFile(); // save a local copy in case the app is closed or crashes
-        } catch (JSONException e) {
+        } catch (JSONException | IOException | InterruptedException e) {
             e.printStackTrace();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        finally {
-            mRequestMapAccessSem.release();
+        } finally {
+            mRequestListAccessSem.release();
         }
     }
 
     protected abstract String getServerEndpointName(T CurrentRequest);
 
     // note this function exists so that the various network-connected classes can be choreographed,
-    // rather than a free-for-all
-    public void SendAllRequests()
-    {
-        try
-        {
-            if(Utilities.isWifiConnected(mAppContextRef))
-            {
-                SharedPreferences prefs = mAppContextRef.getSharedPreferences(
-                        mAppContextRef.getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
+    // rather than a free-for-all. This function blocks until all requests have been processed or
+    // an error occurs.
+    public void SendAllRequests() {
+        try {
+            Log.d(TAG, "Enter SendAllRequests");
 
-                String ipAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_ip_address), "");
+            SharedPreferences prefs = mAppContextRef.getSharedPreferences(
+                    mAppContextRef.getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
 
-                Set<String> requestIds = mRequestMap.keySet();
-                Iterator<String> requestIdIterator = requestIds.iterator();
-                while(requestIdIterator.hasNext())
+            String protocol = prefs.getString(mAppContextRef.getString(R.string.prefs_server_protocol), "http");
+            String ipAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_ip_address), "");
+
+            Log.d(TAG, "Pend on mRequestListAccessSem");
+            mRequestListAccessSem.acquire();
+            Log.d(TAG, "Got semaphore");
+
+            Log.i(TAG, String.format("There are %d requests to process", mStockHandlingRequestList.size()));
+
+            mSendAllSyncSem = new Semaphore(1); // init every time this function runs, just to avoid any weird bugs
+
+            for (int i = 0; i < mStockHandlingRequestList.size(); i++) {
+                if(!mSendAllSyncSem.tryAcquire(10, TimeUnit.SECONDS))
                 {
-                    mRequestMapAccessSem.acquire();
-                    String requestId = requestIdIterator.next();
-                    T request = mRequestMap.get(requestId);
-                    String url = "http://" + ipAddress + getServerEndpointName(request);
+                    Log.d(TAG, "Failed to acquire mSendAllSyncSem. Stop");
+                    return;
+                }
+                Log.d(TAG, String.format("Processing request %d", i));
 
-                    JSONObject addStockRequestJson = convertRequestToJsonObject(request);
-                    addStockRequestJson.put("requestId", requestId);
+                // turn the request into JSON and append the request ID
+                StockHandlingRequest stockHandlingRequest = mStockHandlingRequestList.get(i);
+                JSONObject requestParamsJson = convertRequestParametersToJsonObject(stockHandlingRequest.requestParameters);
+                requestParamsJson.put("requestId", stockHandlingRequest.requestId);
 
-                    JsonObjectRequest addStockRequest = new JsonObjectRequest(
-                            Request.Method.POST,
-                            url,
-                            addStockRequestJson,
-                            new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
-                                        mRequestMapAccessSem.acquire();
+                // url has to be built dynamically as check-in and check-out requests have different endpoints
+                String url = protocol + "://" + ipAddress + getServerEndpointName(stockHandlingRequest.requestParameters);
 
-                                        mRequestMap.remove(response.get("processedId"));
-                                        Utilities.showDebugMessage(mAppContextRef, String.format("Processed request ID %s", response.get("processedId")));
-
-                                        /* only update the cached copy when the last pending
-                                         * request has been removed. No point hammering the
-                                         * disk so much in a short time
-                                         */
-                                        if(mRequestMap.isEmpty())
-                                            writeListToJsonFile();
-
-                                        mRequestMapAccessSem.release();
-                                    } catch (JSONException | InterruptedException | IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e(TAG, "onErrorResponse: " + error.getMessage());
+                JsonObjectRequest requestToServer = new JsonObjectRequest(
+                        url,
+                        requestParamsJson,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    Log.d(TAG, String.format("Got response. Processed ID: %s", response.getString("processedId")));
+                                    Utilities.showDebugMessage(mAppContextRef, String.format("Got response. Processed ID: %s", response.getString("processedId")));
+                                    Runnable runnable = new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // this has to run in a new thread because volley puts response
+                                            // handlers on the main thread and things didn't work
+                                            mSendAllSyncSem.release();
+                                            Log.d(TAG, "mSendAllSyncSem released");
+                                        }
+                                    };
+                                    new Thread(runnable).start();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
                             }
-
-                    );
-                    mRequestMapAccessSem.release();
-                    mRequestQueue.add(addStockRequest);
-                }
-
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.getMessage());
+                            }
+                        }
+                );
+                mRequestQueue.add(requestToServer);
+                Log.d(TAG, "Request added to queue");
             }
+            // wait for last request to be processed
+            mSendAllSyncSem.acquire();
+            mStockHandlingRequestList.clear();
+        } catch (InterruptedException | JSONException e) {
+            Log.e(TAG, e.getMessage());
         }
-        catch (JSONException e)
+        finally
         {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            mRequestListAccessSem.release();
+            Log.d(TAG, "released semaphore");
         }
     }
 }
+

@@ -27,6 +27,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
@@ -49,6 +51,7 @@ abstract class UpdateableServerDataManager<T> {
         mMapAccessSem = new Semaphore(1);
         mRequestQueue = Volley.newRequestQueue(mAppContextRef);
         mRequestQueue.start();
+        /*
         mTimer = new Timer(true);
         mTimerTask = new TimerTask() {
             @Override
@@ -58,6 +61,7 @@ abstract class UpdateableServerDataManager<T> {
             }
         };
         mTimer.scheduleAtFixedRate(mTimerTask, 10000, 10000);
+        */
     }
 
     public boolean isInitialised(){
@@ -76,28 +80,28 @@ abstract class UpdateableServerDataManager<T> {
         if(mListInitialised)
             return;
 
+        // by default attempt to load the local list first
+        try {
+            loadItemList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // then if the wifi is connected, the local copy may be updated from the server
         if(Utilities.isWifiConnected(mAppContextRef))
         {
             // wifi is connected. Attempt to reach server and update.
             fetchUpdatedItemList();
         }
-        else
-        {
-            // wifi is not connected. Attempt to initialise the product list from the local copy
-            Runnable runnable = () -> {
-                try {
-                    loadItemList();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            };
-            Thread t = new Thread(runnable);
-            t.start();
-        }
+    }
+
+    public void update(){
+        if(Utilities.isWifiConnected(mAppContextRef))
+            fetchUpdatedItemList();
     }
 
     private void saveItemListJson(JSONArray ItemArrayJson) throws IOException {
@@ -125,6 +129,8 @@ abstract class UpdateableServerDataManager<T> {
 
     protected abstract T parseJsonObjectToItem(JSONObject ItemJson) throws JSONException;
 
+    protected abstract JSONObject parseItemToJsonObject(T Item) throws JSONException;
+
     protected abstract String getItemDictKeyString(T Item);
 
     void parseItemJsonArrayDataToMap(JSONArray ItemListJsonArray) throws InterruptedException, JSONException {
@@ -137,12 +143,25 @@ abstract class UpdateableServerDataManager<T> {
         mMapAccessSem.release();
     }
 
+    JSONArray parseItemMapToJsonArray() throws JSONException{
+        JSONArray jsonArray = new JSONArray();
+        Set<String> keys = mItemMap.keySet();
+        Iterator iterator = keys.iterator();
+
+        while(iterator.hasNext()){
+            T item = mItemMap.get(iterator.next());
+            jsonArray.put(parseItemToJsonObject(item));
+        }
+        return jsonArray;
+    }
+
     private void fetchUpdatedItemList(){
         SharedPreferences prefs = mAppContextRef.getSharedPreferences(
                 mAppContextRef.getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
 
+        String protocol = prefs.getString(mAppContextRef.getString(R.string.prefs_server_protocol), "http");
         String ipAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_ip_address), "");
-        String url = "http://" + ipAddress + mUpdateEndpoint;
+        String url = protocol + "://" + ipAddress + mUpdateEndpoint;
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -188,5 +207,16 @@ abstract class UpdateableServerDataManager<T> {
         if (!isInitialised())
             throw new RuntimeException("Not initialised");
         return (mItemMap.get(Key));
+    }
+
+    // allows an item to be added to the internal map immediately. This will allow lookups
+    // to be performed without a server sync.
+    protected void addItem(T newItem) throws JSONException, IOException {
+        String key = getItemDictKeyString(newItem);
+        mItemMap.put(key, newItem);
+
+        // immediately save to file to avoid loss of data if the app closes
+        JSONArray mapJson = parseItemMapToJsonArray();
+        saveItemListJson(mapJson);
     }
 }

@@ -25,6 +25,14 @@ public class ItemIdLookUpDataManager extends UpdateableServerDataManager<ItemIdB
     }
 
     @Override
+    protected JSONObject parseItemToJsonObject(ItemIdBarcodeLookup Item) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("itemId", Item.ItemId);
+        jsonObject.put("barcode", Item.Barcode);
+        return jsonObject;
+    }
+
+    @Override
     protected String getItemDictKeyString(ItemIdBarcodeLookup Item) {
         return Item.ItemId;
     }

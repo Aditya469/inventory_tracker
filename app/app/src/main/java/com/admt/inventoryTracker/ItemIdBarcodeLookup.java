@@ -6,4 +6,10 @@ public class ItemIdBarcodeLookup {
 
     public ItemIdBarcodeLookup()
     {}
+
+    public ItemIdBarcodeLookup(String newItemId, String newBarcode)
+    {
+        ItemId = newItemId;
+        Barcode = newBarcode;
+    }
 }

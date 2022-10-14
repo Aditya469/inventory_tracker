@@ -24,6 +24,14 @@ public class LocationDataManager extends UpdateableServerDataManager<Location>
     }
 
     @Override
+    protected JSONObject parseItemToJsonObject(Location Item) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("idString", Item.LocationIdString);
+        jsonObject.put("locationName", Item.LocationName);
+        return jsonObject;
+    }
+
+    @Override
     protected String getItemDictKeyString(Location Item) {
         return Item.LocationIdString;
     }

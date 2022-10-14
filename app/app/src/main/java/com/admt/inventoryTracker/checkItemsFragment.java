@@ -170,37 +170,30 @@ public class checkItemsFragment extends Fragment {
 
             // get the itemLookup for this ID and retreive the product name and barcode
             ItemIdBarcodeLookup itemIdBarcodeLookup = mItemIdLookUpDataManager.get(BarcodeData);
-            Product productType = null;
+            if(itemIdBarcodeLookup == null)
+                error = getString(R.string.error_check_stock_item_unknown);
+            else {
+                final Product productType = mProductDataManger.get(itemIdBarcodeLookup.Barcode);
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        EditText etItemId = (EditText) getActivity().findViewById(R.id.etCheckStockItemId);
+                        etItemId.setText(BarcodeData);
 
-            if(itemIdBarcodeLookup != null)
-                productType = mProductDataManger.get(itemIdBarcodeLookup.Barcode);
+                        EditText etProdName = (EditText) getActivity().findViewById(R.id.etCheckStockProductName);
+                        EditText etBarcode = (EditText) getActivity().findViewById(R.id.etCheckStockProductBarcode);
 
-            final Product finalProductType = productType;
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    EditText etItemId = (EditText) getActivity().findViewById(R.id.etCheckStockItemId);
-                    etItemId.setText(BarcodeData);
-
-                    EditText etProdName = (EditText) getActivity().findViewById(R.id.etCheckStockProductName);
-                    EditText etBarcode = (EditText) getActivity().findViewById(R.id.etCheckStockProductBarcode);
-
-                    if (finalProductType != null) {
-                        etProdName.setText(finalProductType.Name);
-                        etBarcode.setText(finalProductType.Barcode);
+                        etProdName.setText(productType.Name);
+                        etBarcode.setText(productType.Barcode);
                     }
-                    else {
-                        etProdName.setText(getString(R.string.error_check_stock_product_name_unknown));
-                        etBarcode.setText(R.string.error_check_stock_product_barcode_unknown);
-                    }
-                }
-            };
-            mainHandler.post(runnable);
+                };
+                mainHandler.post(runnable);
+            }
         }
         else if(BarcodeData.startsWith(getString(R.string.sys_prefix_job))) {
             JobNameLookup jobNameLookup = mJobLookupDataManager.get(BarcodeData);
             if(jobNameLookup == null){
-                error = "Job is not known";
+                error = getString(R.string.error_check_job_id_unknown);
             }
             else {
                 mCurrentCheckingRequest.JobId = jobNameLookup.JobIdString;
@@ -220,7 +213,7 @@ public class checkItemsFragment extends Fragment {
             mCurrentCheckingRequest.BinId = BarcodeData;
             Location location = mLocationDataManager.get(BarcodeData);
             if(location == null)
-                error = "Location not known";
+                error = getString(R.string.error_check_location_id_unknown);
             else {
                 runnable = new Runnable() {
                     @Override
@@ -236,7 +229,7 @@ public class checkItemsFragment extends Fragment {
             mCurrentCheckingRequest.UserId = BarcodeData;
             User user = mUserDataManager.get(BarcodeData);
             if(user == null)
-                error = "User not known";
+                error = getString(R.string.error_check_user_id_unknown);
             else {
                 runnable = new Runnable() {
                     @Override
@@ -272,7 +265,7 @@ public class checkItemsFragment extends Fragment {
                 mainHandler.post(runnable);
             }
             else{
-                error = "scan a QR code. You scanned a non-bulk product";
+                error = getString(R.string.error_check_scanned_non_bulk_product);
             }
         }
 

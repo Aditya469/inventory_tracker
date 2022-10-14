@@ -25,6 +25,9 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.Calendar;
 
 
@@ -39,6 +42,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
     LocationDataManager mLocationDataManager;
     AddStockManager mAddStockManager;
     AddStockRequestParameters mAddStockRequestParameters;
+    ItemIdLookUpDataManager mItemIdLookUpDataManager;
 
     StockInteractionHandlingCallbacks mStockHandlingInteractionCallbacks;
     Product mCurrentProduct;
@@ -50,7 +54,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         // Required empty public constructor
     }
 
-    public addNewStockFragment(ProductDataManager PDMRef, LocationDataManager LDMRef, AddStockManager ASMRef)
+    public addNewStockFragment(ProductDataManager PDMRef, LocationDataManager LDMRef, AddStockManager ASMRef, ItemIdLookUpDataManager ILMRef)
     {
         MainActivity mainActivity = (MainActivity)getActivity();
         mStockHandlingInteractionCallbacks = mainActivity;
@@ -58,6 +62,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         mProductDataManager = PDMRef;
         mLocationDataManager = LDMRef;
         mAddStockManager = ASMRef;
+        mItemIdLookUpDataManager = ILMRef; // mote: the item lookup is used to cache newly added IDs prior to server sync
         mAddStockRequestParameters = new AddStockRequestParameters();
     }
 
@@ -422,16 +427,25 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         ConstraintLayout rootLayout = getActivity().findViewById(R.id.clAddStockLayout);
         Snackbar snackbar = Snackbar
                 .make(rootLayout, R.string.label_add_stock_item_added_confirmation, Snackbar.LENGTH_LONG)
-                .addCallback(new Snackbar.Callback(){
+                .addCallback(new Snackbar.Callback() {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
-                        super.onDismissed(transientBottomBar, event);
-                        switch (event){
-                            case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
-                            case Snackbar.Callback.DISMISS_EVENT_SWIPE:
-                            case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
-                                mAddStockManager.QueueRequest(requestToAdd);
+                        try {
+                            super.onDismissed(transientBottomBar, event);
+                            switch (event) {
+                                case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
+                                case Snackbar.Callback.DISMISS_EVENT_SWIPE:
+                                case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
+                                    mAddStockManager.QueueRequest(requestToAdd);
+                                    mItemIdLookUpDataManager.addItem(new ItemIdBarcodeLookup(requestToAdd.ItemId, requestToAdd.Barcode));
+                            }
                         }
+                        catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        catch (IOException e) {
+                                e.printStackTrace();
+                            }
                     }
                 })
                 .setAction("Undo", new View.OnClickListener() {

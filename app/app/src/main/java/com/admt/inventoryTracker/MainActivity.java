@@ -13,6 +13,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -123,45 +125,11 @@ public class MainActivity extends AppCompatActivity
         mModeSelectFragment = new modeSelectorFragment();
 
         // As this app is expected to only have intermittent access to the network
-        mSendDataTimer = new Timer(false);
+        mSendDataTimer = new Timer(true);
         mSendDataTimerTask = new TimerTask() {
             @Override
             public void run() {
-                try {
-                    Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
-                    Runnable runnable;
-                    if (Utilities.isWifiConnected(getApplicationContext())) {
-                        if (mAddStockManager != null) {
-                            if (mAddStockManager.hasPending()) {
-                                Utilities.showDebugMessage(getApplicationContext(), "Begin sending addStock requests");
-                                mAddStockManager.SendAllRequests();
-                                while (mAddStockManager.hasPending()) {
-                                    Thread.sleep(1000);
-                                }
-                                Utilities.showDebugMessage(getApplicationContext(), "addStock requests processed");
-                            }
-                        }
-
-                        if (mCheckStockInOutManager != null) {
-                            if (mCheckStockInOutManager.hasPending()) {
-                                Utilities.showDebugMessage(getApplicationContext(), "Begin send checkStock requests");
-                                mCheckStockInOutManager.SendAllRequests();
-                                while (mCheckStockInOutManager.hasPending()) {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                Utilities.showDebugMessage(getApplicationContext(), "checkStock requests processed");
-                            }
-                        }
-                    } else {
-                        Utilities.showDebugMessage(getApplicationContext(), "Wifi is not connected");
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                syncWithServer();
             }
         };
         mSendDataTimer.scheduleAtFixedRate(mSendDataTimerTask, 1000, 10000);
@@ -186,6 +154,36 @@ public class MainActivity extends AppCompatActivity
         getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
+
+    private void syncWithServer() {
+        if (Utilities.isWifiConnected(getApplicationContext())) {
+            mProductDataManager.update();
+            mLocationDataManger.update();
+            mItemIdLookUpDataManager.update();
+            mJobLookupDataManager.update();
+            mUserDataManager.update();
+
+            if (mAddStockManager != null) {
+                if (mAddStockManager.hasPending()) {
+                    Utilities.showDebugMessage(getApplicationContext(), "Begin sending addStock requests");
+                    mAddStockManager.SendAllRequests();
+                    Utilities.showDebugMessage(getApplicationContext(), "addStock requests processed");
+                }
+            }
+
+            if (mCheckStockInOutManager != null) {
+                if (mCheckStockInOutManager.hasPending()) {
+                    Utilities.showDebugMessage(getApplicationContext(), "Begin send checkStock requests");
+                    mCheckStockInOutManager.SendAllRequests();
+                    Utilities.showDebugMessage(getApplicationContext(), "checkStock requests processed");
+                }
+            }
+        }
+        else {
+            Utilities.showDebugMessage(getApplicationContext(), "Wifi is not connected");
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -213,7 +211,16 @@ public class MainActivity extends AppCompatActivity
                     else
                         item.setIcon(R.drawable.ic_flashlight_black);
                     break;
+            case R.id.miSync:
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run(){
+                            syncWithServer();
+                    }
+                };
+                new Thread(runnable).start();
 
+                break;
         }
 
         return true;
@@ -253,7 +260,8 @@ public class MainActivity extends AppCompatActivity
             mAddNewStockFragment = new addNewStockFragment(
                     mProductDataManager,
                     mLocationDataManger,
-                    mAddStockManager
+                    mAddStockManager,
+                    mItemIdLookUpDataManager
             );
 
         getSupportFragmentManager().beginTransaction()

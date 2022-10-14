@@ -11,7 +11,7 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
     }
 
     @Override
-    protected JSONObject convertRequestToJsonObject(CheckStockInOutRequestParameters Request) throws JSONException {
+    protected JSONObject convertRequestParametersToJsonObject(CheckStockInOutRequestParameters Request) throws JSONException {
         JSONObject requestJson = new JSONObject();
         if(Request.IdString != null)
             requestJson.put("idString", Request.IdString);
@@ -37,7 +37,7 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
     }
 
     @Override
-    protected CheckStockInOutRequestParameters convertJsonObjectToRequest(JSONObject JsonObject) throws JSONException {
+    protected CheckStockInOutRequestParameters convertJsonObjectToRequestParameters(JSONObject JsonObject) throws JSONException {
         CheckStockInOutRequestParameters parameters = new CheckStockInOutRequestParameters();
         if(JsonObject.has("idString"))
             parameters.IdString = JsonObject.getString("idString");

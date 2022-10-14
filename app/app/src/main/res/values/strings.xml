@@ -69,11 +69,17 @@
 
     <string name="error_check_stock_product_name_unknown">The item\'s name has not been fetched</string>
     <string name="error_check_stock_product_barcode_unknown">The item\'s barcode has not been fetched</string>
+    <string name="error_check_stock_item_unknown">This item ID is not recognised. Add stock before check in/out</string>
+    <string name="error_check_job_id_unknown">This job ID is not recognised</string>
+    <string name="error_check_location_id_unknown">This bin ID is not recognised</string>
+    <string name="error_check_user_id_unknown">This user ID is not recognised</string>
+    <string name="error_check_scanned_non_bulk_product">Scan a QR code. You scanned a non-bulk product</string>
 
 
     <!-- keys for shared prefs. Ideally should be in a separate XML file, but I'm having trouble
     getting android studio to find a custom file -->
     <string name="prefs_file_key" translatable="false">com.admt.inventoryTracker.prefs</string>
+    <string name="prefs_server_protocol" translatable="false">prefsServerProtocol</string>
     <string name="prefs_server_ip_address" translatable="false">prefsServerIpAddress</string>
     <string name="prefs_settings_password" translatable="false">prefsSettingsPassword</string>
     <string name="prefs_use_front_camera" translatable="false">prefsCameraToUse</string>

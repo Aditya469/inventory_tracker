@@ -36,7 +36,7 @@ public class AddStockManager extends StockHandlingRequestManager<AddStockRequest
     }
 
     @Override
-    protected JSONObject convertRequestToJsonObject(AddStockRequestParameters Request) throws JSONException{
+    protected JSONObject convertRequestParametersToJsonObject(AddStockRequestParameters Request) throws JSONException{
         JSONObject addStockRequestJson = new JSONObject();
 
         if(Request.Barcode != null)
@@ -57,7 +57,7 @@ public class AddStockManager extends StockHandlingRequestManager<AddStockRequest
     }
 
     @Override
-    protected AddStockRequestParameters convertJsonObjectToRequest(JSONObject JsonObject) throws JSONException{
+    protected AddStockRequestParameters convertJsonObjectToRequestParameters(JSONObject JsonObject) throws JSONException{
         AddStockRequestParameters addStockRequestParameters = new AddStockRequestParameters();
         if(JsonObject.has("barcode"))
             addStockRequestParameters.Barcode = JsonObject.getString("barcode");

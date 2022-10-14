@@ -15,6 +15,7 @@ limitations under the License.
 '''
 import datetime
 import logging
+import time
 
 import flask
 from flask import (
@@ -123,7 +124,7 @@ def processAddStockRequest():
 
 		if 'requestId' not in requestParams:
 			logging.error("requestId not provided")
-			return make_response("requestId not provided", 200)
+			return make_response("requestId not provided", 400)
 
 		if 'idString' not in requestParams:
 			logging.error("Failed to process request to add item. idString not provided")
@@ -231,7 +232,7 @@ def processAddStockRequest():
 		logging.error(e)
 		# a positive response is returned even in the case of an error, as the app MUST remove the
 		# request from its list, otherwise it'll just keep coming back
-		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+		return make_response(jsonify({"status": "error"}), 200)
 
 
 	dbSession.flush()
@@ -442,3 +443,11 @@ def processCheckStockOutRequest():
 def handleDiscovery():
 	hostname = flask.request.host
 	return make_response(jsonify({"inventoryTrackerHostName": hostname}), 200)
+
+
+@bp.route("/serverTest", methods=("GET", "POST"))
+def serverTest():
+	#print(request.json)
+	print("beep")
+	time.sleep(1)
+	return make_response("beep", 200)

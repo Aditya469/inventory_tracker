@@ -54,6 +54,20 @@ public class ProductDataManager extends UpdateableServerDataManager<Product>{
     }
 
     @Override
+    protected JSONObject parseItemToJsonObject(Product Item) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", Item.Name);
+        jsonObject.put("barcode", Item.Barcode);
+        jsonObject.put("expires", Item.CanExpire);
+        jsonObject.put("isBulk", Item.IsBulkProduct);
+        jsonObject.put("isAssignedStockId", Item.IsAssignedStockId);
+        jsonObject.put("associatedStockId", Item.AssociatedStockId);
+        jsonObject.put("quantityUnit", Item.Unit);
+        return jsonObject;
+
+    }
+
+    @Override
     protected String getItemDictKeyString(Product Item) {
         return Item.Barcode;
     }

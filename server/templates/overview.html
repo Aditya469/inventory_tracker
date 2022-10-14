@@ -74,7 +74,7 @@ limitations under the License.
 						<a href="" id="oldStockCsvDownloadLink">Download this data as a CSV file</a>
 						<div>
 							<label id="stockDaysNearExpiryLabel" for="stockDaysNearExpiry">Show stock expiring in this many days</label>
-							<input id="stockDaysNearExpiry" type="number" size="2">
+							<input id="stockDaysNearExpiry" type="number" size="2" oninput="updateStockTables()">
 						</div>
 						<div id="oldStockTableContainer"></div>
 					</div>
