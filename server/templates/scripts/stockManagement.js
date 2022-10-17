@@ -50,6 +50,7 @@ function updateStockTable(){
 
     requestParams.sortBy = $("input[name='stockSortingOptions']:checked").val();
     requestParams.hideZeroStockEntries = $("#hideZeroStockEntries").is(":checked");
+    requestParams.hideNonzeroStockEntries = $("#hideNonzeroStockEntries").is(":checked");
 
     $.ajax({
         url: "{{ url_for('stockManagement.getStock') }}",

@@ -119,8 +119,12 @@ limitations under the License.
                 </div>
                 <hr>
                 <div class="form-check my-2">
-                    <input id="hideZeroStockEntries" class="form-check-input" type="checkbox" name="stockSortingOptions" value="expiryDateDesc" oninput="updateStockTable()">
+                    <input id="hideZeroStockEntries" class="form-check-input" type="checkbox" name="hideZeroStockCheckbox" oninput="updateStockTable()">
                     <label for="hideZeroStockEntries" class="form-check-label">Hide Zero Quantity Stock</label>
+                </div>
+                <div class="form-check my-2">
+                    <input id="hideNonzeroStockEntries" class="form-check-input" type="checkbox" name="hideNonzeroStockCheckbox" oninput="updateStockTable()">
+                    <label for="hideNonzeroStockEntries" class="form-check-label">Hide Non-zero Quantity Stock</label>
                 </div>
             </div>
         </div>

@@ -148,6 +148,10 @@ def getStockDataFromRequest():
         if request.args.get("hideZeroStockEntries", default="false") == "true":
             stmt = stmt.where(StockItem.quantityRemaining != 0)
 
+    if "hideNonzeroStockEntries" in request.args:
+        if request.args.get("hideNonzeroStockEntries", default="false") == "true":
+            stmt = stmt.where(StockItem.quantityRemaining == 0)
+
     # ... and ordering
     if "sortBy" in request.args:
         if request.args.get("sortBy") == "productNameAsc":
