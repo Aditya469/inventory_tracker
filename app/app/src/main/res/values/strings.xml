@@ -63,10 +63,9 @@
     <string name="label_check_stock_item_checked_in">Item has been Checked In</string>
     <string name="label_check_stock_item_checked_out">Item has been Checked Out</string>
 
-    <string name="prompt_check_stock_scan_item_id">Scan an Item ID QR Code</string>
-    <string name="prompt_check_stock_set_amount_scan_user_or_check_out">Set Qty. to Check In/Out, scan a user, or Check Out Item</string>
-    <string name="prompt_check_stock_set_amount_or_check_out">Set Qty. to Check In/Out, or Check Out Item</string>
-    <string name="prompt_check_stock_ready">This Item Can Now Be Checked In/Out</string>
+    <string name="prompt_check_stock_scan_item_id">Scan an item ID QR code</string>
+    <string name="prompt_check_stock_add_qty_options_or_check_out">Add a quantity to check in, add more options, or check out</string>
+    <string name="prompt_check_stock_ready">This item can now be checked in/out</string>
 
     <string name="error_check_stock_product_name_unknown">The item\'s name has not been fetched</string>
     <string name="error_check_stock_product_barcode_unknown">The item\'s barcode has not been fetched</string>

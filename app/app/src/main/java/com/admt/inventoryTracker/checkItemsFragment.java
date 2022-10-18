@@ -315,11 +315,20 @@ public class checkItemsFragment extends Fragment implements AdapterView.OnItemSe
 
     private String getStatusPrompt()
     {
-        return "Prompt to be determined";
+        String prompt = "";
+        if(mCurrentCheckingRequest.IdString == null)
+            prompt = getString(R.string.prompt_check_stock_scan_item_id);
+        else if(mCurrentCheckingRequest.QuantityChecking == null)
+            prompt = getString(R.string.prompt_check_stock_add_qty_options_or_check_out);
+        else
+            prompt = getString(R.string.prompt_check_stock_ready);
+
+        return prompt;
     }
 
     private void resetDisplay()
     {
+        mCurrentCheckingRequest = new CheckStockInOutRequestParameters();
         EditText etItemId = (EditText) getActivity().findViewById(R.id.etCheckStockItemId);
         etItemId.setText("");
         EditText etProdName = (EditText) getActivity().findViewById(R.id.etCheckStockProductName);
