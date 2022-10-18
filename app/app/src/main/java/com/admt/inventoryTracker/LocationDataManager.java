@@ -8,11 +8,7 @@ import org.json.JSONObject;
 public class LocationDataManager extends UpdateableServerDataManager<Location>
 {
     public LocationDataManager(Application application) {
-        super(application);
-
-        super.mJsonFileName = "LocationList.json";
-        super.mUpdateEndpoint = "/getAppBinData";
-        super.initialiseItemList();
+        super(application,"LocationList.json", "/getAppBinData");
     }
 
     @Override

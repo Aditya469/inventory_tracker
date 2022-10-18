@@ -8,10 +8,7 @@ import org.json.JSONObject;
 public class ItemIdLookUpDataManager extends UpdateableServerDataManager<ItemIdBarcodeLookup>{
     public ItemIdLookUpDataManager(Application application)
     {
-        super(application);
-        super.mJsonFileName = "itemBarcodesLookup.json";
-        super.mUpdateEndpoint = "/getAppItemIdBarcodeList";
-        super.initialiseItemList();
+        super(application, "itemBarcodesLookup.json", "/getAppItemIdBarcodeList");
     }
 
     @Override

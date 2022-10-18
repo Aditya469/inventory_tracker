@@ -26,7 +26,7 @@ from werkzeug.utils import secure_filename
 from stockManagement import updateNewStockWithNewProduct
 from .auth import login_required
 from dbSchema import ProductType, StockItem, Bin, ItemId, CheckInRecord, VerificationRecord, IdAlias, CheckOutRecord, \
-	Job, User
+	Job, User, CheckingReason
 from db import getDbSession
 from sqlalchemy import select, or_, create_engine, func
 import decimal
@@ -78,6 +78,14 @@ def getAppJobData():
 	jobs = dbSession.query(Job).all()
 	jobList = [{"idString": job.idString, "jobName": job.jobName} for job in jobs]
 	return make_response(jsonify(jobList), 200)
+
+
+@bp.route('/getAppCheckingReasons')
+def getAppCheckingReasons():
+	dbSession = getDbSession()
+	reasons = dbSession.query(CheckingReason).order_by(CheckingReason.reason.asc()).all()
+	reasonList = [reason.toDict() for reason in reasons]
+	return make_response(jsonify(reasonList), 200)
 
 
 # fetch a dict of itemIds against product barcodes
@@ -333,6 +341,9 @@ def processCheckStockInRequest():
 		if 'userIdString' in requestParams:
 			checkInRecord.userId = \
 				dbSession.query(User.id).filter(User.idString == requestParams["userIdString"]).first()[0]
+
+		if "reasonId" in requestParams:
+			checkInRecord.reasonId = requestParams["reasonId"]
 
 		stockItem.quantityRemaining += decimal.Decimal(requestParams['quantity'])
 		stockItem.isCheckedIn = True

@@ -8,11 +8,7 @@ import org.json.JSONObject;
 public class UserDataManager extends UpdateableServerDataManager<User>
 {
     public UserDataManager(Application application){
-        super(application);
-
-        super.mJsonFileName = "UserList.json";
-        super.mUpdateEndpoint = "/getAppUserIdList";
-        super.initialiseItemList();
+        super(application, "UserList.json", "/getAppUserIdList");
     }
 
     @Override

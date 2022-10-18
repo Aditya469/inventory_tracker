@@ -41,16 +41,20 @@ abstract class UpdateableServerDataManager<T> {
     private RequestQueue mRequestQueue;
     private Context mAppContextRef;
     private boolean mListInitialised = false;
-    protected String mJsonFileName;
-    protected String mUpdateEndpoint;
+    private String mJsonFileName;
+    private String mUpdateEndpoint;
 
 
-    public UpdateableServerDataManager(Application application){
+    public UpdateableServerDataManager(Application application, String JsonFileName, String UpdateEndpointName){
         mAppContextRef = application.getApplicationContext();
         mItemMap = new HashMap<String, T>();
         mMapAccessSem = new Semaphore(1);
         mRequestQueue = Volley.newRequestQueue(mAppContextRef);
         mRequestQueue.start();
+        mJsonFileName = JsonFileName;
+        mUpdateEndpoint = UpdateEndpointName;
+        initialiseItemList();
+
         /*
         mTimer = new Timer(true);
         mTimerTask = new TimerTask() {
@@ -76,6 +80,11 @@ abstract class UpdateableServerDataManager<T> {
         mRequestQueue.start();
     }
 
+    protected void onUpdateComplete(final HashMap<String, T> ItemMap)
+    {
+
+    }
+
     protected void initialiseItemList(){
         if(mListInitialised)
             return;
@@ -83,11 +92,9 @@ abstract class UpdateableServerDataManager<T> {
         // by default attempt to load the local list first
         try {
             loadItemList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            mListInitialised = true;
+            onUpdateComplete(mItemMap);
+        } catch (IOException | JSONException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -174,9 +181,8 @@ abstract class UpdateableServerDataManager<T> {
                             parseItemJsonArrayDataToMap(ItemDataJson);
                             saveItemListJson(ItemDataJson);
                             mListInitialised = true;
-                        } catch (InterruptedException | IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
+                            onUpdateComplete(mItemMap);
+                        } catch (InterruptedException | IOException | JSONException e) {
                             e.printStackTrace();
                         }
                     }

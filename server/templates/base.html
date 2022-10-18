@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
-<!doctype html>
+<!DOCTYPE html>
 <head>
 	<title></title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='common.css')}}">
@@ -25,7 +25,7 @@ limitations under the License.
 	{% block additionalHeadMaterial %}{% endblock %}
 </head>
 <body>
-	<nav id="nav" class="navbar navbar-expand-xl navbar-dark bg-primary">
+	<nav id="nav" class="navbar navbar-expand-xxl navbar-dark bg-primary">
 		<div class="container-fluid">
 			<img src="{{ url_for('static', filename='logo.png') }}" class="navbar-brand" id="logo">
 			{% if g.user != None %}
@@ -37,7 +37,8 @@ limitations under the License.
 					<a class="nav-item nav-link m-2" href="{{ url_for('overview.getOverview') }}">Overview Page</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('productManagement.getProductManagementPage') }}">Products and New Stock</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('stockManagement.getStockPage') }}">Stock Management</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('bins.manageBins') }}">Bins/Locations</a>
+					<a class="nav-item nav-link m-2" href="{{ url_for('bins.manageBins') }}">Bins</a>
+					<a class="nav-item nav-link m-2" href="{{ url_for('checkingReasons.manageCheckingReasons') }}">Check-in/out Reasons</a>
 					{% if g.user['accessLevel'] == 3 %}
 					<a class="nav-item nav-link m-2" href="{{ url_for('users.manageUsers') }}">Users</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('systemSettings.getSystemSettingsPage') }}">Settings</a>

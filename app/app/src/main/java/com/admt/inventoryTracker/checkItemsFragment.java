@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -24,13 +26,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-public class checkItemsFragment extends Fragment {
+public class checkItemsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     ProductDataManager mProductDataManger;
     LocationDataManager mLocationDataManager;
     CheckStockInOutManager mCheckStockInOutManager;
     ItemIdLookUpDataManager mItemIdLookUpDataManager;
     JobLookupDataManager mJobLookupDataManager;
     UserDataManager mUserDataManager;
+    CheckingReasonDataManager mCheckingReasonsDataManager;
 
     StockInteractionHandlingCallbacks mStockInteractionHandlingCallbacks;
     CheckStockInOutRequestParameters mCurrentCheckingRequest;
@@ -43,7 +46,9 @@ public class checkItemsFragment extends Fragment {
 
     public checkItemsFragment(
             ProductDataManager PDM, LocationDataManager LDM, CheckStockInOutManager CSM,
-            ItemIdLookUpDataManager ILDM, JobLookupDataManager JDM, UserDataManager UDM)
+            ItemIdLookUpDataManager ILDM, JobLookupDataManager JDM, UserDataManager UDM,
+            CheckingReasonDataManager CRDM
+    )
     {
         MainActivity mainActivity = (MainActivity)getActivity();
         mStockInteractionHandlingCallbacks = mainActivity;
@@ -54,6 +59,7 @@ public class checkItemsFragment extends Fragment {
         mItemIdLookUpDataManager = ILDM;
         mJobLookupDataManager = JDM;
         mUserDataManager = UDM;
+        mCheckingReasonsDataManager = CRDM;
 
         mCurrentCheckingRequest = new CheckStockInOutRequestParameters();
     }
@@ -126,6 +132,12 @@ public class checkItemsFragment extends Fragment {
                 }
             }
         });
+
+        // TODO: add textChangedListener for product barcode here too
+
+        Spinner spCheckingReason = (Spinner) view.findViewById(R.id.spCheckStockJobReason);
+        spCheckingReason.setOnItemSelectedListener(this);
+        mCheckingReasonsDataManager.setSpinnerReference(spCheckingReason);
 
         return view;
     }
@@ -322,6 +334,8 @@ public class checkItemsFragment extends Fragment {
         etQty.setText("");
         EditText etJobId = (EditText) getActivity().findViewById(R.id.etCheckStockJobName);
         etJobId.setText("");
+        Spinner spReason = (Spinner) getActivity().findViewById(R.id.spCheckStockJobReason);
+        spReason.setSelection(0);
         Button btnCheckIn = (Button) getActivity().findViewById(R.id.btnCheckStockIn);
         btnCheckIn.setEnabled(false);
         Button btnCheckOut = (Button) getActivity().findViewById(R.id.btnCheckStockOut);
@@ -388,5 +402,23 @@ public class checkItemsFragment extends Fragment {
         String formattedTimeStamp = timeStamp.format(DateTimeFormatter.ofPattern(pattern));
         return formattedTimeStamp;
 
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String selectedName = (String) parent.getItemAtPosition(position);
+        CheckingReason checkingReason = mCheckingReasonsDataManager.get(selectedName);
+
+        if(checkingReason != null) {
+            mCurrentCheckingRequest.ReasonId = checkingReason.id;
+
+            TextView tvPrompt = (TextView) getActivity().findViewById(R.id.tvCheckItemsPrompt);
+            tvPrompt.setText(getStatusPrompt());
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        mCurrentCheckingRequest.ReasonId = null;
     }
 }

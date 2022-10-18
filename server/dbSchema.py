@@ -172,6 +172,7 @@ class CheckInRecord(Base):
 	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	userId = Column(Integer, ForeignKey("users.id"))
+	reasonId = Column(Integer, ForeignKey("checkingReasons.id"))
 	associatedStockItem = relationship("StockItem", backref="checkInRecords")
 	createdByRequestId = Column(String)
 
@@ -183,7 +184,8 @@ class CheckInRecord(Base):
 			"quantity": self.quantity,
 			"binId": self.binId,
 			"jobId": self.jobId,
-			"userId": self.userId
+			"userId": self.userId,
+			"reasonId": self.reasonId
 		}
 		if self.timestamp:
 			dataDict["timestamp"] = self.timestamp.strftime("%d/%m/%y %H:%M")
@@ -202,6 +204,7 @@ class CheckOutRecord(Base):
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	userId = Column(Integer, ForeignKey("users.id"))
+	reasonId = Column(Integer, ForeignKey("checkingReasons.id"))
 	associatedStockItem = relationship("StockItem", backref="checkOutRecords")
 	createdByRequestId = Column(String)
 
@@ -213,7 +216,8 @@ class CheckOutRecord(Base):
 			"quantity": self.quantity,
 			"binId": self.binId,
 			"jobId": self.jobId,
-			"userId": self.userId
+			"userId": self.userId,
+			"reasonId": self.reasonId
 		}
 		if self.timestamp:
 			dataDict["timestamp"] = self.timestamp.strftime("%d/%m/%y %H:%M")
@@ -235,6 +239,19 @@ class Bin(Base):
 			"idString": self.idString,
 			"locationName": self.locationName,
 			"qrCodeName": self.qrCodeName
+		}
+
+
+class CheckingReason(Base):
+	__tablename__ = "checkingReasons"
+
+	id = Column(Integer, primary_key=True)
+	reason = Column(String)
+
+	def toDict(self):
+		return {
+			"id": self.id,
+			"reason": self.reason
 		}
 
 

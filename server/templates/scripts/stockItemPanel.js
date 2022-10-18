@@ -88,6 +88,7 @@ function openStockItemPanel(stockItemId){
                 row.append($("<td>").append(checkingRecord.binName));
                 row.append($("<td>").append(checkingRecord.username));
                 row.append($("<td>").append(checkingRecord.jobName));
+                row.append($("<td>").append(checkingRecord.reasonName));
                 $("#stockMovementTableBody").append(row);
             }
 

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private static ItemIdLookUpDataManager mItemIdLookUpDataManager = null;
     private static JobLookupDataManager mJobLookupDataManager = null;
     private static UserDataManager mUserDataManager = null;
+    private static CheckingReasonDataManager mCheckingReasonDataManager = null;
 
     private static AddStockManager mAddStockManager = null;
     private static CheckStockInOutManager mCheckStockInOutManager = null;
@@ -122,6 +124,9 @@ public class MainActivity extends AppCompatActivity
         if (mUserDataManager == null)
             mUserDataManager = new UserDataManager(getApplication());
 
+        if (mCheckingReasonDataManager == null)
+            mCheckingReasonDataManager = new CheckingReasonDataManager(getApplication());
+
         mModeSelectFragment = new modeSelectorFragment();
 
         // As this app is expected to only have intermittent access to the network
@@ -162,6 +167,7 @@ public class MainActivity extends AppCompatActivity
             mItemIdLookUpDataManager.update();
             mJobLookupDataManager.update();
             mUserDataManager.update();
+            mCheckingReasonDataManager.update();
 
             if (mAddStockManager != null) {
                 if (mAddStockManager.hasPending()) {
@@ -219,7 +225,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 };
                 new Thread(runnable).start();
-
                 break;
         }
 
@@ -289,7 +294,8 @@ public class MainActivity extends AppCompatActivity
                     mCheckStockInOutManager,
                     mItemIdLookUpDataManager,
                     mJobLookupDataManager,
-                    mUserDataManager
+                    mUserDataManager,
+                    mCheckingReasonDataManager
             );
 
         getSupportFragmentManager().beginTransaction()

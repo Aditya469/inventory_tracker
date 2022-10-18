@@ -23,16 +23,16 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
             requestJson.put("binIdString", Request.BinId);
         if(Request.UserId != null)
             requestJson.put("userIdString", Request.UserId);
-        if(Request.CheckRequestType == CheckStockInOutRequestParameters.CheckingType.CHECK_IN) {
-            if (Request.QuantityChecking != null)
-                requestJson.put("quantityCheckedIn", Request.QuantityChecking);
+        if(Request.QuantityChecking != null)
+            requestJson.put("quantity", Request.QuantityChecking);
+        if(Request.ReasonId != null)
+            requestJson.put("reasonId", Request.ReasonId);
+
+        if(Request.CheckRequestType == CheckStockInOutRequestParameters.CheckingType.CHECK_IN)
             requestJson.put("checkRequestType", "checkIn");
-        }
-        else if(Request.CheckRequestType == CheckStockInOutRequestParameters.CheckingType.CHECK_OUT) {
-            if (Request.QuantityChecking != null)
-                requestJson.put("quantityCheckedOut", Request.QuantityChecking);
+        else if(Request.CheckRequestType == CheckStockInOutRequestParameters.CheckingType.CHECK_OUT)
             requestJson.put("checkRequestType", "checkOut");
-        }
+
         return requestJson;
     }
 
@@ -49,17 +49,16 @@ public class CheckStockInOutManager extends StockHandlingRequestManager<CheckSto
             parameters.BinId = JsonObject.getString("binIdString");
         if(JsonObject.has("userIdString"))
             parameters.UserId = JsonObject.getString("userIdString");
+        if(JsonObject.has("quantity"))
+            parameters.QuantityChecking = JsonObject.getDouble("quantity");
+        if(JsonObject.has("reasonId"))
+            parameters.ReasonId = JsonObject.getString("reasonId");
+
         if(JsonObject.has("checkRequestType")){
-            if(JsonObject.getString("checkRequestType").equals("checkIn")){
+            if(JsonObject.getString("checkRequestType").equals("checkIn"))
                 parameters.CheckRequestType = CheckStockInOutRequestParameters.CheckingType.CHECK_IN;
-                if(JsonObject.has("quantityCheckedIn"))
-                    parameters.QuantityChecking = JsonObject.getDouble("quantityCheckedIn");
-            }
-            else if(JsonObject.getString("checkRequestType").equals("checkOut")){
+            else if(JsonObject.getString("checkRequestType").equals("checkOut"))
                 parameters.CheckRequestType = CheckStockInOutRequestParameters.CheckingType.CHECK_OUT;
-                if(JsonObject.has("quantityCheckedOut"))
-                    parameters.QuantityChecking = JsonObject.getDouble("quantityCheckedOut");
-            }
         }
         return parameters;
     }

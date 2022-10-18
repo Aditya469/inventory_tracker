@@ -7,6 +7,18 @@ public class CheckStockInOutRequestParameters {
     String JobId;
     String BinId;
     String UserId;
+    String ReasonId;
     Double QuantityChecking;
     CheckingType CheckRequestType;
+
+    public CheckStockInOutRequestParameters()
+    {
+        IdString = null;
+        Timestamp = null;
+        JobId = null;
+        BinId = null;
+        UserId = null;
+        ReasonId = null;
+        QuantityChecking = null;
+    }
 }

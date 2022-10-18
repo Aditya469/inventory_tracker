@@ -7,10 +7,7 @@ import org.json.JSONObject;
 
 public class JobLookupDataManager extends UpdateableServerDataManager<JobNameLookup>{
     public JobLookupDataManager(Application application){
-        super(application);
-        super.mJsonFileName = "jobDataCache.json";
-        super.mUpdateEndpoint = "/getAppJobData";
-        super.initialiseItemList();
+        super(application, "jobDataCache.json", "/getAppJobData");
     }
 
     @Override

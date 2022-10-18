@@ -32,11 +32,7 @@ import java.util.concurrent.Semaphore;
 
 public class ProductDataManager extends UpdateableServerDataManager<Product>{
      public ProductDataManager(Application application) {
-        super(application);
-
-        super.mJsonFileName = "productsData.json";
-        super.mUpdateEndpoint = "/getAppProductData";
-        super.initialiseItemList();
+        super(application, "productsData.json", "/getAppProductData");
     }
 
     @Override

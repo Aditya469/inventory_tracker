@@ -57,6 +57,7 @@
     <string name="label_check_stock_location">Location:</string>
     <string name="label_check_stock_quantity">Quantity:</string>
     <string name="label_check_stock_job">Job:</string>
+    <string name="label_check_stock_reason">Reason:</string>
     <string name="label_check_stock_checkin">Check Item In</string>
     <string name="label_check_stock_checkout">Check Item Out</string>
     <string name="label_check_stock_item_checked_in">Item has been Checked In</string>
