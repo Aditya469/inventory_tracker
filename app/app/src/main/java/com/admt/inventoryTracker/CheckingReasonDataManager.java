@@ -68,24 +68,36 @@ public class CheckingReasonDataManager extends UpdateableServerDataManager<Check
         // so it needs to be updated after every update, including the initial loading.
         // A blank option is included, which equates to not providing a reason. This
         // will line up with a null in the checkstock request parameters
+        try {
+            if (mReasonSpinnerRef != null) {
+                String startingValue = (String) mReasonSpinnerRef.getSelectedItem();
 
-        if(mReasonSpinnerRef != null) {
-            String currentValue = (String) mReasonSpinnerRef.getSelectedItem();
+                ArrayList<String> nameList = new ArrayList<>();
+                for (Iterator<String> i = mReasonsMap.keySet().iterator(); i.hasNext(); )
+                    nameList.add(i.next());
+                Collections.sort(nameList);
+                ArrayAdapter<String> adapter =
+                        new ArrayAdapter<>(mContextRef, android.R.layout.simple_spinner_item, nameList);
+                adapter.insert("Unspecified", 0);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                mReasonSpinnerRef.setAdapter(adapter);
 
-            ArrayList<String> nameList = new ArrayList<>();
-            for (Iterator<String> i = mReasonsMap.keySet().iterator(); i.hasNext(); )
-                nameList.add(i.next());
-            Collections.sort(nameList);
-            ArrayAdapter<String> adapter =
-                    new ArrayAdapter<>(mContextRef, android.R.layout.simple_spinner_item, nameList);
-            adapter.insert("Unspecified", 0);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mReasonSpinnerRef.setAdapter(adapter);
-
-            if (nameList.contains(currentValue))
-                mReasonSpinnerRef.setSelection(nameList.indexOf(currentValue) + 1);
-            else
-                mReasonSpinnerRef.setSelection(0);
+                if (nameList.contains(startingValue))
+                {
+                    for(int i = 0; i < adapter.getCount(); i++)
+                    {
+                        if(adapter.getItem(i).equals(startingValue))
+                        {
+                            mReasonSpinnerRef.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+                else
+                    mReasonSpinnerRef.setSelection(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
