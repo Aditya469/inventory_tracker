@@ -511,7 +511,6 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
     void resetDisplay()
     {
-        mAddStockRequestParameters = new AddStockRequestParameters();
         Button saveBtn = (Button) getActivity().findViewById(R.id.btnAddStockSave);
         saveBtn.setEnabled(false);
         EditText editText = (EditText) getActivity().findViewById(R.id.etAddStockItemBarcode);
@@ -526,6 +525,8 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         editText.setText("");
         editText = (EditText) getActivity().findViewById(R.id.etAddStockLocationName);
         editText.setText("");
+        editText = (EditText) getActivity().findViewById(R.id.etAddStockPartialStockQty);
+        editText.setText("");
         TextView tvQtyUnit = (TextView) getActivity().findViewById(R.id.tvAddStockPartialPackUnit);
         tvQtyUnit.setText("");
 
@@ -538,6 +539,8 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         trBulkQty.setVisibility(View.GONE);
         TableRow trSpecQty = (TableRow) getActivity().findViewById(R.id.trAddStockSpecificItemQty);
         trSpecQty.setVisibility(View.GONE);
+
+        mAddStockRequestParameters = new AddStockRequestParameters();
     }
 
 
