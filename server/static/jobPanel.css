@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#greyout {
-  background: grey;
-  opacity: 60%
-}
-
-.greyout {
-  background: grey;
-  opacity: 60%
+.assignedStockQuantityContainer{
+    width: 10em;
 }

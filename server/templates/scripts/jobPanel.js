@@ -117,7 +117,7 @@ function populateJobPanel(jobData){
         qtyContainerDiv.append(numberInput);
         qtyContainerDiv.append(numberUnitSpan);
 
-        row.append($("<td>").append(qtyContainerDiv));
+        row.append($("<td class='assignedStockQuantityContainer'>").append(qtyContainerDiv));
 
         $("#assignedStockTableBody").append(row);
     }
@@ -183,7 +183,7 @@ function addStockToAssignedList(ProductName, ProductId, ProductQuantity, Product
     qtyContainerDiv.append(numberInput);
     qtyContainerDiv.append(numberUnitSpan);
 
-    row.append($("<td>").append(qtyContainerDiv));
+    row.append($("<td class='assignedStockQuantityContainer'>").append(qtyContainerDiv));
 
     $("#assignedStockTableBody").append(row);
 }
