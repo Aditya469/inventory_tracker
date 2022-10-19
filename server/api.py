@@ -251,6 +251,8 @@ def processAddStockRequest():
 	checkInRecord.timestamp = func.now()
 	if checkInRecord.quantity is None:
 		checkInRecord.quantity = productType.initialQuantity
+	if 'quantityCheckingIn' in requestParams:
+		checkInRecord.quantity = decimal.Decimal(requestParams['quantityCheckingIn'])
 	checkInRecord.createdByRequestId = requestParams['requestId']
 
 	if 'binIdString' in requestParams:
