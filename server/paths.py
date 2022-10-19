@@ -21,3 +21,5 @@ dbPath = "/home/richard/work/DigitME/inventory_tracker/inventoryDB.sqlite"
 dbLockFilePath = "/home/richard/work/DigitME/inventory_tracker/dbLockFile.lock"
 dbBackupStatusFilePath = "/home/richard/work/DigitME/inventory_tracker/dbBackupStatusFile"
 dbBackupDirPath = "/home/richard/work/DigitME/inventory_tracker/dbBackupFiles"
+
+logPath = "/home/richard/work/DigitME/inventory_tracker/server.log"

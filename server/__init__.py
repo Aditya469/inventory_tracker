@@ -13,13 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+import logging
 import os
+import sys
+
+import paths
 
 from flask import Flask, render_template
 
 
 def create_app():
+    logging.basicConfig(filename=paths.logPath, level=logging.DEBUG, format='%(asctime)s %(message)s')
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -74,5 +80,7 @@ def create_app():
 
     from . import backup
     app.register_blueprint(backup.bp)
+
+    logging.info("created app")
 
     return app
