@@ -103,6 +103,40 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             }
         });
 
+        EditText etItemBarcode = (EditText) view.findViewById(R.id.etAddStockItemBarcode);
+        etItemBarcode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // if the user types a barcode into the input field, this handler will fire
+                // to allow ID codes (not necessarily actual barcode numbers) to be entered
+                String barcode = editable.toString();
+                if(barcode == "")
+                    mAddStockRequestParameters.Barcode = null;
+                else {
+                    Product product = mProductDataManager.get(barcode);
+                    if(product != null)
+                        addBarcode(barcode, false);
+                }
+                if (isAddStockRequestValid()) {
+                    TextView tvPrompt = (TextView) (getActivity().
+                            findViewById(R.id.tvAddStockPrompt));
+                    tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
+
+                    enableSaveButton();
+                }
+            }
+        });
+
         TableRow trExpiry = (TableRow) view.findViewById(R.id.trAddStockExpiry);
         trExpiry.setVisibility(View.GONE);
         TableRow trBulkQty = (TableRow) view.findViewById(R.id.trAddStockBulkAddQty);
@@ -255,9 +289,12 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
     }
 
 
+    public  void addBarcode(String BarcodeData)
+    {
+        addBarcode(BarcodeData, true);
+    }
 
-
-    public void addBarcode(String BarcodeData)
+    private void addBarcode(String BarcodeData, final Boolean UpdateBarcodeField)
     {
         String error = null;
         Runnable runnable;
@@ -276,20 +313,23 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             else
             {
                 mAddStockRequestParameters.ItemId = BarcodeData;
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView tvItemId = (TextView) getActivity().findViewById(R.id.etAddStockItemQrCode);
-                        tvItemId.setText(BarcodeData);
+                if(UpdateBarcodeField)
+                {
+                    runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView tvItemId = (TextView) getActivity().findViewById(R.id.etAddStockItemQrCode);
+                            tvItemId.setText(BarcodeData);
 
-                        TextView tvPrompt = (TextView) getActivity().findViewById(R.id.tvAddStockPrompt);
-                        if(mCurrentProduct.CanExpire && mAddStockRequestParameters.LocationId == null)
-                            tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code_or_set_expiry));
-                        else
-                            tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code));
-                    }
-                };
-                mainHandler.post(runnable);
+                            TextView tvPrompt = (TextView) getActivity().findViewById(R.id.tvAddStockPrompt);
+                            if (mCurrentProduct.CanExpire && mAddStockRequestParameters.LocationId == null)
+                                tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code_or_set_expiry));
+                            else
+                                tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code));
+                        }
+                    };
+                    mainHandler.post(runnable);
+                }
             }
         }
 
@@ -301,32 +341,34 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             else
             {
                 mAddStockRequestParameters.LocationId = BarcodeData;
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView tvLocationName = (TextView) (getActivity()
-                                .findViewById(R.id.etAddStockLocationName));
-
-                        tvLocationName.setText(location.LocationName);
-
-                        TextView tvPrompt = (TextView)(getActivity().
-                                findViewById(R.id.tvAddStockPrompt));
-
-                        // prompt for expiry date if other fields have been filled
-                        if(mCurrentProduct.CanExpire &&
-                                mAddStockRequestParameters.ExpiryDate == null &&
-                                mAddStockRequestParameters.Barcode != null &&
-                                mAddStockRequestParameters.ItemId != null)
+                if(UpdateBarcodeField) {
+                    runnable = new Runnable() {
+                        @Override
+                        public void run()
                         {
-                            tvPrompt.setText(getString(R.string.prompt_add_stock_set_expiry_date));
-                        }
-                        // or to send if all fields ready
-                        else if(isAddStockRequestValid())
-                            tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
+                            TextView tvLocationName = (TextView) (getActivity()
+                                    .findViewById(R.id.etAddStockLocationName));
 
-                    }
-                };
-                mainHandler.post(runnable);
+                            tvLocationName.setText(location.LocationName);
+
+                            TextView tvPrompt = (TextView) (getActivity().
+                                    findViewById(R.id.tvAddStockPrompt));
+
+                            // prompt for expiry date if other fields have been filled
+                            if (mCurrentProduct.CanExpire &&
+                                    mAddStockRequestParameters.ExpiryDate == null &&
+                                    mAddStockRequestParameters.Barcode != null &&
+                                    mAddStockRequestParameters.ItemId != null) {
+                                tvPrompt.setText(getString(R.string.prompt_add_stock_set_expiry_date));
+                            }
+                            // or to send if all fields ready
+                            else if (isAddStockRequestValid())
+                                tvPrompt.setText(getString(R.string.prompt_add_stock_ready));
+
+                        }
+                    };
+                    mainHandler.post(runnable);
+                }
             }
         }
 
@@ -346,9 +388,11 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
                 runnable = new Runnable() {
                     @Override
                     public void run() {
-                        TextView etItemBarcode = (TextView) (getActivity()
-                                .findViewById(R.id.etAddStockItemBarcode));
-                        etItemBarcode.setText(BarcodeData);
+                        if(UpdateBarcodeField) {
+                            TextView etItemBarcode = (TextView) (getActivity()
+                                    .findViewById(R.id.etAddStockItemBarcode));
+                            etItemBarcode.setText(BarcodeData);
+                        }
 
                         TextView tvProductName = (TextView) (getActivity()
                                 .findViewById(R.id.etAddStockProductName));

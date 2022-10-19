@@ -133,8 +133,6 @@ public class checkItemsFragment extends Fragment implements AdapterView.OnItemSe
             }
         });
 
-        // TODO: add textChangedListener for product barcode here too
-
         Spinner spCheckingReason = (Spinner) view.findViewById(R.id.spCheckStockJobReason);
         spCheckingReason.setOnItemSelectedListener(this);
         mCheckingReasonsDataManager.setSpinnerReference(spCheckingReason);
