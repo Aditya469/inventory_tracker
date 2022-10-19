@@ -28,7 +28,7 @@ from db import getDbSession, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
 	User, Job, CheckingReason
-from utilities import writeDataToCsvFile
+from utilities import writeDataToCsvFile, formatStockAmount
 from sqlalchemy import select, delete, func, or_, update, and_
 
 bp = Blueprint('stockManagement', __name__)
@@ -183,7 +183,7 @@ def getStockDataFromRequest():
 			rowDict["expiryDate"] = row[3].strftime("%Y-%m-%d")
 		else:
 			rowDict["expiryDate"] = ""
-		rowDict["quantityRemaining"] = row[4]
+		rowDict["quantityRemaining"] = formatStockAmount(row[4], 2)
 		rowDict["price"] = row[5]
 		rowDict["productName"] = row[6]
 		rowDict["productBarcode"] = row[7]
@@ -247,6 +247,7 @@ def getStockItemById(stockId):
 	for key in movementKeys:
 		record = movementRecordsDict[key]
 		recordDict = record.toDict()
+		recordDict["quantity"] = formatStockAmount(recordDict["quantity"], 2)
 
 		if record.userId is not None:
 			recordDict["username"] = session.query(User.username).filter(User.id == record.userId).scalar()
@@ -282,7 +283,7 @@ def getStockItemById(stockId):
 			"addedTimestamp": stockItem[3],
 			"expiryDate": expiryDate,
 			"canExpire": stockItem[5],
-			"quantityRemaining": stockItem[6],
+			"quantityRemaining": formatStockAmount(stockItem[6], 2),
 			"quantityUnit": stockItem[7],
 			"price": stockItem[8],
 			"isCheckedIn": stockItem[9],
@@ -572,13 +573,6 @@ def getExpiredStockDataFromRequest():
 	return productList
 
 
-def formatStockAmount(stockAmount, maxDecimalPlaces):
-	if int(stockAmount) != stockAmount:
-		stockAmount = round(stockAmount, maxDecimalPlaces)
-
-	return f"{stockAmount}"
-
-
 @bp.route('/editStockItem', methods=("POST",))
 @edit_access_required
 def updateStock():
@@ -694,7 +688,7 @@ def getNewlyAddedStock():
 			"productName": row[3],
 			"productQuantityUnit": row[4],
 			"checkInRecordId": row[5],
-			"quantity": row[6]
+			"quantity": formatStockAmount(row[6], 2)
 		})
 
 	return make_response(jsonify(results), 200)
@@ -772,7 +766,7 @@ def deleteNewlyAddedStock():
 
 	session.commit()
 
-	return make_response("WIP", 200)
+	return make_response("items deleted", 200)
 
 
 @bp.route("/getStockCsvFile", methods=("GET",))

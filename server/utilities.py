@@ -35,3 +35,10 @@ def writeDataToCsvFile(headingsDictList, dataDictList, filename="tempCsvFile.csv
 			csvWriter.writerow(rowList)
 
 	return path
+
+
+def formatStockAmount(stockAmount, maxDecimalPlaces):
+	if int(stockAmount) != stockAmount:
+		stockAmount = round(stockAmount, maxDecimalPlaces)
+
+	return f"{stockAmount}"
