@@ -59,9 +59,6 @@ def load_logged_in_user():
 	else:
 		dbSession = getDbSession()
 		g.user = dbSession.query(User).filter(User.username == username).first()
-		print(g.user)
-
-
 
 		
 @bp.route('/logout')
