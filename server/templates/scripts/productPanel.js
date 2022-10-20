@@ -13,6 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+$(document).ready(function(){
+    setProductPanelDetailsHeight();
+    $(window).resize(function(){ setProductPanelDetailsHeight(); });
+});
+
+function setProductPanelDetailsHeight(){
+    // calculate the height of the required stock and stock used table containers and set
+    var stockUsedContainerHeight = $("#editJobPanel").height() - (
+        $("#productPanelNav").outerHeight() +
+        $("#commitButtonsContainer").outerHeight()
+    );
+    var newHeightStyling = "height: " + stockUsedContainerHeight + "px;";
+    $("#productPanelDetails").prop("style", newHeightStyling);
+}
 
 function openProductDetailsPanel(prodId){
     $("#greyout").prop("hidden", false);
