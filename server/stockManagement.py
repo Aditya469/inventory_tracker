@@ -179,7 +179,7 @@ def getStockDataFromRequest():
 		rowDict["id"] = row[0]
 		rowDict["idNumber"] = row[1]
 		rowDict["canExpire"] = row[2]
-		if rowDict["canExpire"]:
+		if rowDict["canExpire"] and row[3] is not None:
 			rowDict["expiryDate"] = row[3].strftime("%Y-%m-%d")
 		else:
 			rowDict["expiryDate"] = ""
