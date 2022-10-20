@@ -166,8 +166,7 @@ public abstract class StockHandlingRequestManager<T> {
             SharedPreferences prefs = mAppContextRef.getSharedPreferences(
                     mAppContextRef.getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
 
-            String protocol = prefs.getString(mAppContextRef.getString(R.string.prefs_server_protocol), "http");
-            String ipAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_ip_address), "");
+            String serverBaseAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_base_address), "");
 
             Log.d(TAG, "Pend on mRequestListAccessSem");
             mRequestListAccessSem.acquire();
@@ -191,7 +190,7 @@ public abstract class StockHandlingRequestManager<T> {
                 requestParamsJson.put("requestId", stockHandlingRequest.requestId);
 
                 // url has to be built dynamically as check-in and check-out requests have different endpoints
-                String url = protocol + "://" + ipAddress + getServerEndpointName(stockHandlingRequest.requestParameters);
+                String url = serverBaseAddress + getServerEndpointName(stockHandlingRequest.requestParameters);
 
                 JsonObjectRequest requestToServer = new JsonObjectRequest(
                         url,

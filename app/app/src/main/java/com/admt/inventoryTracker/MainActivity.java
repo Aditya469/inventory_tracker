@@ -1,20 +1,17 @@
 package com.admt.inventoryTracker;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,12 +38,44 @@ public class MainActivity extends AppCompatActivity
     private static AddStockManager mAddStockManager = null;
     private static CheckStockInOutManager mCheckStockInOutManager = null;
 
+    // note that the sendData task is started in onCreate so that it will run as long as the app
+    // is active, even if it's in the background. The server discovery only runs when MainActivity
+    // is actually running to prevent weirdness whilst in the settings page. Both tasks are created
+    // in oncreate
+    private Timer mPeriodicActionsTimer = null;
+    private TimerTask mSendDataTimerTask = null;
+    private TimerTask mDiscoverServerTimerTask = null;
 
-    private Timer mSendDataTimer;
-    private TimerTask mSendDataTimerTask;
+    private String TAG = "MainActivity";
 
     private enum CurrentState {MODE_SELECT, ADD_STOCK, CHECK_STOCK};
     private CurrentState mCurrentState;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(mDiscoverServerTimerTask != null)
+        {
+            mPeriodicActionsTimer.scheduleAtFixedRate(mDiscoverServerTimerTask, 1000, 15000);
+            Log.d(TAG, "mDiscoverServerTimerTask scheduled for repeated execution");
+        }
+        else
+            Log.d(TAG, "mDiscoverServerTimerTask is null. Skip scheduling");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if(mDiscoverServerTimerTask != null)
+        {
+            mDiscoverServerTimerTask.cancel();
+            Log.d(TAG, "mDiscoverServerTimerTask cancelled");
+        }
+        else
+            Log.d(TAG, "mDiscoverServerTimerTask is null. Skip cancelling");
+    }
 
     public void onBarcodeRead(String barcodeValue) {
         if (mCurrentState == CurrentState.ADD_STOCK)
@@ -130,15 +159,49 @@ public class MainActivity extends AppCompatActivity
         mModeSelectFragment = new modeSelectorFragment();
 
         // As this app is expected to only have intermittent access to the network
-        mSendDataTimer = new Timer(true);
+        mPeriodicActionsTimer = new Timer(true);
         mSendDataTimerTask = new TimerTask() {
             @Override
             public void run() {
                 syncWithServer();
             }
         };
-        mSendDataTimer.scheduleAtFixedRate(mSendDataTimerTask, 1000, 10000);
+        mPeriodicActionsTimer.scheduleAtFixedRate(mSendDataTimerTask, 1000, 10000);
 
+        // created here but scheduled in onResume and cancelled in onPause
+        mDiscoverServerTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                String TAG = "ServerDiscoveryTimerTask";
+                SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs_file_key),
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+
+                if(prefs.getBoolean(getString(R.string.prefs_use_server_discovery), true))
+                {
+                    Log.d(TAG, "Begin server discovery");
+                    ServerDiscovery.DiscoveryResult discoveryResult =
+                            ServerDiscovery.findServer(getApplicationContext());
+                    if(discoveryResult == null)
+                    {
+                        Log.i(TAG, "Failed to find server");
+                        return;
+                    }
+
+                    Log.i(TAG, "Found server. Base address is " + discoveryResult.serverBaseAddress);
+
+                    editor.putString(
+                            getString(R.string.prefs_server_protocol),
+                            discoveryResult.protocol);
+                    editor.putString(
+                            getString(R.string.prefs_server_url),
+                            discoveryResult.ipAddress + ":" + discoveryResult.port);
+                    editor.putString(
+                            getString(R.string.prefs_server_base_address),
+                            discoveryResult.serverBaseAddress);
+                }
+            }
+        };
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainer2, mModeSelectFragment).commit();

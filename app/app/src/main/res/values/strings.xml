@@ -10,7 +10,11 @@
 
     <!-- settings page -->
     <string name="title_activity_settings">Settings</string>
-    <string name="label_settings_server_ip_address">Server IP Address</string>
+    <string name="label_settings_server_base_address">Server Base Address</string>
+    <string name="hint_settings_server_base_address">http://xxx.xxx.xxx.xxx:yy</string>
+    <string name="label_settings_use_server_discovery">Automatic Server Discovery</string>
+    <string name="label_settings_find_server_now">Find Server Now</string>
+    <string name="label_settings_server_port">Server Port</string>
     <string name="label_settings_camera_selector">Camera</string>
     <string-array name="camera_selection_options">
         <item>Front Camera</item>
@@ -18,8 +22,7 @@
     </string-array>
     <string name="label_settings_password">Settings Password</string>
     <string name="settings_password_hint">New password...</string>
-    <string name="label_detection_delay">Detection Delay (seconds)</string>
-    <string name="label_use_fullscreen_confirmations">Use Fullscreen Confirmations</string>
+    <string name="label_detection_delay">QR Code Detection Delay (seconds)</string>
     <string-array name="detection_delay_labels">
         <item>No delay</item>
         <item>0.5 seconds</item>
@@ -80,13 +83,14 @@
     getting android studio to find a custom file -->
     <string name="prefs_file_key" translatable="false">com.admt.inventoryTracker.prefs</string>
     <string name="prefs_server_protocol" translatable="false">prefsServerProtocol</string>
-    <string name="prefs_server_ip_address" translatable="false">prefsServerIpAddress</string>
+    <string name="prefs_server_url" translatable="false">prefsServerUrl</string>
+    <string name="prefs_use_server_discovery" translatable="false">prefsUseServerDiscovery</string>
+    <string name="prefs_server_base_address" translatable="false">prefsServerBaseAddress</string>
     <string name="prefs_settings_password" translatable="false">prefsSettingsPassword</string>
     <string name="prefs_use_front_camera" translatable="false">prefsCameraToUse</string>
     <string name="prefs_camera_detection_delay" translatable="false">prefsCameraDetectionDelay</string>
     <string name="prefs_use_fullscreen_confirmations" translatable="false">useFullscreenConfirmations</string>
     <string name="prefs_minimum_wait_after_camera_send_barcode" translatable="false">minCameraBarcodeRepeatDelay</string>
-
 
 
     <!--    System keywords. Kept here rather than have a list of repeated and typo-sensitive keys

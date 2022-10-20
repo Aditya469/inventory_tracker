@@ -166,9 +166,8 @@ abstract class UpdateableServerDataManager<T> {
         SharedPreferences prefs = mAppContextRef.getSharedPreferences(
                 mAppContextRef.getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
 
-        String protocol = prefs.getString(mAppContextRef.getString(R.string.prefs_server_protocol), "http");
-        String ipAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_ip_address), "");
-        String url = protocol + "://" + ipAddress + mUpdateEndpoint;
+        String serverBaseAddress = prefs.getString(mAppContextRef.getString(R.string.prefs_server_base_address), "");
+        String url = serverBaseAddress + mUpdateEndpoint;
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
