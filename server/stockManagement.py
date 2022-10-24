@@ -17,6 +17,7 @@ limitations under the License.
 import csv
 import decimal
 import json
+import os
 
 from flask import (
 	Blueprint, current_app, make_response, render_template, send_file, jsonify, request
@@ -25,7 +26,7 @@ from werkzeug.utils import secure_filename
 import datetime
 from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from db import getDbSession, Settings
-from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets
+from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets, generateIdCard
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
 	User, Job, CheckingReason
 from utilities import writeDataToCsvFile, formatStockAmount
@@ -828,3 +829,18 @@ def getStockOverviewCsvFile():
 	csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=stockOverviewData)
 
 	return send_file(csvPath, as_attachment=True, download_name="StockOverviewInfo.csv", mimetype="text/csv")
+
+
+@bp.route("/getStockIdCard")
+@login_required
+def getStockIdCard():
+	stockItemId = request.args.get("stockItemId", default=None)
+	if stockItemId is None:
+		return make_response("stockItemId must be provided", 400)
+
+	dbSession = getDbSession()
+	idString = dbSession.query(StockItem.idString).filter(StockItem.id == stockItemId).scalar()
+	idCard = generateIdCard(idString, label=idString)
+	filePath = os.path.join(current_app.instance_path, "stockItemIdCard.png")
+	idCard.save(filePath)
+	return send_file(filePath, as_attachment=True, download_name=f"{idString}.png")

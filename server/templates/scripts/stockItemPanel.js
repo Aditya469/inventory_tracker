@@ -78,6 +78,10 @@ function openStockItemPanel(stockItemId){
             else
                 $("#stockItemExpires").prop("checked", false);
 
+            var idCardUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockIdCard')}}");
+            idCardUrl.searchParams.append("stockItemId", stockItemId);
+            $("#idCardDownloadLink").prop("href", idCardUrl);
+
             // generate stock movement table body
             for(var i = 0; i < stockItemDetails.movementRecords.length; i++){
                 var checkingRecord = stockItemDetails.movementRecords[i];
