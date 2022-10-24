@@ -23,3 +23,7 @@ limitations under the License.
   background: grey;
   opacity: 60%
 }
+
+#versionString{
+    padding-left: 10px;
+}

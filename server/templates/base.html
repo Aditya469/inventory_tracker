@@ -27,7 +27,11 @@ limitations under the License.
 <body>
 	<nav id="nav" class="navbar navbar-expand-xxl navbar-dark bg-primary">
 		<div class="container-fluid">
-			<img src="{{ url_for('static', filename='logo.png') }}" class="navbar-brand" id="logo">
+			<div class="navbar-brand">
+				<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+				<br>
+				<span id="versionString">Version 1.0.0</span>
+			</div>
 			{% if g.user != None %}
 			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
 				<span class="navbar-toggler-icon"></span>
