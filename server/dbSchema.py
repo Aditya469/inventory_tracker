@@ -77,6 +77,7 @@ class StockItem(Base):
 	quantityRemaining = Column(Numeric, default=0)
 	price = Column(Numeric)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
+	lastUpdated = Column(DateTime(timezone=True), server_default=func.now())
 	associatedProduct = relationship("ProductType", back_populates="associatedStock")
 
 	def toDict(self):
@@ -88,7 +89,8 @@ class StockItem(Base):
 			"expiryDate": self.expiryDate,
 			"quantityRemaining": self.quantityRemaining,
 			"price": self.price,
-			"isCheckedIn": self.isCheckedIn
+			"isCheckedIn": self.isCheckedIn,
+			"lastUpdated": self.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
 		}
 		if self.addedTimestamp:
 			dataDict["addedTimestamp"] = self.addedTimestamp.strftime("%d/%m/%y %H:%M")
@@ -135,6 +137,7 @@ class ProductType(Base):
 	sendStockNotifications = Column(Boolean, default=False)
 	needsReordering = Column(Boolean, default=False)
 	stockReordered = Column(Boolean, default=False)
+	lastUpdated = Column(DateTime(timezone=True), server_default=func.now())
 	associatedStock = relationship("StockItem", back_populates='associatedProduct')
 	associatedAssignedStock = relationship("AssignedStock", backref="productTypes")
 
@@ -157,7 +160,8 @@ class ProductType(Base):
 			"reorderLevel": self.reorderLevel,
 			"sendStockNotifications": self.sendStockNotifications,
 			"needsReordering": self.needsReordering,
-			"stockReordered": self.stockReordered
+			"stockReordered": self.stockReordered,
+			"lastUpdated": self.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
 		}
 
 
@@ -263,6 +267,7 @@ class Job(Base):
 	addedTimestamp = Column(DateTime(timezone=True), server_default=func.now())
 	qrCodeName = Column(String)
 	jobName = Column(String)
+	lastUpdated = Column(DateTime(timezone=True), server_default=func.now())
 	associatedStockCheckins = relationship("CheckInRecord", backref='Job')
 	associatedStockCheckouts = relationship("CheckOutRecord", backref='Job')
 	associatedAssignedStock = relationship("AssignedStock", backref="Job")
@@ -272,10 +277,11 @@ class Job(Base):
 			"id": self.id,
 			"addedTimestamp": "",
 			"qrCodeName": self.qrCodeName,
-			"jobName": self.jobName
+			"jobName": self.jobName,
+			"addedTimestamp": self.addedTimestamp.strftime("%d/%m/%y %H:%M"),
+			"lastUpdated": self.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
 		}
-		if self.addedTimestamp:
-			dataDict["addedTimestamp"] = self.addedTimestamp.strftime("%d/%m/%y %H:%M")
+
 		return dataDict
 
 

@@ -13,6 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+refreshCheckIntervalId = null;
+lastUpdateTimestamp = "";
+
 $(document).ready(function(){
     setProductPanelDetailsHeight();
     $(window).resize(function(){ setProductPanelDetailsHeight(); });
@@ -79,6 +83,14 @@ function openProductDetailsPanel(prodId){
                     $("#newStockOrderedLabel").prop("hidden", true);
                 }
                 $("#addedTimestamp").html(responseData.addedTimestamp);
+
+                lastUpdateTimestamp = responseData.lastUpdated;
+
+                // set up event to check for the product having been updated elsewhere
+                if(refreshCheckIntervalId != null)
+                    clearInterval(refreshCheckIntervalId);
+                startProductUpdatedInterval();
+
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert(jqXHR.responseText);
@@ -87,7 +99,41 @@ function openProductDetailsPanel(prodId){
     }
 }
 
+function startProductUpdatedInterval(){
+    refreshCheckIntervalId = setInterval(function(){
+        console.log("Checking if this product has been updated");
+        var id = $("#productId").val();
+        if(id == "-1" || id == "")
+            return;
+
+        var url = new URL(window.location.origin + "{{ url_for('productManagement.getProductTypeLastUpdateTimestamp') }}");
+        url.searchParams.append("itemId", id);
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function(responseTimestamp){
+                console.log("got response: " + responseTimestamp);
+                if(lastUpdateTimestamp != responseTimestamp){
+                    console.log("an update has occurred");
+                    clearInterval(refreshCheckIntervalId);
+                    if(confirm("This product's status has changed. Reload?"))
+                        openProductDetailsPanel(id);
+                    else
+                    {
+                        lastUpdateTimestamp = responseTimestamp;
+                        startProductUpdatedInterval();
+                    }
+                }
+            }
+        });
+    }, 5000);
+}
+
 function saveProductDetails(){
+    // pause update check until the new data has been saved.
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
+
     var productName = $("#productName").val();
     var productBarcode = $("#barcode").val();
     var bulkSpecSelection = "";
@@ -153,13 +199,23 @@ function saveProductDetails(){
         data: fd,
         contentType: false,
         processData: false,
+        cache: false,
         success: function(response){
-            $("#saveProductFeedbackSpan").html(response);
-            setTimeout(function(){$("#saveProductFeedbackSpan").empty();}, 3000);
-            updateProductsTable();
-            updateNewStockTable();
+            console.log("beep");
+            console.log(response);
+            if(response.success){
+                $("#saveProductFeedbackSpan").html(response.message);
+                setTimeout(function(){$("#saveProductFeedbackSpan").empty();}, 3000);
+                updateProductsTable();
+                updateNewStockTable();
+                openProductDetailsPanel(response.id); // most straightforward way to reset the update timer and stuff
+            }
+            else{
+                $("#saveProductFeedbackSpan").html(response.message);
+            }
         },
         error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR);
             $("#saveProductFeedbackSpan").html(jqXHR.responseText);
         }
     });
@@ -167,6 +223,8 @@ function saveProductDetails(){
 
 function deleteProduct(){
     if(confirm("Delete this product?")){
+        if(refreshCheckIntervalId != null)
+            clearInterval(refreshCheckIntervalId);
         var productId = $("#productId").val();
         var fd = new FormData();
         fd.append("id", productId);
@@ -197,4 +255,6 @@ function closeProductDetailsPanel(){
     $("#editProductPanel").prop("hidden", true);
     $("#newStockOrderedLabel").prop("hidden", true);
     $("#newStockOrdered").prop("hidden", true);
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
 }

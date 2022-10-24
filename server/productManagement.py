@@ -94,7 +94,7 @@ def addNewProductType():
 	if errorState is None:
 		session.commit()
 		updateNewStockWithNewProduct(product)
-		return make_response("New product added", 200)
+		return make_response(jsonify({"success": True, "message": "New product added", "id": product.id}), 200)
 	else:
 		return make_response(errorState, 400)
 
@@ -112,9 +112,9 @@ def updateProductType():
 	if errorState is None:
 		session.commit()
 		updateNewStockWithNewProduct(product)
-		return make_response("Product details updated", 200)
+		return make_response(jsonify({"success": True, "message": "Product details updated", "id": product.id}), 200)
 	else:
-		return make_response(errorState, 400)
+		return make_response(jsonify({"success": False, "message": errorState}, 400))
 
 
 @bp.route('/deleteProduct', methods=('POST',))
@@ -185,6 +185,8 @@ def updateProductFromRequestForm(session, product):
 	if "newStockOrdered" in request.form:
 		product.stockReordered = request.form["newStockOrdered"] == "true"
 
+	product.lastUpdated = func.current_timestamp()
+
 	return None, product
 
 '''
@@ -239,3 +241,13 @@ def getProductsCsvFile():
 	csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=productData)
 
 	return send_file(csvPath, as_attachment=True, download_name="ProductInfo.csv", mimetype="text/csv")
+
+
+@bp.route("/getProductTypeLastUpdateTimestamp")
+@login_required
+def getProductTypeLastUpdateTimestamp():
+	itemId = request.args.get("itemId")
+	dbSession = getDbSession()
+	item = dbSession.query(ProductType).filter(ProductType.id == itemId).one()
+	timestamp = item.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
+	return make_response(timestamp, 200)

@@ -42,3 +42,5 @@ def formatStockAmount(stockAmount, maxDecimalPlaces):
 		stockAmount = round(stockAmount, maxDecimalPlaces)
 
 	return f"{stockAmount}"
+
+

@@ -636,6 +636,7 @@ def updateStock():
 			binId=request.form.get("binId")
 		))
 
+	stockItem.lastUpdated = func.current_timestamp()
 	session.commit()
 
 	return make_response("Changes saved", 200)
@@ -753,6 +754,7 @@ def updateNewStockWithNewProduct(newProductType):
 		stockItem.productType == newProductType.id
 		stockItem.quantityRemaining += newProductType.initialQuantity
 		stockItem.price = newProductType.expectedPrice
+		StockItem.lastUpdated = func.current_timestamp()
 
 	checkinRecords = session.query(CheckInRecord) \
 		.join(VerificationRecord, CheckInRecord.id == VerificationRecord.associatedCheckInRecord) \
@@ -844,3 +846,14 @@ def getStockIdCard():
 	filePath = os.path.join(current_app.instance_path, "stockItemIdCard.png")
 	idCard.save(filePath)
 	return send_file(filePath, as_attachment=True, download_name=f"{idString}.png")
+
+
+@bp.route("/getStockItemLastUpdateTimestamp")
+@login_required
+def getStockItemLastUpdateTimestamp():
+	itemId = request.args.get("itemId")
+	dbSession = getDbSession()
+	item = dbSession.query(StockItem).filter(StockItem.id == itemId).one()
+	timestamp = item.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
+	return make_response(timestamp, 200)
+

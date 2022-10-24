@@ -335,7 +335,9 @@ def processCheckStockInRequest():
 			checkInRecord.checkinTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
 		if "jobIdString" in requestParams:
-			checkInRecord.jobId = dbSession.query(Job.id).filter(Job.idString == requestParams['jobIdString']).first()[0]
+			job = dbSession.query(Job).filter(Job.idString == requestParams['jobIdString']).first()
+			job.lastUpdated = func.current_time()
+			checkInRecord.jobId = job.id
 
 		if 'binIdString' in requestParams:
 			checkInRecord.binId = dbSession.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]
@@ -349,6 +351,8 @@ def processCheckStockInRequest():
 
 		stockItem.quantityRemaining += decimal.Decimal(requestParams['quantity'])
 		stockItem.isCheckedIn = True
+		stockItem.lastUpdated = func.current_timestamp()
+
 		dbSession.commit()
 	except Exception as e:
 		logging.error(e)
@@ -422,7 +426,9 @@ def processCheckStockOutRequest():
 			checkOutRecord.timestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
 		if "jobIdString" in requestParams:
-			checkOutRecord.jobId = dbSession.query(Job.id).filter(Job.idString == requestParams['jobIdString']).first()[0]
+			job = dbSession.query(Job).filter(Job.idString == requestParams['jobIdString']).first()
+			job.lastUpdated = func.current_time()
+			checkOutRecord.jobId = job.id
 
 		if 'binIdString' in requestParams:
 			checkOutRecord.binId = dbSession.query(Bin.id).filter(Bin.idString == requestParams['binIdString']).first()[0]

@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+refreshCheckIntervalId = null;
+lastUpdateTimestamp = "";
+
 $(document).ready(function (){
     setStockItemTableSizes();
     $(window).resize(function(){ setStockItemTableSizes(); });
@@ -24,6 +27,8 @@ function closeStockItemPanel(){
     $(".editStockPanelInput").val("");
     $(".editStockPanelInput").empty();
     $("#stockMovementTableBody").empty();
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
 }
 
 function openStockItemPanel(stockItemId){
@@ -96,11 +101,48 @@ function openStockItemPanel(stockItemId){
                 $("#stockMovementTableBody").append(row);
             }
 
+            lastUpdateTimestamp = stockItemDetails.lastUpdated;
+
+            // set up event to check for the product having been updated elsewhere
+            if(refreshCheckIntervalId != null)
+                clearInterval(refreshCheckIntervalId);
+
+            startStockUpdatedInterval();
+
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
         }
     });
+}
+
+function startStockUpdatedInterval(){
+    refreshCheckIntervalId = setInterval(function(){
+        var id = $("#stockId").val();
+        if(id == -1 || id == "")
+            return;
+
+        var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockItemLastUpdateTimestamp') }}");
+        url.searchParams.append("itemId", id);
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function(responseTimestamp){
+                console.log("got response: " + responseTimestamp);
+                if(lastUpdateTimestamp != responseTimestamp){
+                    console.log("an update has occurred");
+                    clearInterval(refreshCheckIntervalId);
+                    if(confirm("This stock item's status has changed. Reload?"))
+                        openStockItemPanel(id);
+                    else
+                    {
+                        lastUpdateTimestamp = responseTimestamp;
+                        startStockUpdatedInterval();
+                    }
+                }
+            }
+        });
+    }, 5000);
 }
 
 // sets the maximum height of the stock item panel table(s) to allow overflow to work correctly
@@ -118,6 +160,8 @@ function onLocationUpdated(){
 }
 
 function saveStockItemDetails(){
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
     var data = new FormData();
     data.append("id", $("#stockId").val());
     data.append("quantityRemaining", $("#quantityRemaining").val());
@@ -143,7 +187,8 @@ function saveStockItemDetails(){
             updateStockTable();
             $("#saveStockItemFeedbackSpan").html("Changes saved");
             setTimeout(function(){$("#saveStockItemFeedbackSpan").empty();}, 3000);
-            $("#deleteStockButton").prop("disabled", true);
+            //$("#deleteStockButton").prop("disabled", true);
+            openStockItemPanel($("#stockId").val()); // easiest way to reset update check timer etc
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
@@ -153,6 +198,8 @@ function saveStockItemDetails(){
 
 function deleteStockItem(){
     if(confirm("Delete this item of stock?")){
+        if(refreshCheckIntervalId != null)
+            clearInterval(refreshCheckIntervalId);
         var id = $("#stockId").val();
         var data = {"id": id};
         $.ajax({

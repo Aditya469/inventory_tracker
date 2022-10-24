@@ -16,6 +16,9 @@ limitations under the License.
 
 var assignedStockIdsToDelete = [];
 
+refreshCheckIntervalId = null;
+lastUpdateTimestamp = "";
+
 $(document).ready(function(){
     setJobStockTableSizes();
     $(window).resize(function(){ setJobStockTableSizes(); });
@@ -29,6 +32,8 @@ function closePanels(){
     $(".editJobInput").removeClass('is-invalid');
     $("#stockUsedTableBody").empty();
     $("#assignedStockTableBody").empty();
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
 }
 
 function openJobDetailsPanel(jobId){
@@ -121,6 +126,44 @@ function populateJobPanel(jobData){
 
         $("#assignedStockTableBody").append(row);
     }
+
+    lastUpdateTimestamp = jobData.lastUpdated;
+
+    // set up event to check for the job having been updated elsewhere
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
+
+    startJobUpdatedInterval();
+}
+
+function startJobUpdatedInterval(){
+    refreshCheckIntervalId = setInterval(function(){
+        var id = $("#jobId").val();
+        if(id == "-1" || id == "")
+            return;
+
+        var url = new URL(window.location.origin + "{{ url_for('jobs.getJobLastUpdateTimestamp') }}");
+        url.searchParams.append("itemId", id);
+
+        $.ajax({
+            url: url,
+            type: "GET",
+             success: function(responseTimestamp){
+                console.log("got response: " + responseTimestamp);
+                if(lastUpdateTimestamp != responseTimestamp){
+                    console.log("an update has occurred");
+                    clearInterval(refreshCheckIntervalId);
+                    if(confirm("This jobs's status has changed. Reload?"))
+                        openJobDetailsPanel(id);
+                    else
+                    {
+                        lastUpdateTimestamp = responseTimestamp;
+                        startJobUpdatedInterval();
+                    }
+                }
+            }
+        });
+    }, 5000);
 }
 
 function onRequiredStockSearchBarInput(){
@@ -285,6 +328,9 @@ function saveJobDetails(){
 
     console.log(requestArgs);
 
+    if(refreshCheckIntervalId != null)
+        clearInterval(refreshCheckIntervalId);
+
     $.ajax({
         url: url,
         type: "POST",
@@ -307,6 +353,8 @@ function saveJobDetails(){
 
 function deleteJob(){
     if(confirm("Delete this job?")){
+        if(refreshCheckIntervalId != null)
+            clearInterval(refreshCheckIntervalId);
         $.ajax({
             url: "{{ url_for('jobs.deleteJob', jobId="")}}" + $("#jobId").val(),
             type: "POST",

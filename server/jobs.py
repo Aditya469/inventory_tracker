@@ -236,6 +236,8 @@ def updateJobFromRequest(jobId, dbSession):
 				.filter(AssignedStock.id == request.json["deletedStockAssignments"][i])\
 				.delete()
 
+	job.lastUpdated = func.current_timestamp()
+
 	return None
 
 
@@ -533,3 +535,13 @@ def getPickingList():
 	pickingListFile.close()
 
 	return send_file(filepath, as_attachment=True, download_name=f"Picking List {job.jobName}.txt")
+
+
+@bp.route("/getJobLastUpdateTimestamp")
+@login_required
+def getJobLastUpdateTimestamp():
+	itemId = request.args.get("itemId")
+	dbSession = getDbSession()
+	item = dbSession.query(Job).filter(Job.id == itemId).one()
+	timestamp = item.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
+	return make_response(timestamp, 200)
