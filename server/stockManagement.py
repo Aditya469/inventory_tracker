@@ -37,8 +37,34 @@ bp = Blueprint('stockManagement', __name__)
 @bp.route('/stockManagement')
 @login_required
 def getStockPage():
+	# Get the stock page, possibly preloading search parameters.
+	dbSession = getDbSession()
 	productName = request.args.get("productName", default=None)
-	return render_template("stockManagement.html", productName=productName)
+
+	showExpiry = False
+	expiryDayCount = request.args.get("expiryDayCount", default=None)
+	if expiryDayCount is not None:
+		showExpiry = True
+		startDate = datetime.datetime.now() + datetime.timedelta(days=int(expiryDayCount))
+		expStartDateString = startDate.strftime("%Y-%m-%d")
+	else:
+		expStartDateString = ""
+
+	showExpiredOnly = request.args.get("showExpiredOnly", default=None)
+	if showExpiredOnly is not None and showExpiredOnly == "true":
+		showExpiry = True
+		yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+		expEndDateString = yesterday.strftime("%Y-%m-%d")
+	else:
+		expEndDateString = ""
+
+	return render_template(
+		"stockManagement.html",
+		productName=productName,
+		showExpiry=showExpiry,
+		expiryStartDateValue=expStartDateString,
+		expiryEndDateValue=expEndDateString
+	)
 
 
 @bp.route('/getIdStickerSheet')
@@ -605,7 +631,7 @@ def updateStock():
 		session.add(CheckInRecord(
 			stockItem=stockItem.id,
 			productType=stockItem.productType,
-			quantityCheckedIn=0,
+			quantity=0,
 			binId=request.form.get("binId")
 		))
 

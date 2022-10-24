@@ -63,19 +63,19 @@ limitations under the License.
                 <div class="row">
                     <div id="expirytickBoxes col-12">
                         <div class="form-check">
-                            <label class="form-check-label" for="canExpire">Only Show Expirable Stock</label>
-                            <input class="form-check-input" type="checkbox" id="canExpire" onclick="onCanExpireCheckboxClicked()">
+                            <label class="form-check-label" for="canExpire">Only Show Stock That Expires</label>
+                            <input class="form-check-input" type="checkbox" id="canExpire" onclick="onCanExpireCheckboxClicked()" {% if showExpiry %} checked {% endif %}>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label" for="limitExpiryDates">Limit Expiry Dates</label>
-                            <input class="form-check-input" type="checkbox" id="limitExpiryDates" disabled oninput="updateStockTable()" onclick="onLimitExpiryDatesClicked()">
+                            <input class="form-check-input" type="checkbox" id="limitExpiryDates" oninput="updateStockTable()" onclick="onLimitExpiryDatesClicked()" {% if showExpiry %} checked {% else %} disabled {% endif %}>
                         </div>
                     </div>
                     <div class="col-12">
                         <label for="startDate" class="">Expiry Range Start Date:</label>
-                        <input type="date" class="form-control form-control-sm" id="startDate" disabled oninput="updateStockTable()"/>
+                        <input type="date" class="form-control form-control-sm" id="startDate" disabled oninput="updateStockTable()" value="{{ expiryStartDateValue}}"/>
                         <label for="endDate" class="">Expiry Range End Date:</label>
-                        <input type="date" class="form-control form-control-sm" id="endDate" disabled oninput="updateStockTable()"/>
+                        <input type="date" class="form-control form-control-sm" id="endDate" disabled oninput="updateStockTable()" value="{{ expiryEndDateValue}}"/>
                     </div>
 
                 </div>

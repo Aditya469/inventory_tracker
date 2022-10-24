@@ -75,7 +75,7 @@ function updateStockTables(){
         data: totalStockParams,
         success:function(responseData){
             console.log(responseData);
-            var table = generateOverviewStockTable(responseData);
+            var table = generateOverviewStockTable(responseData, onTotalStockRowClicked);
             table.attr("id","stockTotalTable");
             $("#totalStockTableContainer").empty().append(table);
         },
@@ -91,7 +91,7 @@ function updateStockTables(){
         data: availableStockParams,
         success:function(responseData){
             console.log(responseData);
-            var table = generateOverviewStockTable(responseData);
+            var table = generateOverviewStockTable(responseData, onTotalStockRowClicked);
             table.attr("id", "availableStockTable");
             $("#availableStockTableContainer").empty().append(table);
         },
@@ -111,7 +111,7 @@ function updateStockTables(){
         data: expiringStockParams,
         success:function(responseData){
             console.log(responseData);
-            var table = generateOverviewStockTable(responseData);
+            var table = generateOverviewStockTable(responseData, onNearExpiryRowClicked);
             table.attr("id", "oldStockTable");
             $("#oldStockTableContainer").empty().append(table);
         },
@@ -127,7 +127,7 @@ function updateStockTables(){
         data: expiredStockParams,
         success:function(responseData){
             console.log(responseData);
-            var table = generateOverviewStockTable(responseData);
+            var table = generateOverviewStockTable(responseData, onExpiredRowClicked);
             table.attr("id", "expiredStockTable");
             $("#expiredStockTableContainer").empty().append(table);
         },
@@ -157,7 +157,27 @@ function updateStockTables(){
     $("#expiredStockCsvDownloadLink").prop("href", url);
 }
 
-function generateOverviewStockTable(stockData)
+function onTotalStockRowClicked(){
+    searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+    searchUrl.searchParams.append("productName",$(this).data("productName"));
+    window.location.href = searchUrl.href;
+}
+
+function onNearExpiryRowClicked(){
+    searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+    searchUrl.searchParams.append("productName",$(this).data("productName"));
+    searchUrl.searchParams.append("expiryDayCount", $("#stockDaysNearExpiry").val());
+    window.location.href = searchUrl.href;
+}
+
+function onExpiredRowClicked(){
+    searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+    searchUrl.searchParams.append("productName",$(this).data("productName"));
+    searchUrl.searchParams.append("showExpiredOnly", "true");
+    window.location.href = searchUrl.href;
+}
+
+function generateOverviewStockTable(stockData, onClickFunction)
 {
     var table = $("<table class='table'>");
     var thead = $("<thead>");
@@ -175,11 +195,7 @@ function generateOverviewStockTable(stockData)
     for(i=0; i<stockData.length; i++){
         tr = $("<tr>");
         tr.data("productName", stockData[i].productName);
-        tr.on("click", function(){
-            searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
-            searchUrl.searchParams.append("productName",$(this).data("productName"));
-            window.location.href = searchUrl.href;
-        });
+        tr.on("click", onClickFunction);
 
         tr.append($("<td>" + stockData[i].productName + "</td>"));
         tr.append($("<td>" + stockData[i].stockAmount + " " + stockData[i].quantityUnit + "</td>"));
