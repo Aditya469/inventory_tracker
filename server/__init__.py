@@ -17,9 +17,9 @@ import logging
 import os
 import sys
 
-import paths
+from flask import Flask
 
-from flask import Flask, render_template
+import paths
 
 
 def create_app():
@@ -39,46 +39,46 @@ def create_app():
     except OSError:
         pass
 
-    from . import db
+    import db
     db.initApp(app)
 
-    from . import scripts
+    import scripts
     app.register_blueprint(scripts.bp)
 
-    from . import auth
+    import auth
     app.register_blueprint(auth.bp)
 
-    from . import overview
+    import overview
     app.register_blueprint(overview.bp)
 
-    from . import users
+    import users
     app.register_blueprint(users.bp)
 
-    from . import stockManagement
+    import stockManagement
     app.register_blueprint(stockManagement.bp)
 
-    from . import productManagement
+    import productManagement
     app.register_blueprint(productManagement.bp)
 
-    from . import jobs
+    import jobs
     app.register_blueprint(jobs.bp)
 
-    from . import files
+    import files
     app.register_blueprint(files.bp)
 
-    from . import bins
+    import bins
     app.register_blueprint(bins.bp)
 
-    from . import checkingReasons
+    import checkingReasons
     app.register_blueprint(checkingReasons.bp)
 
-    from . import api
+    import api
     app.register_blueprint(api.bp)
 
-    from . import systemSettings
+    import systemSettings
     app.register_blueprint(systemSettings.bp)
 
-    from . import backup
+    import backup
     app.register_blueprint(backup.bp)
 
     logging.info("created app")

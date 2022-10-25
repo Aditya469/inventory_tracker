@@ -15,27 +15,20 @@ limitations under the License.
 """
 
 import os
-import threading
-import time
-
-from flask import (
-	Blueprint, render_template, request, make_response, jsonify, current_app
-)
-from werkzeug.utils import secure_filename
-
-import db
-from stockManagement import updateNewStockWithNewProduct
-from auth import login_required, admin_access_required,create_access_required,edit_access_required
-from dbSchema import ProductType, StockItem, User, Settings
-from db import getDbSession, dbLock, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext, close_db
-from sqlalchemy import select, or_, func
-import decimal
-from emailNotification import sendEmail
-from messages import getDatabaseBackupSuccessNotificationMessage, getDatabaseBackupFailureNotificationMessage
-from filelock import Timeout, FileLock
 from datetime import datetime
 from shutil import copy
-from paths import dbBackupStatusFilePath, dbBackupDirPath, dbPath
+
+from filelock import Timeout
+from flask import (
+	Blueprint, request, make_response, jsonify
+)
+
+from auth import admin_access_required
+from db import dbLock, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext, close_db
+from dbSchema import User, Settings
+from emailNotification import sendEmail
+from messages import getDatabaseBackupSuccessNotificationMessage, getDatabaseBackupFailureNotificationMessage
+from paths import dbBackupDirPath, dbPath
 
 bp = Blueprint('backup', __name__)
 

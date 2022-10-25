@@ -14,21 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import functools
-import os
-
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, request, make_response, jsonify,
-    current_app
+    Blueprint, render_template, request, make_response, jsonify
 )
-from werkzeug.exceptions import abort
-from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import delete, update
 
-from dbSchema import CheckingReason, Settings
-from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
-from db import getDbSession, User
-from auth import login_required, userHasAdminAccess, create_access_required
+from auth import login_required, create_access_required
+from db import getDbSession
+from dbSchema import CheckingReason
 
 bp = Blueprint('checkingReasons', __name__)
 

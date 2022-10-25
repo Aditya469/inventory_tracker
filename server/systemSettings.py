@@ -16,15 +16,14 @@ limitations under the License.
 from datetime import datetime
 
 from flask import (
-    Blueprint, render_template, make_response, jsonify, request
+	Blueprint, render_template, make_response, jsonify, request
 )
-from werkzeug.utils import secure_filename
 
-from auth import login_required, admin_access_required
+from auth import admin_access_required
 from db import getDbSession
 from dbSchema import Settings
-from messages import getTestEmailMessage
 from emailNotification import sendEmail
+from messages import getTestEmailMessage
 
 bp = Blueprint('systemSettings', __name__)
 

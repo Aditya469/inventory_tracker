@@ -15,11 +15,11 @@ limitations under the License.
 """
 
 from flask import (
-    Blueprint, render_template, make_response
+	Blueprint, render_template, make_response
 )
 from werkzeug.utils import secure_filename
 
-from .auth import login_required
+from auth import login_required
 
 bp = Blueprint('scripts', __name__)
 

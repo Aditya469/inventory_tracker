@@ -20,9 +20,8 @@ import logging
 import smtplib
 import ssl
 import threading
+
 from db import getDbSession
-
-
 # the sending part of this runs on a different thread to prevent the system hanging
 from dbSchema import Settings
 

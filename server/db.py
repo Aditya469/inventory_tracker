@@ -15,21 +15,14 @@ limitations under the License.
 """
 import sqlite3
 
-import click
-from flask import current_app, g
-from flask.cli import with_appcontext
-from werkzeug.exceptions import abort
-from werkzeug.security import check_password_hash, generate_password_hash
-import os
-
-from sqlalchemy import create_engine, Boolean, Column, Date, DateTime, ForeignKey, Integer, Numeric, Sequence, String, \
-	Text, inspect
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-from sqlalchemy.sql import func
-
-from dbSchema import Base, User, ProductType, StockItem, Settings, ItemId, Bin
-
 from filelock import FileLock, Timeout
+from flask import g
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from werkzeug.exceptions import abort
+from werkzeug.security import generate_password_hash
+
+from dbSchema import Base, User, ProductType, Settings, Bin
 from paths import dbPath, dbLockFilePath
 
 dbLock = FileLock(dbLockFilePath, timeout=1)

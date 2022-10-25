@@ -14,24 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import decimal
-import functools
-import logging
 import os
+
 from flask import (
-	Blueprint, flash, g, redirect, render_template, request, url_for, request, make_response, jsonify, current_app,
+	Blueprint, current_app,
 	send_file
 )
-from sqlalchemy import select, func
-from werkzeug.exceptions import abort
-from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.utils import secure_filename, send_from_directory
+from werkzeug.utils import secure_filename
 
-from db import getDbSession
-from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType
-import json
 from auth import login_required
-from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
+
 bp = Blueprint('files', __name__)
 
 @bp.route("/getFile/<filename>")

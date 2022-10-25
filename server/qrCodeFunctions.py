@@ -15,12 +15,14 @@ limitations under the License.
 """
 
 import math
+import os
 
+import qrcode
 from PIL import Image, ImageDraw, ImageFont
 from flask import current_app
-import qrcode
-import os
-from db import getDbSession, ItemId
+
+from db import getDbSession
+from dbSchema import ItemId
 
 
 def fetchAvailableItemIds(countRequired):

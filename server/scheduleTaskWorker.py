@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import datetime
+import logging
 import sys
 import time
 
@@ -24,7 +25,6 @@ from db import getDbSessionWithoutApplicationContext, closeDbSessionWithoutAppli
 from dbSchema import Settings
 from productManagement import findAndMarkProductsToReorder
 
-import logging
 
 def setUpScheduler():
 	'''

@@ -17,10 +17,11 @@ limitations under the License.
 import functools
 
 from flask import (
-	Blueprint, flash, g, redirect, render_template, request, session, url_for, request
+	Blueprint, flash, g, redirect, render_template, session, url_for, request
 )
 from werkzeug.exceptions import abort
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
+
 from db import getDbSession, User
 
 bp = Blueprint('auth', __name__)

@@ -23,7 +23,7 @@ Base = declarative_base()
 # this section borrowed from https://stackoverflow.com/questions/10355767/how-should-i-handle-decimal-in-sqlalchemy-sqlite
 from decimal import Decimal as D
 import sqlalchemy.types as types
-from datetime import datetime
+
 
 class Numeric(types.TypeDecorator):
 	impl = types.String

@@ -15,21 +15,19 @@ limitations under the License.
 '''
 
 import decimal
-import functools
 import logging
 import os
+
 from flask import (
-	Blueprint, flash, g, redirect, render_template, request, url_for, request, make_response, jsonify, current_app,
+	Blueprint, request, make_response, jsonify, current_app,
 	send_file
 )
 from sqlalchemy import select, func
-from werkzeug.exceptions import abort
-from werkzeug.security import check_password_hash, generate_password_hash
+
+from auth import login_required, create_access_required, edit_access_required
 from db import getDbSession
 from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType, JobTemplate, \
 	TemplateStockAssignment, Bin
-import json
-from auth import login_required, admin_access_required, create_access_required, edit_access_required
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
 from utilities import writeDataToCsvFile
 

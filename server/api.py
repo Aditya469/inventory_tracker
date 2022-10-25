@@ -14,22 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '''
 import datetime
+import decimal
 import logging
 import time
 
 import flask
 from flask import (
-	Blueprint, render_template, request, make_response, jsonify
+	Blueprint, request, make_response, jsonify
 )
-from werkzeug.utils import secure_filename
+from sqlalchemy import func
 
-from stockManagement import updateNewStockWithNewProduct
-from .auth import login_required
+from db import getDbSession
 from dbSchema import ProductType, StockItem, Bin, ItemId, CheckInRecord, VerificationRecord, IdAlias, CheckOutRecord, \
 	Job, User, CheckingReason
-from db import getDbSession
-from sqlalchemy import select, or_, create_engine, func
-import decimal
 
 bp = Blueprint('api', __name__)
 

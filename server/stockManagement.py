@@ -14,23 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '''
 
-import csv
+import datetime
 import decimal
-import json
 import os
 
 from flask import (
 	Blueprint, current_app, make_response, render_template, send_file, jsonify, request
 )
-from werkzeug.utils import secure_filename
-import datetime
-from auth import login_required, admin_access_required, create_access_required, edit_access_required
+from sqlalchemy import select, delete, func, or_, update, and_
+
+from auth import login_required, create_access_required, edit_access_required
 from db import getDbSession, Settings
-from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets, generateIdCard
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
 	User, Job, CheckingReason
+from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets, generateIdCard
 from utilities import writeDataToCsvFile, formatStockAmount
-from sqlalchemy import select, delete, func, or_, update, and_
 
 bp = Blueprint('stockManagement', __name__)
 

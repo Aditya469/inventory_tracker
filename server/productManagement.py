@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import decimal
+
 from flask import (
 	Blueprint, render_template, request, make_response, jsonify, send_file
 )
-from werkzeug.utils import secure_filename
-
-from stockManagement import updateNewStockWithNewProduct
-from auth import login_required, admin_access_required,create_access_required,edit_access_required
-from dbSchema import ProductType, StockItem, User
-from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
 from sqlalchemy import select, or_, func
-import decimal
+
+from auth import login_required, create_access_required, edit_access_required
+from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
+from dbSchema import ProductType, StockItem, User
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
+from stockManagement import updateNewStockWithNewProduct
 from utilities import writeDataToCsvFile
 
 bp = Blueprint('productManagement', __name__)

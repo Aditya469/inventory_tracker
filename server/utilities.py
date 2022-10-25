@@ -19,7 +19,6 @@ import os
 
 from flask import current_app
 
-
 '''
 	headingDictList -> [{"heading": "<Heading name pretty>", "dataName": "<data key>"}, ...]
 	dataDictList -> [{"<data key 1">: <data value 1>, "<data key 2">: <data value 2>,...}, {"<data key 1">: <data value 1>, "<data key 2">: <data value 2>,...}]  
