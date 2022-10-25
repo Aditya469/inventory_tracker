@@ -269,7 +269,7 @@ def getStockItemById(stockId):
 	checkOutRecords = session.query(CheckOutRecord).filter(CheckOutRecord.stockItem == stockId).all()
 	movementRecordsDict.update({int(record.timestamp.timestamp()): record for record in checkOutRecords})
 
-	movementKeys = sorted(movementRecordsDict.keys(), reverse=True)
+	movementKeys = sorted(movementRecordsDict.keys(), reverse=True) # reverse to give the newest items first
 
 	movementList = []
 	for key in movementKeys:

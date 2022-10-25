@@ -71,6 +71,7 @@ public abstract class StockHandlingRequestManager<T> {
         mJsonFileName = cacheFileName;
         readListFromJsonFile(); // load the list from file. This will contain data if the app was
                                 // not able to send all requests before it closed/crashed
+        Log.i(TAG, String.format("Loaded %d requests from disk", mStockHandlingRequestList.size()));
     }
 
     private void writeListToJsonFile() throws InterruptedException, JSONException, IOException {
@@ -229,7 +230,8 @@ public abstract class StockHandlingRequestManager<T> {
             // wait for last request to be processed
             mSendAllSyncSem.acquire();
             mStockHandlingRequestList.clear();
-        } catch (InterruptedException | JSONException e) {
+            writeListToJsonFile(); // the list is empty, so this just removes cached requests from the file
+        } catch (InterruptedException | JSONException | IOException e) {
             Log.e(TAG, e.getMessage());
         }
         finally
