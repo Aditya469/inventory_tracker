@@ -342,6 +342,8 @@ public class checkItemsFragment extends Fragment implements AdapterView.OnItemSe
         etUsername.setText("");
         EditText etQty = (EditText) getActivity().findViewById(R.id.etCheckStockQuantity);
         etQty.setText("");
+        TextView tvQtyUnit = (TextView) getActivity().findViewById(R.id.tvCheckStockQtyUnit);
+        tvQtyUnit.setText("");
         EditText etJobId = (EditText) getActivity().findViewById(R.id.etCheckStockJobName);
         etJobId.setText("");
         Spinner spReason = (Spinner) getActivity().findViewById(R.id.spCheckStockJobReason);
