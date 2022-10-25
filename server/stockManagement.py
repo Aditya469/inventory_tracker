@@ -240,7 +240,8 @@ def getStockItemById(stockId):
 		ProductType.productDescriptor2,
 		ProductType.productDescriptor3,
 		ProductType.tracksAllItemsOfProductType,
-		ProductType.tracksSpecificItems
+		ProductType.tracksSpecificItems,
+		StockItem.lastUpdated
 	) \
 		.filter(StockItem.id == stockId) \
 		.join(ProductType, ProductType.id == StockItem.productType) \
@@ -319,6 +320,7 @@ def getStockItemById(stockId):
 			"productDescriptor2": stockItem[12],
 			"productDescriptor3": stockItem[13],
 			"isBulk": stockItem[14],
+			"lastUpdated": stockItem[16].strftime("%d/%m/%y %H:%M:%S"),
 			"bin": binId,
 			"movementRecords": movementList
 		}

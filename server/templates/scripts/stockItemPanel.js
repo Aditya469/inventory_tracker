@@ -88,6 +88,7 @@ function openStockItemPanel(stockItemId){
             $("#idCardDownloadLink").prop("href", idCardUrl);
 
             // generate stock movement table body
+            $("#stockMovementTableBody").empty();
             for(var i = 0; i < stockItemDetails.movementRecords.length; i++){
                 var checkingRecord = stockItemDetails.movementRecords[i];
                 var row = $("<tr>");
