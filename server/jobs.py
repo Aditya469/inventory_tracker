@@ -58,10 +58,6 @@ def createJob():
 	session.flush()
 
 	job.idString = f"job_{job.id}"
-	job.qrCodeName = job.idString + ".png"
-	qrCodePath = os.path.join(current_app.instance_path, job.qrCodeName)
-	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=request.json['jobName'], DbSession=session)
-	idCard.save(qrCodePath)
 
 	error = updateJobFromRequest(job.id, session)
 	if error is None:
@@ -545,3 +541,18 @@ def getJobLastUpdateTimestamp():
 	item = dbSession.query(Job).filter(Job.id == itemId).one()
 	timestamp = item.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
 	return make_response(timestamp, 200)
+
+
+@bp.route("/getJobIdCard")
+@login_required
+def getJobIdCard():
+	dbSession = getDbSession()
+	jobId = request.args.get("jobId", default=None)
+	if jobId is None:
+		return make_response("jobId must be provided", 400)
+	job = dbSession.query(Job).filter(Job.id == jobId).first()
+	qrCodePath = os.path.join(current_app.instance_path, "jobIdCard.png")
+	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=job.jobName, DbSession=dbSession)
+	idCard.save(qrCodePath)
+
+	return send_file(qrCodePath, as_attachment=True, download_name=f"{job.jobName}_id_card.png")

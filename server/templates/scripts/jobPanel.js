@@ -84,7 +84,10 @@ function populateJobPanel(jobData){
     assignedStockIdsToDelete = [];
     $("#jobId").val(jobData.id);
     $("#jobName").val(jobData.jobName);
-    $("#jobQrCodeLink").prop("href","{{ url_for('files.getFile', filename='') }}" + jobData.qrCodeName);
+
+    var idCardUrl = new URL(window.location.origin + "{{ url_for('jobs.getJobIdCard')}}");
+    idCardUrl.searchParams.append("jobId", jobData.id);
+    $("#jobQrCodeLink").prop("href",idCardUrl);
     $("#totalCost").html("£" + jobData.cost);
 
     $("#stockUsedTableBody").empty();
