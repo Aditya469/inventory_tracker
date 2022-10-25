@@ -191,10 +191,13 @@ public class checkItemsFragment extends Fragment implements AdapterView.OnItemSe
                         etItemId.setText(BarcodeData);
 
                         EditText etProdName = (EditText) getActivity().findViewById(R.id.etCheckStockProductName);
-                        EditText etBarcode = (EditText) getActivity().findViewById(R.id.etCheckStockProductBarcode);
-
                         etProdName.setText(productType.Name);
+
+                        EditText etBarcode = (EditText) getActivity().findViewById(R.id.etCheckStockProductBarcode);
                         etBarcode.setText(productType.Barcode);
+
+                        TextView tvUnit = (TextView) getActivity().findViewById(R.id.tvCheckStockQtyUnit);
+                        tvUnit.setText(productType.Unit);
                     }
                 };
                 mainHandler.post(runnable);
