@@ -17,6 +17,7 @@ limitations under the License.
 # simply a list of all configurable file and folder paths, all kept in
 # one file for easy management
 
+instancePath = "/home/richard/work/DigitME/inventory_tracker/instance"
 dbPath = "/home/richard/work/DigitME/inventory_tracker/inventoryDB.sqlite"
 dbLockFilePath = "/home/richard/work/DigitME/inventory_tracker/dbLockFile.lock"
 dbBackupStatusFilePath = "/home/richard/work/DigitME/inventory_tracker/dbBackupStatusFile"

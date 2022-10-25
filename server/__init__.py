@@ -27,7 +27,7 @@ def create_app():
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_path=paths.instancePath)
     app.config.from_mapping(
         SECRET_KEY='dev'
     )
