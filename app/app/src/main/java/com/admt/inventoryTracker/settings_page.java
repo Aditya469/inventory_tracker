@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -87,21 +88,33 @@ public class settings_page extends AppCompatActivity {
     }
 
     public void onFindServerBtnClicked(View v){
-        EditText tbServerURL = (EditText) findViewById(R.id.tbServerURL);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                EditText tbServerURL = (EditText) findViewById(R.id.tbServerURL);
 
-        String TAG = "ServerDiscoverySettings";
-        Log.d(TAG, "Begin server discovery");
-        ServerDiscovery.DiscoveryResult discoveryResult =
-                ServerDiscovery.findServer(getApplicationContext());
-        if(discoveryResult == null)
-        {
-            Log.i(TAG, "Failed to find server");
-            return;
-        }
+                String TAG = "ServerDiscoverySettings";
+                Log.d(TAG, "Begin server discovery");
+                ServerDiscovery.DiscoveryResult discoveryResult =
+                        ServerDiscovery.findServer(getApplicationContext());
+                if (discoveryResult == null) {
+                    Log.i(TAG, "Failed to find server");
+                    return;
+                }
 
-        Log.i(TAG, "Found server. Base address is " + discoveryResult.serverBaseAddress);
+                Log.i(TAG, "Found server. Base address is " + discoveryResult.serverBaseAddress);
 
-        tbServerURL.setText(discoveryResult.serverBaseAddress);
+                Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        tbServerURL.setText(discoveryResult.serverBaseAddress);
+                    }
+                };
+                mainHandler.post(runnable);
+            }
+        };
+        new Thread(runnable).start();
     }
 
     public void onBtnOkClicked(View v) {
