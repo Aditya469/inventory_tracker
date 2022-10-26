@@ -18,9 +18,11 @@ limitations under the License.
 # one file for easy management
 
 instancePath = "/home/richard/work/DigitME/inventory_tracker/instance"
-dbPath = "/home/richard/work/DigitME/inventory_tracker/inventoryDB.sqlite"
-dbLockFilePath = "/home/richard/work/DigitME/inventory_tracker/dbLockFile.lock"
-dbBackupStatusFilePath = "/home/richard/work/DigitME/inventory_tracker/dbBackupStatusFile"
-dbBackupDirPath = "/home/richard/work/DigitME/inventory_tracker/dbBackupFiles"
+dbPath = f"{instancePath}/inventoryDB.sqlite"
+dbLockFilePath = f"{instancePath}/dbLockFile.lock"
+dbBackupStatusFilePath = f"{instancePath}/dbBackupStatusFile"
+dbBackupDirPath = f"{instancePath}/dbBackupFiles"
 
-logPath = "/home/richard/work/DigitME/inventory_tracker/server.log"
+logPath = f"{instancePath}/server.log"
+scheduleWorkerLogPath= f"{instancePath}/scheduleTaskWorker.log"
+

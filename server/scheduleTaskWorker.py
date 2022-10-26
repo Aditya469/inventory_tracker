@@ -69,7 +69,7 @@ def findAndRunScheduledTasks():
 
 
 def main():
-	logging.basicConfig(filename="scheduleTaskWorker.log", level=logging.DEBUG, format='%(asctime)s %(message)s')
+	logging.basicConfig(filename=paths.scheduleWorkerLogPath, level=logging.DEBUG, format='%(asctime)s %(message)s')
 	logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 	scheduler = setUpScheduler()
 
