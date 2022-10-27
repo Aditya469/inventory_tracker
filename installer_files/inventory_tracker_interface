@@ -1,0 +1,9 @@
+server{
+	listen 80;
+	server_name digitme2_inventory_tracker www.digitme2_inventory_tracker;
+	
+	location / {
+		include proxy.conf;
+		proxy_pass  http://unix:ROOTPATH/server/server.sock;
+	}
+}

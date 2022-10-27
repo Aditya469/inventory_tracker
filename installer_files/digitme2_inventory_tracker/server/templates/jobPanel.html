@@ -1,0 +1,141 @@
+{#
+Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+
+<div id="greyout" hidden class="greyout position-fixed top-0 start-0 vw-100 vh-100" onclick="closePanels()"></div>
+<div id="editJobPanel" hidden class="container h-100 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+	<nav id="jobPanelNav" class="navbar bg-light navbar-light w-100">
+		<h1>Job Details</h1>
+		<input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closePanels()"/>
+	</nav>
+	<form class="row row-cols-xs-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2 overflow-scroll needs-validation" novalidate>
+		<input id="jobId" type="hidden" class="editJobInput">
+		<input id="templateId" type="hidden" class="editJobInput">
+        <div class="col">
+			<div class="row" id="jobNameContainer">
+				<label class="col col-sm-4 col-form-label" for="jobName">Name:</label>
+				<div class="col col-sm-8">
+					<input class="form-control editJobInput" type="text" id="jobName">
+				</div>
+				<a class="col-12 text-end" id="jobQrCodeLink"href="">Download Job Identifier QR Code</a>
+			</div>
+            <div id="stockUsedContainer" class="col-12 h-auto">
+				<h3 >Stock Used</h3>
+				<div>
+					<span>Total Cost: </span>
+					<span id="totalCost" class="editJobInput"></span>
+				</div>
+				<div id="stockUsedTableContainer">
+					<table class="table">
+						<thead>
+							<tr>
+								<td>Product Name</td>
+								<td>Quantity</td>
+								<td>Cost</td>
+							</tr>
+						</thead>
+						<tbody id="stockUsedTableBody">
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<h3 id="reqStockTitle">Required Stock</h3>
+			<div id="reqStockSearch" class="col-12 row">
+				<label class="col col-auto col-form-label" for="assignStockSearchBar">Search:</label>
+				<div class="col">
+					<input class="form-control editJobInput" id="assignStockSearchBar" placeholder="start typing..." oninput="onRequiredStockSearchBarInput()">
+				</div>
+			</div>
+            <div id="reqStockAssign" class="col-12 row">
+				<div class="col-6">
+                	<select id="knownProductDropdown" class="form-select" onchange="onKnownProductSelectChange()">
+					</select>
+				</div>
+                <div class="col col-6">
+					<div class="input-group">
+						<input class="form-control editJobInput" id="quantityToAssign" type="number" value="" placeholder="qty.">
+						<span class="input-group-text col-form-label editJobInput" id="quantityUnitDisplay"></span>
+					</div>
+                </div>
+				<input value="Remove" type="button" class="col col-3 my-3 btn btn-danger" id="removeAssignedStockButton" disabled onclick="onRemoveAssignedStockButtonClicked()">
+				<input value="Templates..." type="button" class="col col-3 offset-1 my-3 btn btn-secondary" id="openTemplatePanelButton" onclick="onOpenTemplatePanelButtonClicked()">
+				<input type="button" class="col col-3 offset-2 my-3 btn btn-secondary" id="assignStockButton" onclick="onAddStockButtonClicked()" value="Add">
+            </div>
+			<a href="" id="pickingListLink">Get Picking List</a>
+			<div id="assignedStockTableContainer" class="col-12 overflow-scroll">
+				<table class="table">
+					<thead>
+						<tr>
+							<td>
+								<input type="checkbox" id="selectAllRequiredStock" onclick="onSelectAllRequiredStockClicked()">
+								<label class="visually-hidden" for="selectAllRequiredStock">Select All</label>
+							</td>
+							<td>Product Name</td>
+							<td>Quantity</td>
+						</tr>
+					</thead>
+					<tbody id="assignedStockTableBody">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</form>
+	<div class="col col-12 p-4 position-absolute bottom-0" id="commitButtonsContainer">
+			<div class="row g-1">
+				<div class="col col-3">
+					<input class="w-100 btn btn-danger" id="deleteButton" type="button" onclick="deleteJob()" value="Delete This Job">
+				</div>
+				<div class="col col-3">
+					<span class="w-100" id="saveJobFeedbackSpan"></span>
+				</div>
+				<div class="col col-3">
+					<input class="w-100 btn btn-secondary" id="saveTemplateButton" type="button" onclick="saveJobTemplate()" value="Save As Template">
+				</div>
+				<div class="col col-3">
+					<input class="w-100 btn btn-primary" id="saveButton" type="button" onclick="saveJobDetails()" value="Save Job">
+				</div>
+			</div>
+		</div>
+</div>
+<div id="templatesGreyout" hidden class="row greyout position-absolute top-0 start-0 w-100 h-100" onclick="closeTemplatesPanel()"></div>
+<div id="templatesPanel" hidden class="container w-50 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed" style="background: white;">
+	<nav id="templatesPanelNav" class="navbar bg-light navbar-light w-100">
+		<h1>Select Template</h1>
+		<input class="btn-close" id="closeTemplatesPanelBtn" type="button" onclick="closeTemplatePanel()"/>
+	</nav>
+	<div class="row">
+		<label class="col-3 form-label" for="templatesSearchBox">Search:</label>
+		<div class="col-9">
+			<input class="form-control" id="templatesSearchBox" placeholder="Start typing..." oninput="populateTemplateNameList()">
+		</div>
+		<label class="col-3 form-label" for="templateSelect">Select Template:</label>
+		<div class="col-9">
+			<select class="form-select" id="templateSelect">
+			</select>
+		</div>
+		<div class="col col-3">
+			<input type="button" class="w-100 btn btn-danger mt-5 mb-1" value="Delete Template" onclick="deleteSelectedTemplate()">
+		</div>
+		<div class="col col-9">
+			<input type="button" class="w-100 btn btn-primary mt-5 mb-1" value="Use This Template" onclick="onApplyTemplateButtonClicked()">
+		</div>
+	</div>
+
+</div>

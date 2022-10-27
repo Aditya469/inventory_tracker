@@ -1,0 +1,61 @@
+{#
+Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+<div id="stickerSheetGreyout" hidden class="row greyout position-absolute top-0 start-0 w-100 h-100" onclick="closeStickerSheetPanel()"></div>
+<div id="stickerSheetPanel" hidden class="container col-6 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed" style="background: white;">
+	<nav id="stickerSheetPanelNav" class="navbar bg-light navbar-light w-100">
+		<h1>Get Item ID Sticker Sheet</h1>
+		<input class="btn-close" id="closeStickerSheetPanelBtn" type="button" onclick="closeStickerSheetPanel()"/>
+	</nav>
+	<input type="hidden" id="settingsId">
+	<div class="row">
+		<div class="col">
+			<form class="row  needs-validation" novalidate>
+				<label class="col-7" for="stickerSheetPageHeight">Page Height (mm)</label>
+				<div class="col-5">
+					<input id="stickerSheetPageHeight" class="form-control" type="number" oninput="updateSettings()">
+				</div>
+				<label class="col-7" for="stickerSheetPageWidth">Page Width (mm)</label>
+				<div class="col-5">
+					<input id="stickerSheetPageWidth" class="form-control" type="number" oninput="updateSettings()">
+				</div>
+				<label class="col-7" for="stickerSheetStickersHeight">Sticker Area Height (mm)</label>
+				<div class="col-5">
+					<input id="stickerSheetStickersHeight" class="form-control" type="number" oninput="updateSettings()">
+				</div>
+				<label class="col-7" for="stickerSheetStickersWidth">Sticker Area Width (mm)</label>
+				<div class="col-5">
+					<input id="stickerSheetStickersWidth" class="form-control" type="number" oninput="updateSettings()">
+				</div>
+				<label class="col-7" for="stickerSheetRowCount">Row Count</label>
+				<div class="col-5">
+					<input id="stickerSheetRowCount" class="form-control" type="number" oninput="updateSettings()">
+				</div>
+				<label class="col-7" for="stickerSheetColumnCount">Column Count</label>
+				<div class="col-5">
+					<input id="stickerSheetColumnCount" class="form-control" type="number" oninput="updateSettings()">
+				</div>
+
+				<div class="col-12 py-2">
+					<input id="getStickerSheetButton" class="w-100 btn btn-primary" value="Get Sticker Sheet" type="button" onclick="fetchStickerSheet()">
+				</div>
+			</form>
+		</div>
+		<div class="col-auto">
+			<img src="{{ url_for('static', filename='page_diagram.png') }}" width="250px">
+		</div>
+	</div>
+</div>

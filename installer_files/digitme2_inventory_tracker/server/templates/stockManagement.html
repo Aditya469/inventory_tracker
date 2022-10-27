@@ -1,0 +1,145 @@
+{#
+Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block additionalHeadMaterial %}
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stockManagement.js') }}"></script>
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stockItemPanel.js') }}"></script>
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='stickerSheetPanel.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='stockManagement.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='stickerSheetPanel.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="contentContainer" class="container mt-2">
+    <div class="d-flex flex-row justify-content-between align-items-center">
+        <h1>Items of Stock</h1>
+        <input type="button" id="openStickerSheetPanelButton" class="btn btn-primary" onclick="openStickerSheetPanel()" value="Get ID Sticker Sheet">
+    </div>
+    <div id="displayControlsContainer">
+        <div id="displayControls" class="row">
+            <div id="searchControls" class="col-xs-12 col-sm-12 col-md-4 col-lg-3 border">
+                <h4>Text Search</h4>
+                <label class="" for="searchBar">Search Term:</label>
+                <input class="form-control" id="searchBar" {% if productName is not none %} value="{{ productName }}" {% endif %} placeholder="Start typing..." oninput="updateStockTable()">
+                <div class="form-check">
+                    <label class="form-check-label" for="searchProductTypeName">Search by Product Names</label>
+                    <input class="form-check-input" type="checkbox" id="searchProductTypeName" onclick="updateStockTable()" {% if productName is not none %} checked {% endif %}>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label" for="searchByDescriptors">Search by Descriptors</label>
+                    <input class="form-check-input" type="checkbox" id="searchByDescriptors" oninput="updateStockTable()">
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label" for="searchByIdNumber">Search by Stock ID number</label>
+                    <input class="form-check-input" type="checkbox" id="searchByIdNumber" oninput="updateStockTable()">
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label" for="searchByBarcode">Search by Product Barcode</label>
+                    <input class="form-check-input" type="checkbox" id="searchByBarcode" oninput="updateStockTable()">
+                </div>
+            </div>
+            <div id="expirySelectorControls" class="col-xs-12 col-sm-12 col-md-4 col-lg-3 border pb-1 ">
+                <h4>Expiring Stock</h4>
+                <div class="row">
+                    <div id="expirytickBoxes col-12">
+                        <div class="form-check">
+                            <label class="form-check-label" for="canExpire">Only Show Stock That Expires</label>
+                            <input class="form-check-input" type="checkbox" id="canExpire" onclick="onCanExpireCheckboxClicked()" {% if showExpiry %} checked {% endif %}>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label" for="limitExpiryDates">Limit Expiry Dates</label>
+                            <input class="form-check-input" type="checkbox" id="limitExpiryDates" oninput="updateStockTable()" onclick="onLimitExpiryDatesClicked()" {% if showExpiry %} checked {% else %} disabled {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="startDate" class="">Expiry Range Start Date:</label>
+                        <input type="date" class="form-control form-control-sm" id="startDate" disabled oninput="updateStockTable()" value="{{ expiryStartDateValue}}"/>
+                        <label for="endDate" class="">Expiry Range End Date:</label>
+                        <input type="date" class="form-control form-control-sm" id="endDate" disabled oninput="updateStockTable()" value="{{ expiryEndDateValue}}"/>
+                    </div>
+
+                </div>
+            </div>
+            <div id="priceRangeSelector" class="col-xs-12 col-sm-12 col-md-4 col-lg-3 border">
+                <h4>Cost of Stock Items</h4>
+                <div class="form-check">
+                    <label class="form-check-label" for="limitByPrice">Limit Stock Cost Range</label>
+                    <input class="form-check-input" type="checkbox" id="limitByPrice" onclick="onLimitByPriceCheckboxClicked()">
+                </div>
+                <label for="priceRangeStart">Cost Range Minimum (£.pp)</label>
+                <input class="form-control" type="number" min="0" step="0.01" placeholder="10.00" id="priceRangeStart" oninput="updateStockTable()">
+                <label for="priceRangeEnd">Cost Range Maximum (£.pp)</label>
+                <input class="form-control" type="number" min="0" step="0.01" placeholder="10.00" id="priceRangeEnd" oninput="updateStockTable()">
+            </div>
+            <div id="sortingOptions" class="col-xs-12 col-sm-12 col-md-4 col-lg-3 border pb-1">
+                <h4>Sorting and Display Options</h4>
+                <div class="form-check">
+                    <input id="sortByProductNameAsc" class="form-check-input" type="radio" name="stockSortingOptions" value="productNameAsc" checked oninput="updateStockTable()">
+                    <label for="sortByProductNameAsc" class="form-check-label">Product Name (Asc)</label>
+                </div>
+                <div class="form-check">
+                    <input id="sortByProductNameDesc" class="form-check-input" type="radio" name="stockSortingOptions" value="productNameDesc" oninput="updateStockTable()">
+                    <label for="sortByProductNameDesc" class="form-check-label">Product Name (Desc)</label>
+                </div>
+                <div class="form-check">
+                    <input id="sortByDateAddedAsc" class="form-check-input" type="radio" name="stockSortingOptions" value="dateAddedAsc" oninput="updateStockTable()">
+                    <label for="sortByDateAddedAsc" class="form-check-label">Date Added (oldest first)</label>
+                </div>
+                <div class="form-check">
+                    <input id="sortByDateAddedDesc" class="form-check-input" type="radio" name="stockSortingOptions" value="dateAddedDesc" oninput="updateStockTable()">
+                    <label for="sortByDateAddedDesc" class="form-check-label">Date Added (newest first)</label>
+                </div>
+                <div class="form-check">
+                    <input id="sortByExpiryDateAsc" class="form-check-input" type="radio" name="stockSortingOptions" value="expiryDateAsc" oninput="updateStockTable()">
+                    <label for="sortByExpiryDateAsc" class="form-check-label">Expiry Date (Asc)</label>
+                </div>
+                <div class="form-check">
+                    <input id="sortByExpiryDateDesc" class="form-check-input" type="radio" name="stockSortingOptions" value="expiryDateDesc" oninput="updateStockTable()">
+                    <label for="sortByExpiryDateDesc" class="form-check-label">Expiry Date (Desc)</label>
+                </div>
+                <hr>
+                <div class="form-check my-2">
+                    <input id="hideZeroStockEntries" class="form-check-input" type="checkbox" name="hideZeroStockCheckbox" oninput="updateStockTable()">
+                    <label for="hideZeroStockEntries" class="form-check-label">Hide Zero Quantity Stock</label>
+                </div>
+                <div class="form-check my-2">
+                    <input id="hideNonzeroStockEntries" class="form-check-input" type="checkbox" name="hideNonzeroStockCheckbox" oninput="updateStockTable()">
+                    <label for="hideNonzeroStockEntries" class="form-check-label">Hide Non-zero Quantity Stock</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div id="stockTableOuterContainer" class="border">
+        <div id="extraControls" class="d-flex justify-content-between">
+            <input type="button" id="deleteStockButton" class="btn btn-danger" value="Delete Selected" onclick="onDeleteSelectedButtonClicked()" disabled/>
+            <a href="" id="stockCsvDownloadLink">Download this data as a CSV file</a>
+        </div>
+        <div id="stockTableContainer">
+
+        </div>
+    </div>
+</div>
+{% include "stockItemPanel.html" %}
+{% include "stickerSheetPanel.html" %}
+{% endblock %}

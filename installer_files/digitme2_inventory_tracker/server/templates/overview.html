@@ -1,0 +1,92 @@
+{#
+Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block additionalHeadMaterial %}
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='overview.js') }}"></script>
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='jobPanel.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='common.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='jobPanel.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='overview.css')}}">
+{% endblock %}
+
+{% block content %}
+<div id="contentContainer" class="container mt-2">
+	<div class="row row-cols-sm-1 row-cols-md-2	">
+		<div id="currentJobsContainer" class="col col-md-5 border">
+			<h1>Jobs</h1>
+			<div id="jobsContainerControls" class="row px-2">
+				<input class="col col-12 btn btn-primary" id="addJobButton" type="button" value="Create New Job" onclick="openJobDetailsPanel(-1)">
+				<input class="col form-control my-1" id="jobSearchBar" placeholder="start typing to search..." oninput="updateJobsTable()">
+			</div>
+			<a href="" id="jobsOverviewCsvDownloadLink">Download this data as a CSV file</a>
+			<div id="jobsTableContainer">
+			</div>
+		</div>
+		<div id="stockDisplayContainer" class="col col-md-7 border">
+			<h1>Stock</h1>
+			<div id="stockSearchControls pb-1">
+				<input id="stockSearchBar" class="form-control" placeholder="start typing to search..." oninput="updateStockTables()">
+			</div>
+			<br>
+			<div id="stockTableTabsContainer">
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<a class="nav-link active" href="#totalStockPanel" data-bs-toggle="tab">Total Stock</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#availableStockPanel" data-bs-toggle="tab">Unassigned Stock</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#oldStockPanel" data-bs-toggle="tab">Near Expiry</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#expiredStockPanel" data-bs-toggle="tab">Expired</a>
+					</li>
+				</ul>
+				<div id="stockOverviewTableContainer" class="tab-content overflow-auto">
+					<div class="tab-pane fade show active" id="totalStockPanel">
+						<a href="" id="totalStockCsvDownloadLink">Download this data as a CSV file</a>
+						<div id="totalStockTableContainer"></div>
+					</div>
+					<div class="tab-pane fade" id="availableStockPanel">
+						<a href="" id="availableStockCsvDownloadLink">Download this data as a CSV file</a>
+						<div id="availableStockTableContainer"></div>
+					</div>
+					<div class="tab-pane fade" id="oldStockPanel">
+						<a href="" id="oldStockCsvDownloadLink">Download this data as a CSV file</a>
+						<div>
+							<label id="stockDaysNearExpiryLabel" for="stockDaysNearExpiry">Show stock expiring in this many days</label>
+							<input id="stockDaysNearExpiry" type="number" size="2" oninput="updateStockTables()" value="30">
+						</div>
+						<div id="oldStockTableContainer"></div>
+					</div>
+					<div class="tab-pane fade" id="expiredStockPanel">
+						<a href="" id="expiredStockCsvDownloadLink">Download this data as a CSV file</a>
+						<div id="expiredStockTableContainer"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'jobPanel.html' %}
+{% endblock %}

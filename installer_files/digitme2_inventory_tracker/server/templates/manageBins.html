@@ -1,0 +1,62 @@
+{#
+Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block additionalHeadMaterial %}
+<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='binsManagement.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='common.css')}}">
+{% endblock %}
+
+{% block content %}
+<div id="contentContainer" class="container mt-2">
+	<div class="row row-cols-sm-1 row-cols-md-2	gx-2">
+		<div class="col col-sm-12 col-md-6 col-lg-4 px-3" id="addBinControls">
+			<h2>Add a New Bin</h2>
+			<div class="row">
+				<label class="col-auto" for="newBinName">New Bin Name:</label>
+				<input class="col form-control" id="newBinName" type="text"/>
+			</div>
+			<div class="row py-2 ps-1 pe-2">
+				<input class="col-12 ms-2 btn btn-primary" value="Add New Bin" type="button" onclick="addBin()">
+			</div>
+			<div class="row d-flex justify-content-end">
+				<span class="col-12" id="addBinFeedbackSpan"/>
+			</div>
+		</div>
+		<div class="col col-sm-12 col-md-8 col-lg-6 px-3" id="availableBins">
+			<h2>Available Bins</h2>
+			<div id="binListContainer">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Bin Name</th>
+							<th>Bin Label QR Code</th>
+							<th>Delete</th>
+						</tr>
+					</thead>
+					<tbody id="binTableBody">
+
+					</tbody>
+				</table>
+			</div>
+	</div>
+</div>
+{% endblock %}

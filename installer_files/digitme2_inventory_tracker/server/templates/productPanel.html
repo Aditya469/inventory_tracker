@@ -1,0 +1,88 @@
+{#
+Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+<div id="greyout" hidden class="position-fixed top-0 start-0 vw-100 vh-100" onclick="closeProductDetailsPanel()"></div>
+<div id="editProductPanel" hidden class="container w-75 h-100 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+	<nav id="productPanelNav" class="navbar bg-light navbar-light w-100">
+		<h1>Product Details</h1>
+		<input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closeProductDetailsPanel()"/>
+	</nav>
+	<input id="productId" type="hidden" class="editProductPanelInput">
+	<form class="needs-validation" novalidate>
+		<div class="row" id="productPanelDetails">
+			<div class="col row row-cols-2 mx-1">
+				<label class="col mt-2" for="productName">Product Name:</label>
+				<input class="col form-control editProductPanelInput" id="productName" type="text" required/>
+				<label class="col mt-2" for="barcode">Product Barcode:</label>
+				<input class="col form-control editProductPanelInput" id="barcode" required/>
+				<span class="col mt-2">Bulk Product?:  </span>
+				<div class="col mt-2">
+					<div class="form-check">
+						<label class="form-check-label" for="bulkSelector">Bulk</label>
+						<input class="form-check-input" id="bulkSelector" type="radio" name="bulkSelectorRadio" value="bulk">
+					</div>
+					<div class="form-check">
+						<label class="form-check-label" for="specificItemSelector">Specific Item</label>
+						<input class="form-check-input" id="specificItemSelector" type="radio" name="bulkSelectorRadio" checked value="specificItem">
+					</div>
+				</div>
+				<label class="col mt-2" for="reorderLevel">Reorder Notify at Quantity:</label>
+				<div class="col mt-2">
+					<input class="form-control editProductPanelInput" id="reorderLevel" type="number" required>
+				</div>
+				<div class="col-5 ms-2 form-check">
+					<label class="form-check-label" for="sendStockNotifications">Send Reorder Alerts</label>
+					<input class="form-check-input editProductPanelInput" id="sendStockNotifications" type="checkbox" />
+				</div>
+				<div class="col-6 ms-4 form-check">
+					<label class="form-check-label" hidden id="newStockOrderedLabel" for="newStockOrdered">New Stock Ordered?</label>
+					<input class="form-check-input editProductPanelInput" hidden id="newStockOrdered" type="checkbox" />
+				</div>
+			</div>
+			<div class="col row row-cols-2 mx-1">
+				<label class="col mt-2" for="descriptor1">Product Descriptor 1:</label>
+				<input class="col form-control editProductPanelInput" id="descriptor1" type="text"/>
+				<label class="col mt-2" for="descriptor2">Product Descriptor 2:</label>
+				<input class="col form-control editProductPanelInput" id="descriptor2" type="text"/>
+				<label class="col mt-2" for="descriptor3">Product Descriptor 3:</label>
+				<input class="col form-control editProductPanelInput" id="descriptor3" type="text"/>
+				<div class="col-12 my-4 row">
+					<label class="col" for="initialQuantity">Initial Pack Quantity:</label>
+					<input class="col form-control editProductPanelInput" id="initialQuantity" type="number" required>
+					<label class="col" for="quantityUnit">Quantity Unit:</label>
+					<input class="col form-control editProductPanelInput" id="quantityUnit" type="text"/>
+				</div>
+				<div class="col-12 row mt-3">
+					<label class="col" for="expectedPrice">Expected Price (£.pp)</label>
+					<div class="col">
+						<input class="form-control editProductPanelInput" id="expectedPrice" type="number"/>
+					</div>
+				</div>
+				<div class="col ms-1 mt-2 form-check">
+					<label class="form-check-label" for="canExpire">Expires</label>
+					<input class="form-check-input editProductPanelInput" id="canExpire" type="checkbox" />
+				</div>
+			</div>
+		</div>
+	</form>
+	<div class="row w-100 p-4 position-absolute bottom-0" id="commitButtonsContainer">
+		<div class="row">
+			<input class="col col-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteProduct()" value="Delete This Product">
+			<span class="col col-3 offset-3" id="saveProductFeedbackSpan"></span>
+			<input class="col col-3 btn btn-primary" id="saveButton" type="button" onclick="saveProductDetails()" value="Save">
+		</div>
+	</div>
+</div>
