@@ -17,9 +17,11 @@ import datetime
 import logging
 import sys
 import time
+import paths
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import paths
 from backup import backUpDatabase
 from db import getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
 from dbSchema import Settings
