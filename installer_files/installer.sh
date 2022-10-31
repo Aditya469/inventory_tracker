@@ -33,6 +33,7 @@ sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > digitme2_inventory_tracker/server/paths.p
 rm tmp.txt
 
 # set up python venv and install requirements
+apt install -y python3-venv
 python3 -m venv $ROOT_DIR
 source $ROOT_DIR/bin/activate
 pip install -r requirements.txt
