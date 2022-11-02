@@ -23,6 +23,7 @@ Group=www-data
 WorkingDirectory=ROOTPATH/server
 Environment="PATH=ROOTPATH/bin"
 ExecStart=ROOTPATH/bin/gunicorn --workers 1 --bind unix:server.sock -m 007 wsgi:app
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

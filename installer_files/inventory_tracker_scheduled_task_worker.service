@@ -23,6 +23,7 @@ Group=www-data
 WorkingDirectory=ROOTPATH/server
 Environment="PATH=ROOTPATH/bin"
 ExecStart=ROOTPATH/bin/python ROOTPATH/server/scheduleTaskWorker.py
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

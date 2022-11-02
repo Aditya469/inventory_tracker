@@ -3,7 +3,7 @@ server{
 	server_name digitme2_inventory_tracker www.digitme2_inventory_tracker;
 	
 	location / {
-		include proxy.conf;
+		include proxy_params;
 		proxy_pass  http://unix:ROOTPATH/server/server.sock;
 	}
 }

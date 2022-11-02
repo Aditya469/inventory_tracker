@@ -11,6 +11,7 @@ echo "begin setup"
 
 INSTALL_DIR=$(awk '{split($0,J,"/"); print "/"J[2]"/"J[3]"" }' <<< `pwd`)
 ROOT_DIR=$(awk '{split($0,J,"/"); print "/"J[2]"/"J[3]"/digitme2_inventory_tracker" }' <<< `pwd`)
+USER=$(awk '{split($0,J,"/"); print J[3] }' <<< `pwd`)
 
 echo "Server will be installed under $ROOT_DIR"
 
@@ -33,19 +34,26 @@ sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > digitme2_inventory_tracker/server/paths.p
 rm tmp.txt
 
 # set up python venv and install requirements
-apt install -y python3-venv
-python3 -m venv $ROOT_DIR
+apt install software-properties-common -y
+add-apt-repository ppa:deadsnakes/ppa -y
+aup update
+apt install -y python3.8-venv
+python3.8 -m venv $ROOT_DIR
 source $ROOT_DIR/bin/activate
 pip install -r requirements.txt
 
-# install nginx
-echo "update and install nginx"
-sudo apt update -q -y
-sudo apt -q -y install nginx
 
-# copy server files to /opt
+# set up nginx
+echo "update and install nginx"
+sudo apt update -y
+sudo apt -y install nginx
+sudo cp nginx.conf /etc/nginx/nginx.conf
+sudo rm /etc/nginx/sites-enabled/default
+
+# copy server files to /home/$USER/digitme2_inventory_tracker and set as owned by $USER:www-data
 echo "copy files to $INSTALL_DIR"
 cp -r digitme2_inventory_tracker $INSTALL_DIR
+chown $USER:www-data -R $ROOT_DIR
 
 # copy setup to systemd folder
 echo "copy service units to /etc/systemd/system"
@@ -59,7 +67,7 @@ ln -s /etc/nginx/sites-available/inventory_tracker_interface /etc/nginx/sites-en
 
 # move into the server and initialise the DB. Has to be done before anything else starts or it'll cause an error
 cd $ROOT_DIR/server
-python3 init_db.py
+python init_db.py
 
 
 # start services and enable at boot
@@ -74,8 +82,6 @@ systemctl enable inventory_tracker_discovery.service
 systemctl start inventory_tracker_server.service
 systemctl enable inventory_tracker_server.service
 
-# set up nginx
-echo "set up nginx"
 systemctl restart nginx
 
 # set up firewall
