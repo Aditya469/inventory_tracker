@@ -22,7 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 from flask import current_app
 
 from db import getDbSession
-from dbSchema import ItemId
+from dbSchema import ItemId, Settings
 
 
 def fetchAvailableItemIds(countRequired):
@@ -117,10 +117,32 @@ def createImageSheet(fileNames, totalWidthPx, totalHeightPx, arrayWidthPx, array
 	return mainImg
 
 
-def generateItemIdQrCodeSheets(
-		idCount, rows, columns, pageWidth, pageHeight, arrayWidth, arrayHeight, stickerPadding, includeLabels=True):
-	# get a list of IDs
+def generateItemIdQrCodeSheets(idCount, includeLabels=True):
 	session = getDbSession()
+	pageWidth_mm = session.query(Settings.stickerSheetPageWidth_mm).first()[0]
+	pageHeight_mm = session.query(Settings.stickerSheetPageHeight_mm).first()[0]
+	stickerAreaWidth_mm = session.query(Settings.stickerSheetStickersWidth_mm).first()[0]
+	stickerAreaHeight_mm = session.query(Settings.stickerSheetStickersHeight_mm).first()[0]
+	stickerPadding_mm = session.query(Settings.stickerPadding_mm).first()[0]
+	stickerSheetDpi = session.query(Settings.stickerSheetDpi).first()[0]
+
+	pageWidth = convertDpiAndMmToPx(length_mm=pageWidth_mm, DPI=stickerSheetDpi)
+	pageHeight = convertDpiAndMmToPx(length_mm=pageHeight_mm, DPI=stickerSheetDpi)
+	arrayWidth = convertDpiAndMmToPx(length_mm=stickerAreaWidth_mm, DPI=stickerSheetDpi)
+	arrayHeight = convertDpiAndMmToPx(length_mm=stickerAreaHeight_mm, DPI=stickerSheetDpi)
+	stickerPadding = convertDpiAndMmToPx(length_mm=stickerPadding_mm, DPI=stickerSheetDpi)
+
+	rows = session.query(Settings.stickerSheetRows).first()[0]
+	columns = session.query(Settings.stickerSheetColumns).first()[0]
+
+	if idCount is None:
+		idCount = rows * columns
+
+	# temporary limitation until I find a suitable python pdf library
+		if idCount > rows * columns:
+			return None, f"You may only request up to {rows * columns} at a time"
+
+	# get a list of IDs
 	idList = fetchAvailableItemIds(idCount)
 	fileList = []
 	# generate image of required page(s) based on settings
@@ -159,7 +181,67 @@ def generateItemIdQrCodeSheets(
 
 	session.commit()
 
-	return labelSheets
+	return labelSheets, None
+
+def generateIdQrCodeSheets(idCount, idCardString, includeLabels=True):
+	session = getDbSession()
+	pageWidth_mm = session.query(Settings.stickerSheetPageWidth_mm).first()[0]
+	pageHeight_mm = session.query(Settings.stickerSheetPageHeight_mm).first()[0]
+	stickerAreaWidth_mm = session.query(Settings.stickerSheetStickersWidth_mm).first()[0]
+	stickerAreaHeight_mm = session.query(Settings.stickerSheetStickersHeight_mm).first()[0]
+	stickerPadding_mm = session.query(Settings.stickerPadding_mm).first()[0]
+	stickerSheetDpi = session.query(Settings.stickerSheetDpi).first()[0]
+
+	pageWidth = convertDpiAndMmToPx(length_mm=pageWidth_mm, DPI=stickerSheetDpi)
+	pageHeight = convertDpiAndMmToPx(length_mm=pageHeight_mm, DPI=stickerSheetDpi)
+	arrayWidth = convertDpiAndMmToPx(length_mm=stickerAreaWidth_mm, DPI=stickerSheetDpi)
+	arrayHeight = convertDpiAndMmToPx(length_mm=stickerAreaHeight_mm, DPI=stickerSheetDpi)
+	stickerPadding = convertDpiAndMmToPx(length_mm=stickerPadding_mm, DPI=stickerSheetDpi)
+
+	rows = session.query(Settings.stickerSheetRows).first()[0]
+	columns = session.query(Settings.stickerSheetColumns).first()[0]
+
+	if idCount is None:
+		idCount = rows * columns
+
+	# temporary limitation until I find a suitable python pdf library
+		if idCount > rows * columns:
+			return None, f"You may only request up to {rows * columns} at a time"
+
+	idCard = generateIdCard(
+			idString=idCardString,
+			label=idCardString,
+			labelFontSize=40,
+			totalWidth=math.floor(arrayWidth/columns),
+			totalHeight=math.floor(arrayHeight/rows),
+			padding=stickerPadding
+		)
+	filename = f"{current_app.instance_path}/productIdCard.png"
+	idCard.save(filename)
+
+	# note: quick adaptation of existing code, so works in a weird way. createImageSheet expects a list of file names.
+	# Just give it the same name over and over for now.
+	fileList = []
+	for i in range(idCount):
+		fileList.append(filename)
+	labelSheets = []
+	step = rows * columns
+	for i in range(math.ceil(len(fileList) / step)):
+		labelSheets.append(
+			createImageSheet(
+				fileNames=fileList,
+				rows=rows,
+				cols=columns,
+				totalWidthPx=pageWidth,
+				totalHeightPx=pageHeight,
+				arrayWidthPx=arrayWidth,
+				arrayHeightPx=arrayHeight
+			)
+		)
+
+	session.commit()
+
+	return labelSheets, None
 
 
 def convertDpiAndMmToPx(length_mm, DPI):

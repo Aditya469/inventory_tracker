@@ -24,7 +24,7 @@ from time import sleep
 BROADCAST_PORT = 8092  # This should match the port set in the app
 EXPECTED_TEXT = "DISCOVER_INV_SERVER_REQUEST"
 EXPECTED_RESPONSE = "DISCOVER_INV_SERVER_RESPONSE"
-SERVER_PORT = "80"
+SERVER_PORT = "5000"
 PROTOCOL = "http"
 
 s = socket(AF_INET, SOCK_DGRAM)

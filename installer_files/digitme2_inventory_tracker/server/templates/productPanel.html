@@ -26,8 +26,15 @@ limitations under the License.
 			<div class="col row row-cols-2 mx-1">
 				<label class="col mt-2" for="productName">Product Name:</label>
 				<input class="col form-control editProductPanelInput" id="productName" type="text" required/>
-				<label class="col mt-2" for="barcode">Product Barcode:</label>
-				<input class="col form-control editProductPanelInput" id="barcode" required/>
+				<label class="col" for="barcode">Product Barcode:</label>
+				<div class="col-12 row mt-2">
+					<div class="col">
+						<input class="form-control editProductPanelInput" id="barcode" required/>
+					</div>
+					<div class="col">
+						<input type="button" disabled id="btnGetBarcodeStickerSheet" class="btn btn-primary " onclick="openStickerSheetPanel()" value="Get Barcode Sticker Sheet">
+					</div>
+				</div>
 				<span class="col mt-2">Bulk Product?:  </span>
 				<div class="col mt-2">
 					<div class="form-check">
@@ -86,3 +93,6 @@ limitations under the License.
 		</div>
 	</div>
 </div>
+{% with stickerType="product" %}
+    {% include "stickerSheetPanel.html" %}
+{% endwith %}
