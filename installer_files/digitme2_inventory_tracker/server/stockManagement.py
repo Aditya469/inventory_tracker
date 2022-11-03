@@ -69,42 +69,15 @@ def getStockPage():
 @bp.route('/getIdStickerSheet')
 @create_access_required
 def getItemStickerSheet():
-	dbSession = getDbSession()
-	pageWidth_mm = dbSession.query(Settings.stickerSheetPageWidth_mm).first()[0]
-	pageHeight_mm = dbSession.query(Settings.stickerSheetPageHeight_mm).first()[0]
-	stickerAreaWidth_mm = dbSession.query(Settings.stickerSheetStickersWidth_mm).first()[0]
-	stickerAreaHeight_mm = dbSession.query(Settings.stickerSheetStickersHeight_mm).first()[0]
-	stickerPadding_mm = dbSession.query(Settings.stickerPadding_mm).first()[0]
-	stickerSheetDpi = dbSession.query(Settings.stickerSheetDpi).first()[0]
-
-	pageWidthPx = convertDpiAndMmToPx(length_mm=pageWidth_mm, DPI=stickerSheetDpi)
-	pageHeightPx = convertDpiAndMmToPx(length_mm=pageHeight_mm, DPI=stickerSheetDpi)
-	stickerAreaWidthPx = convertDpiAndMmToPx(length_mm=stickerAreaWidth_mm, DPI=stickerSheetDpi)
-	stickerAreaHeightPx = convertDpiAndMmToPx(length_mm=stickerAreaHeight_mm, DPI=stickerSheetDpi)
-	stickerPaddingPx = convertDpiAndMmToPx(length_mm=stickerPadding_mm, DPI=stickerSheetDpi)
-
-	stickerRows = dbSession.query(Settings.stickerSheetRows).first()[0]
-	stickerColumns = dbSession.query(Settings.stickerSheetColumns).first()[0]
-
 	if "idQty" in request.args:
 		idQty = request.args.get("idQty")
 	else:
-		idQty = stickerRows * stickerColumns
+		idQty = None
 
-	# temporary limitation until I find a suitable python pdf library
-	if idQty > (stickerRows * stickerColumns):
-		return make_response(f"You may only request up to {stickerRows * stickerColumns} at a time")
+	sheets, error = generateItemIdQrCodeSheets(idQty)
 
-	sheets = generateItemIdQrCodeSheets(
-		idQty,
-		stickerRows,
-		stickerColumns,
-		pageWidthPx,
-		pageHeightPx,
-		stickerAreaWidthPx,
-		stickerAreaHeightPx,
-		stickerPaddingPx
-	)
+	if error is not None:
+		return make_response(error)
 
 	sheets[0].save(f"{current_app.instance_path}/stickers.png")
 	return send_file(f"{current_app.instance_path}/stickers.png", as_attachment=True,

@@ -17,7 +17,11 @@ limitations under the License.
 <div id="stickerSheetGreyout" hidden class="row greyout position-absolute top-0 start-0 w-100 h-100" onclick="closeStickerSheetPanel()"></div>
 <div id="stickerSheetPanel" hidden class="container col-6 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed" style="background: white;">
 	<nav id="stickerSheetPanelNav" class="navbar bg-light navbar-light w-100">
-		<h1>Get Item ID Sticker Sheet</h1>
+		{% if stickerType=="stock" %}
+			<h1>Get Item ID Sticker Sheet</h1>
+		{% elif stickerType=="product" %}
+			<h1>Get Product ID Sticker Sheet</h1>
+		{% endif %}
 		<input class="btn-close" id="closeStickerSheetPanelBtn" type="button" onclick="closeStickerSheetPanel()"/>
 	</nav>
 	<input type="hidden" id="settingsId">
@@ -50,7 +54,7 @@ limitations under the License.
 				</div>
 
 				<div class="col-12 py-2">
-					<input id="getStickerSheetButton" class="w-100 btn btn-primary" value="Get Sticker Sheet" type="button" onclick="fetchStickerSheet()">
+					<input id="getStickerSheetButton" class="w-100 btn btn-primary" value="Get Sticker Sheet" type="button" onclick="fetchStickerSheet('{{ stickerType }}')">
 				</div>
 			</form>
 		</div>
