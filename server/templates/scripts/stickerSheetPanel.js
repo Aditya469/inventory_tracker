@@ -67,12 +67,21 @@ function updateSettings(){
     });
 }
 
-function fetchStickerSheet(){
+function fetchStickerSheet(StickerSheetType){
     $("#getStickerSheetButton").prop("disabled", true).val("Working...");
     setTimeout(function(){
             $("#getStickerSheetButton").prop("disabled", false).val("Get Sticker Sheet");
         }, 1500);
 
-    url = new URL(window.location.origin + "{{ url_for('stockManagement.getItemStickerSheet') }}");
-    window.location.href = url;
+    // sticker sheets are downloads, so url-encode ID if needed and send the window to the appropriate location
+    if(StickerSheetType == "stock"){
+        var url = new URL(window.location.origin + "{{ url_for('stockManagement.getItemStickerSheet') }}");
+        window.location.href = url;
+    }
+    else if(StickerSheetType == "product"){
+        var productId = $("#productId").val();
+        var url = new URL(window.location.origin + "{{ url_for('productManagement.getProductBarcodeStickerSheet') }}");
+        url.searchParams.append("productId", productId);
+        window.location.href = url;
+    }
 }

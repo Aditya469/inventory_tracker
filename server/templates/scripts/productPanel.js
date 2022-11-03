@@ -38,6 +38,7 @@ function openProductDetailsPanel(prodId){
     if(prodId != -1){
         $("#addedTimestampLabel").prop("hidden", false);
         $("#addedTimestamp").prop("hidden", false);
+        $("#btnGetBarcodeStickerSheet").prop("disabled", false);
         var getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
         $.ajax({
             url: getDataUrl,
@@ -255,6 +256,7 @@ function closeProductDetailsPanel(){
     $("#editProductPanel").prop("hidden", true);
     $("#newStockOrderedLabel").prop("hidden", true);
     $("#newStockOrdered").prop("hidden", true);
+    $("#btnGetBarcodeStickerSheet").prop("disabled", true);
     if(refreshCheckIntervalId != null)
         clearInterval(refreshCheckIntervalId);
 }

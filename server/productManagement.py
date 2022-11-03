@@ -17,7 +17,7 @@ limitations under the License.
 import decimal
 
 from flask import (
-	Blueprint, render_template, request, make_response, jsonify, send_file
+	Blueprint, render_template, request, make_response, jsonify, send_file, current_app
 )
 from sqlalchemy import select, or_, func
 
@@ -26,6 +26,7 @@ from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessi
 from dbSchema import ProductType, StockItem, User
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
+from qrCodeFunctions import generateIdQrCodeSheets
 from stockManagement import updateNewStockWithNewProduct
 from utilities import writeDataToCsvFile
 
@@ -251,3 +252,27 @@ def getProductTypeLastUpdateTimestamp():
 	item = dbSession.query(ProductType).filter(ProductType.id == itemId).one()
 	timestamp = item.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
 	return make_response(timestamp, 200)
+
+
+@bp.route("/getProductBarcodeStickerSheet")
+@login_required
+def getProductBarcodeStickerSheet():
+	if "idQty" in request.args:
+		idQty = request.args.get("idQty")
+	else:
+		idQty = None
+
+	if "productId" not in request.args:
+		return make_response("productId must be specified", 400)
+
+	dbSession = getDbSession()
+	product = dbSession.query(ProductType).filter(ProductType.id == request.args.get("productId")).first()
+
+	sheets, error = generateIdQrCodeSheets(idQty, product.barcode)
+
+	if error is not None:
+		return make_response(error)
+
+	sheets[0].save(f"{current_app.instance_path}/stickers.png")
+	return send_file(f"{current_app.instance_path}/stickers.png", as_attachment=True,
+					 download_name=f"{product.productName} ID Sticker Sheet.png")

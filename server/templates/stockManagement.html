@@ -141,5 +141,7 @@ limitations under the License.
     </div>
 </div>
 {% include "stockItemPanel.html" %}
-{% include "stickerSheetPanel.html" %}
+{% with stickerType="stock" %}
+    {% include "stickerSheetPanel.html" %}
+{% endwith %}
 {% endblock %}

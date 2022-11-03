@@ -53,7 +53,7 @@ sudo rm /etc/nginx/sites-enabled/default
 # copy server files to /home/$USER/digitme2_inventory_tracker and set as owned by $USER:www-data
 echo "copy files to $INSTALL_DIR"
 cp -r digitme2_inventory_tracker $INSTALL_DIR
-chown $USER:www-data -R $ROOT_DIR
+
 
 # copy setup to systemd folder
 echo "copy service units to /etc/systemd/system"
@@ -68,7 +68,8 @@ ln -s /etc/nginx/sites-available/inventory_tracker_interface /etc/nginx/sites-en
 # move into the server and initialise the DB. Has to be done before anything else starts or it'll cause an error
 cd $ROOT_DIR/server
 python init_db.py
-
+chown $USER:www-data -R $ROOT_DIR
+sudo rm $ROOT_DIR/instance/dbLockFile.lock
 
 # start services and enable at boot
 echo "start services"
