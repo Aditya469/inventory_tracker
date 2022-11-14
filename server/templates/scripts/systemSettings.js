@@ -61,6 +61,9 @@ function saveSettings(){
         processData: false,
         contentType: "application/json",
         cache: false,
+        success: function(){
+            console.log("settings updated");
+        },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
         }
