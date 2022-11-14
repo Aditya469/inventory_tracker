@@ -277,7 +277,6 @@ class Job(Base):
 	def toDict(self):
 		dataDict = {
 			"id": self.id,
-			"addedTimestamp": "",
 			"qrCodeName": self.qrCodeName,
 			"jobName": self.jobName,
 			"addedTimestamp": self.addedTimestamp.strftime("%d/%m/%y %H:%M"),
