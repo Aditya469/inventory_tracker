@@ -433,19 +433,39 @@ def getAvailableStockTotalsDataFromRequest():
 		.all()
 	stockDict = {row[0]: row[1] for row in stockQueryResult}
 
-	# then get assigned stock
-	assignedStockQueryResult = session.query(AssignedStock.productId, func.sum(AssignedStock.quantity)) \
-		.group_by(AssignedStock.productId) \
-		.all()
+	# stock assignment is calculated as the assigned stock per job minus the used stock, down to zero (assignments can't
+	# be negative). This is determined on a per job basis for simplicity, but can probably be improved.
+	jobs = session.query(Job).all()
+	for job in jobs:
+		assignments = session.query(AssignedStock).filter(AssignedStock.associatedJob == job.id).all()
+		checkInRecords = session.query(CheckInRecord).filter(CheckInRecord.jobId == job.id).all()
+		checkOutRecords = session.query(CheckOutRecord).filter(CheckOutRecord.jobId == job.id).all()
 
-	# then work out how much stock is unassigned
-	for row in assignedStockQueryResult:
-		productId = row[0]
-		assignedQty = row[1]
-		if productId in stockDict:
-			stockDict[productId] = stockDict[productId] - assignedQty
-		else:
-			stockDict[productId] = 0 - assignedQty
+		# make a dict of stock assignment totals by productId, subtract the checked out stock, and add back in any that
+		# was checked back in. Then zero any assignment totals that are negative. This gives the total assigned stock
+		# for a job that has not been used yet. This can then be used to update the total unassigned and unused stock
+		# amounts
+		assignedStockDict = {}
+		for assignment in assignments:
+			if assignment.productId not in assignedStockDict:
+				assignedStockDict[assignment.productId] = assignment.quantity
+			else:
+				assignedStockDict[assignment.productId] += assignment.quantity
+
+		for checkOutRecord in checkOutRecords:
+			if checkOutRecord.productType in assignedStockDict:
+				assignedStockDict[checkOutRecord.productType] -= checkOutRecord.quantity
+
+		for checkInRecord in checkInRecords:
+			if checkInRecord.productType in assignedStockDict:
+				assignedStockDict[checkInRecord.productType] += checkInRecord.quantity
+
+		for productId in assignedStockDict.keys():
+			# update the main stockDict by removing the assigned-but-not-yet-used stock from the available total
+			if productId in stockDict:
+				if assignedStockDict[productId] < 0:
+					assignedStockDict[productId] = 0
+				stockDict[productId] -= assignedStockDict[productId]
 
 	# then update the product list
 	for product in productList:
