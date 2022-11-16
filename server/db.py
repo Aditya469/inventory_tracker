@@ -28,8 +28,7 @@ from paths import dbPath, dbLockFilePath
 dbLock = FileLock(dbLockFilePath, timeout=1)
 
 def initApp(app):
-	# engine = create_engine('postgresql://server:server@localhost:5432/inventorydb')
-	engine = create_engine(f'sqlite:///{dbPath}', echo=True)  # temporary for dev use
+	engine = create_engine(f'sqlite:///{dbPath}', echo=True)
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine, future=True)
