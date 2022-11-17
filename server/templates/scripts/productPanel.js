@@ -35,10 +35,16 @@ function setProductPanelDetailsHeight(){
 function openProductDetailsPanel(prodId){
     $("#greyout").prop("hidden", false);
     $("#editProductPanel").prop("hidden", false);
-    if(prodId != -1){
+    if(prodId == -1){
+        $("#panelTitle").html("Create New Product");
+        $("#deleteButton").prop("disabled", true);
+    }
+    else{
+        $("#panelTitle").html("Edit Product Details");
         $("#addedTimestampLabel").prop("hidden", false);
         $("#addedTimestamp").prop("hidden", false);
         $("#btnGetBarcodeStickerSheet").prop("disabled", false);
+        $("#deleteButton").prop("disabled", false);
         var getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
         $.ajax({
             url: getDataUrl,
@@ -202,7 +208,6 @@ function saveProductDetails(){
         processData: false,
         cache: false,
         success: function(response){
-            console.log("beep");
             console.log(response);
             if(response.success){
                 $("#saveProductFeedbackSpan").html(response.message);
