@@ -342,7 +342,7 @@ function saveJobDetails(){
         contentType: "application/json",
         cache: false,
         success: function(responseData){
-            openJobDetailsPanel(responseData.newJobId); // this is an east way to get the panel to reload into the state for an existing job
+            openJobDetailsPanel(responseData.updatedJobId); // this is an east way to get the panel to reload into the state for an existing job
             updateJobsTable();
             updateStockTables();
             $("#saveJobFeedbackSpan").html("Job saved");

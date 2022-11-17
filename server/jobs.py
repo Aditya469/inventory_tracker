@@ -60,7 +60,7 @@ def createJob():
 	error = updateJobFromRequest(job.id, session)
 	if error is None:
 		session.commit()
-		return make_response({"newJobId": job.id}, 200)
+		return make_response({"updatedJobId": job.id}, 200)
 	else:
 		session.rollback()
 		return make_response(error, 400)
@@ -80,7 +80,7 @@ def updateJob():
 	error = updateJobFromRequest(request.json["jobId"], session)
 	if error is None:
 		session.commit()
-		return make_response("Changes Saved", 200)
+		return make_response({"updatedJobId": request.json["jobId"]}, 200)
 	else:
 		session.rollback()
 		return make_response(error, 400)
