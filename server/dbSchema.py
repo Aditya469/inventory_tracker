@@ -237,14 +237,12 @@ class Bin(Base):
 	id = Column(Integer, primary_key=True)
 	idString = Column(String)
 	locationName = Column(String)
-	qrCodeName = Column(String)
 
 	def toDict(self):
 		return {
 			"id": self.id,
 			"idString": self.idString,
 			"locationName": self.locationName,
-			"qrCodeName": self.qrCodeName
 		}
 
 
@@ -366,7 +364,7 @@ class Settings(Base):
 	stickerSheetPageWidth_mm = Column(Integer, default=210)
 	stickerSheetStickersHeight_mm = Column(Integer, default=266)
 	stickerSheetStickersWidth_mm = Column(Integer, default=190)
-	stickerSheetDpi = Column(Integer, default=300)
+	stickerSheetDpi = Column(Integer, default=150)
 	stickerSheetRows = Column(Integer, default=6)
 	stickerSheetColumns = Column(Integer, default=3)
 	stickerPadding_mm = Column(Integer, default=5)
@@ -376,7 +374,7 @@ class Settings(Base):
 	idCardPadding_mm = Column(Integer, default=5)
 	displayIdCardName = Column(Boolean, default=True)
 	displayJobIdCardName = Column(Boolean, default=True)
-	idCardFontSize_px = Column(Integer, default=40)
+	idCardFontSize_px = Column(Integer, default=30)
 	displayBinIdCardName = Column(Boolean, default=True)
 	emailSmtpServerName = Column(String)
 	emailSmtpServerPort = Column(String)

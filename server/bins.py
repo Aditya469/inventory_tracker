@@ -18,7 +18,7 @@ import os
 
 from flask import (
     Blueprint, render_template, request, make_response, jsonify,
-    current_app
+    current_app, send_file
 )
 from werkzeug.exceptions import abort
 
@@ -57,13 +57,10 @@ def createBin():
     dbSession = getDbSession()
     newBin = Bin()
     dbSession.add(newBin)
-    newBin.idString = "bin_" + request.json["locationName"]
+    dbSession.flush()
+    newBin.idString = f"bin_{newBin.id}"
     newBin.locationName = request.json["locationName"]
-    newBin.qrCodeName = "bin_" + request.json["locationName"] + ".png"
 
-    idCard = generateBinIdQrCodeLabel(newBin.idString, newBin.locationName, dbSession)
-    qrCodePath = os.path.join(current_app.instance_path, newBin.qrCodeName)
-    idCard.save(qrCodePath)
     dbSession.commit()
 
     return make_response("New bin added", 200)
@@ -76,11 +73,6 @@ def deleteBin(binId):
     bin = dbSession.query(Bin).filter(Bin.id == binId).first()
     if not bin:
         return make_response("no such bin id", 400)
-
-    if bin.qrCodeName is not None:
-        qrCodePath = os.path.join(current_app.instance_path, bin.qrCodeName)
-        if os.path.exists(qrCodePath):
-            os.remove(qrCodePath)
 
     dbSession.delete(bin)
     dbSession.commit()
@@ -123,3 +115,21 @@ def generateBinIdQrCodeLabel(QrCodeString, LocationName, DbSession):
     return idCard
 
 
+@bp.route("/getBinIdCard")
+@login_required
+def getBinIdCard():
+    binId = request.args.get("binId", default=None)
+    if binId is None:
+        return make_response("binId must be provided", 400)
+
+    dbSession = getDbSession()
+    bin = dbSession.query(Bin).filter(Bin.id == binId).first()
+
+    if bin is None:
+        return make_response("invalid binId", 400)
+
+    idCard = generateBinIdQrCodeLabel(bin.idString, bin.locationName, dbSession)
+    qrCodePath = os.path.join(current_app.instance_path, "bin_qr_code.png")
+    idCard.save(qrCodePath)
+
+    return send_file(qrCodePath, as_attachment=True, download_name=f"{bin.locationName} ID card.png")
