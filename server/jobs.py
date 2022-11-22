@@ -550,7 +550,8 @@ def getJobIdCard():
 		return make_response("jobId must be provided", 400)
 	job = dbSession.query(Job).filter(Job.id == jobId).first()
 	qrCodePath = os.path.join(current_app.instance_path, "jobIdCard.png")
-	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=job.jobName, DbSession=dbSession)
+	idCard = generateIdCard(idString=job.idString, label=job.jobName, labelFontSize=30, totalWidth=400, totalHeight=200)
+
 	idCard.save(qrCodePath)
 
 	return send_file(qrCodePath, as_attachment=True, download_name=f"{job.jobName}_id_card.png")

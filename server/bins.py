@@ -80,41 +80,6 @@ def deleteBin(binId):
     return make_response("bin deleted", 200)
 
 
-# fairly sure this can be improved. TODO: make this better
-def generateBinIdQrCodeLabel(QrCodeString, LocationName, DbSession):
-    cardHeight_mm, cardWidth_mm, cardDpi, cardPadding_mm, showCardName, fontSize = DbSession.query(
-        Settings.idCardHeight_mm,
-        Settings.idCardWidth_mm,
-        Settings.idCardDpi,
-        Settings.idCardPadding_mm,
-        Settings.displayBinIdCardName,
-        Settings.idCardFontSize_px
-    ).first()
-
-    cardHeightPx = convertDpiAndMmToPx(length_mm=cardHeight_mm, DPI=cardDpi)
-    cardWidthPx = convertDpiAndMmToPx(length_mm=cardWidth_mm, DPI=cardDpi)
-    cardPaddingPx = convertDpiAndMmToPx(length_mm=cardPadding_mm, DPI=cardDpi)
-
-    if showCardName:
-        idCard = generateIdCard(
-            idString=QrCodeString,
-            totalWidth=cardWidthPx,
-            totalHeight=cardHeightPx,
-            padding=cardPaddingPx,
-            label=LocationName,
-            labelFontSize=fontSize
-        )
-    else:
-        idCard = generateIdCard(
-            idString=QrCodeString,
-            totalWidth=cardWidthPx,
-            totalHeight=cardHeightPx,
-            padding=cardPaddingPx
-        )
-
-    return idCard
-
-
 @bp.route("/getBinIdCard")
 @login_required
 def getBinIdCard():
@@ -128,7 +93,7 @@ def getBinIdCard():
     if bin is None:
         return make_response("invalid binId", 400)
 
-    idCard = generateBinIdQrCodeLabel(bin.idString, bin.locationName, dbSession)
+    idCard = generateIdCard(idString=bin.idString, label=bin.locationName, labelFontSize=30, totalWidth=600, totalHeight=200)
     qrCodePath = os.path.join(current_app.instance_path, "bin_qr_code.png")
     idCard.save(qrCodePath)
 
