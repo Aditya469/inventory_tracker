@@ -70,7 +70,10 @@ function updateUsersTable(){
                 else
                     accessLevelSel.append($("<option value='3'>Admin</option>"));
 
+                if(responseData[i].username == "admin") // special case
+                    accessLevelSel.prop("disabled", true);
                 row.append($("<td>").append(accessLevelSel));
+
 
                 if(responseData[i].username != "admin") // special case
                 {
