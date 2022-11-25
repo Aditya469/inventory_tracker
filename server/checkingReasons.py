@@ -47,6 +47,10 @@ def createCheckingReason():
         return make_response("reason must be defined", 400)
 
     dbSession = getDbSession()
+    existingReason = dbSession.query(CheckingReason).filter(CheckingReason.reason==request.json.get("reason")).first()
+    if existingReason is not None:
+        return make_response(f"{request.json.get('reason')} already exists", 400)
+
     dbSession.add(CheckingReason(reason=request.json.get("reason")))
     dbSession.commit()
 

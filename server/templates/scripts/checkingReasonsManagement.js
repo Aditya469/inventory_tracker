@@ -43,7 +43,8 @@ function addReason(){
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
-            $("#addReasonsFeedbackSpan").html(jqXHR.responseText);
+            $("#addReasonFeedbackSpan").html(jqXHR.responseText);
+            setTimeout(function(){$("#addReasonFeedbackSpan").html("");}, 5000);
         }
     });
 }
@@ -67,6 +68,7 @@ function deleteReason(reasonId){
             error: function(jqXHR, textStatus, errorThrown){
                 console.log(jqXHR.responseText);
                 $("#addReasonFeedbackSpan").html(jqXHR.responseText);
+                setTimeout(function(){$("#addReasonFeedbackSpan").html("");}, 5000);
             }
         });
     }
