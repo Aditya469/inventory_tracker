@@ -57,9 +57,9 @@ def createCheckingReason():
 @create_access_required
 def deleteCheckingReason():
     dbSession = getDbSession()
-    reasonId = request.json.get("reasonId", default=None)
-    if reasonId is None:
+    if "reasonId" not in request.json:
         return make_response("reasonId must be provided", 400)
+    reasonId = request.json["reasonId"]
 
     reason = dbSession.query(CheckingReason).filter(CheckingReason.id == reasonId).first()
     dbSession.delete(reason)

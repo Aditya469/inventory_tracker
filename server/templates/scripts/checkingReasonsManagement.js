@@ -51,7 +51,7 @@ function addReason(){
 function deleteReason(reasonId){
     if(confirm("Delete this checking reason?")){
         $(this).prop("disabled", true);
-        var url = new URL("{{ url_for("checkingReasons.deleteCheckingReason") }}")
+        var url = new URL(window.location.origin + "{{ url_for("checkingReasons.deleteCheckingReason") }}")
         requestParams = {"reasonId": reasonId}
         $.ajax({
         url: url,
@@ -84,7 +84,7 @@ function updateReasonsTable(){
 
                 var delBtn = $("<input type='button' value='Delete'>");
                 delBtn.data("reasonId", responseData[i].id);
-                delBtn.on("click", function(){ deleteBin($(this).data("reasonId")); });
+                delBtn.on("click", function(){ deleteReason($(this).data("reasonId")); });
                 row.append($("<td>").append(delBtn));
                 $("#reasonTableBody").append(row);
             }
