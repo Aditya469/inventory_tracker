@@ -195,7 +195,7 @@ def deleteTemplate():
 	return make_response("Template deleted", 200)
 
 
-# process changes from overview page job panel. Encapsulted for reusability
+# process changes from overview page job panel.
 def updateJobFromRequest(jobId, dbSession):
 	error = None
 	if "jobName" not in request.json:
@@ -206,6 +206,10 @@ def updateJobFromRequest(jobId, dbSession):
 
 	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
 	job.jobName = request.json["jobName"]
+
+	jobIdString = request.json["jobIdString"]
+	if jobIdString != "" and jobIdString.startswith("job_"):
+		job.idString = jobIdString
 
 	if "newStockAssignments" in request.json:
 		for i in range(len(request.json['newStockAssignments'])):

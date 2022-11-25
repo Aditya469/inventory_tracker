@@ -277,6 +277,7 @@ class Job(Base):
 			"id": self.id,
 			"qrCodeName": self.qrCodeName,
 			"jobName": self.jobName,
+			"jobIdString": self.idString,
 			"addedTimestamp": self.addedTimestamp.strftime("%d/%m/%y %H:%M"),
 			"lastUpdated": self.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
 		}

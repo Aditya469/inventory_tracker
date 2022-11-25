@@ -26,9 +26,13 @@ limitations under the License.
 		<input id="templateId" type="hidden" class="editJobInput">
         <div class="col">
 			<div class="row" id="jobNameContainer">
-				<label class="col col-sm-4 col-form-label" for="jobName">Name:</label>
+				<label class="col col-sm-4 col-form-label" for="jobName" id="jobNameLabel">Job/Template Name:</label>
 				<div class="col col-sm-8">
 					<input class="form-control editJobInput" type="text" id="jobName">
+				</div>
+				<label class="col col-sm-4 col-form-label" for="jobIdString">Job ID:</label>
+				<div class="col col-sm-8">
+					<input class="form-control editJobInput" type="text" id="jobIdString" placeholder="Enter ID or leave blank for auto generated.">
 				</div>
 				<a class="col-12 text-end" id="jobQrCodeLink"href="">Download Job Identifier QR Code</a>
 			</div>
