@@ -27,15 +27,16 @@ limitations under the License.
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
+	<input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{%else%}value="0"{% endif %} />
 	<div class="row row-cols-sm-1 row-cols-md-2	gx-2">
 		<div class="col col-sm-12 col-md-6 col-lg-4 px-3" id="addBinControls">
 			<h2>Add a New Bin</h2>
 			<div class="row">
 				<label class="col-auto" for="newBinName">New Bin Name:</label>
-				<input class="col form-control" id="newBinName" type="text"/>
+				<input class="col form-control" id="newBinName" type="text" {% if not g.user.hasCreateAccess() %}disabled{% endif %}/>
 			</div>
 			<div class="row py-2 ps-1 pe-2">
-				<input class="col-12 ms-2 btn btn-primary" value="Add New Bin" type="button" onclick="addBin()">
+				<input class="col-12 ms-2 btn btn-primary" value="Add New Bin" type="button" onclick="addBin()" {% if not g.user.hasCreateAccess() %}disabled{% endif %}>
 			</div>
 			<div class="row d-flex justify-content-end">
 				<span class="col-12" id="addBinFeedbackSpan"/>

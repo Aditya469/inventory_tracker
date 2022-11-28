@@ -23,7 +23,7 @@ from flask import (
 )
 from sqlalchemy import select, delete, func, or_, update, and_
 
-from auth import login_required, create_access_required, edit_access_required
+from auth import login_required, create_access_required
 from db import getDbSession, Settings
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
 	User, Job, CheckingReason
@@ -594,7 +594,7 @@ def getExpiredStockDataFromRequest():
 
 
 @bp.route('/editStockItem', methods=("POST",))
-@edit_access_required
+@create_access_required
 def updateStock():
 	if "id" not in request.form:
 		return make_response("stockItem id not provided", 400)

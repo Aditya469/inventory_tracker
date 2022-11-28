@@ -44,7 +44,10 @@ function openProductDetailsPanel(prodId){
         $("#addedTimestampLabel").prop("hidden", false);
         $("#addedTimestamp").prop("hidden", false);
         $("#btnGetBarcodeStickerSheet").prop("disabled", false);
-        $("#deleteButton").prop("disabled", false);
+        if($("#userCanCreate").val() == "0")
+            $("#deleteButton").prop("disabled", true);
+        else
+            $("#deleteButton").prop("disabled", false);
         var getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
         $.ajax({
             url: getDataUrl,

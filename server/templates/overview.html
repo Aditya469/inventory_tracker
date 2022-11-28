@@ -30,11 +30,12 @@ limitations under the License.
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
+	<input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{%else%}value="0"{% endif %} />
 	<div class="row row-cols-sm-1 row-cols-md-2	">
 		<div id="currentJobsContainer" class="col col-md-5 border">
 			<h1>Jobs</h1>
 			<div id="jobsContainerControls" class="row px-2">
-				<input class="col col-12 btn btn-primary" id="addJobButton" type="button" value="Create New Job" onclick="openJobDetailsPanel(-1)">
+				<input class="col col-12 btn btn-primary" id="addJobButton" type="button" value="Create New Job" onclick="openJobDetailsPanel(-1)" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				<input class="col form-control my-1" id="jobSearchBar" placeholder="start typing to search..." oninput="updateJobsTable()">
 			</div>
 			<a href="" id="jobsOverviewCsvDownloadLink">Download this data as a CSV file</a>

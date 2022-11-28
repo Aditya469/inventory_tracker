@@ -22,7 +22,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from auth import login_required, userHasAdminAccess, create_access_required
+from auth import login_required, create_access_required
 from db import getDbSession
 from dbSchema import Bin, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
@@ -33,10 +33,7 @@ bp = Blueprint('bins', __name__)
 @bp.route('/manageBins')
 @login_required
 def manageBins():
-    if userHasAdminAccess():
-        return render_template('manageBins.html')
-    else:
-        abort(403)
+    return render_template('manageBins.html')
 
 
 @bp.route('/getBins')

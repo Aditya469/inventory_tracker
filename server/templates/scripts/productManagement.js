@@ -109,6 +109,8 @@ function updateNewStockTable(){
                 var checkbox = $("<input type='checkbox' class='newStockSelectCheckbox'>");
                 checkbox.on("click", function(){ onNewStockSelectCheckboxClicked() });
                 checkbox.data("verificationRecordId", responseData[i].verificationRecordId);
+                if($("#userCanCreate").val() == "0")
+                    checkbox.prop("disabled", true);
                 tr.append(checkbox);
 
                 tr.append($("<td>" + responseData[i].productName + "</td>"));

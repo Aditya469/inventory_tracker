@@ -86,6 +86,8 @@ function updateBinsTable(){
                 var delBtn = $("<input type='button' value='Delete'>");
                 delBtn.data("binId", responseData[i].id);
                 delBtn.on("click", function(){ deleteBin($(this).data("binId")); });
+                if($("#userCanCreate").val() == "0")
+                    delBtn.prop("disabled", true);
                 row.append($("<td>").append(delBtn));
                 $("#binTableBody").append(row);
             }

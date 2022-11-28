@@ -21,7 +21,7 @@ from flask import (
 )
 from sqlalchemy import select, or_, func
 
-from auth import login_required, create_access_required, edit_access_required
+from auth import login_required, create_access_required
 from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
 from dbSchema import ProductType, StockItem, User
 from emailNotification import sendEmail
@@ -101,7 +101,7 @@ def addNewProductType():
 
 
 @bp.route('/updateProduct', methods=('POST',))
-@edit_access_required
+@create_access_required
 def updateProductType():
 	if 'id' not in request.form:
 		return make_response("Product type ID required", 400)

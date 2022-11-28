@@ -22,7 +22,7 @@ limitations under the License.
             <input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closeStockItemPanel()"/>
         </nav>
         <div class="row ">
-            <input id="stockId" type="hidden" class="editStockPanelInput">
+            <input id="stockId" type="hidden" class="editStockPanelInput" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
             <div class="col-5">
                 <div class="row">
                     <label class="col-6 col-form-label" for="productTypeName">Product Type:</label>
@@ -31,7 +31,7 @@ limitations under the License.
                     <label class="col-6 col-form-label" for="quantityRemaining">Quantity Remaining:</label>
                     <div class="col-6">
                         <div class="input-group">
-                            <input class="form-control editStockPanelInput" id="quantityRemaining" type="number" value="">
+                            <input class="form-control editStockPanelInput" id="quantityRemaining" type="number" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                             <span class="input-group-text col-form-label editStockPanelInput" id="quantityUnitDisplay">Units</span>
                         </div>
                     </div>
@@ -44,17 +44,17 @@ limitations under the License.
 
                     <label class="col-6" for="price">Cost of this item:</label>
                     <div class="col-6">
-                        <input class="form-control editStockPanelInput" type="number" id="price">
+                        <input class="form-control editStockPanelInput" type="number" id="price" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                     </div>
 
                     <label class="col-6" for="location">Location:</label>
                     <div class="col-6">
-                        <select class="form-select editStockPanelInput" id="location" oninput="onLocationUpdated()"></select>
+                        <select class="form-select editStockPanelInput" id="location" oninput="onLocationUpdated()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}></select>
                     </div>
 
                     <label class="col-6 col-form-label" id="expiryDateLabel" for="expiryDate">Expiry Date:</label>
                     <div class="col-6">
-                        <input class="form-control form-control-sm editStockPanelInput" type="date" id="expiryDate">
+                        <input class="form-control form-control-sm editStockPanelInput" type="date" id="expiryDate" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                     </div>
                     <a class="col-12" href="#" id="idCardDownloadLink">Download item ID card</a>
                 </div>
@@ -81,9 +81,9 @@ limitations under the License.
             </div>
             <div class="col-10 row p-4 position-absolute bottom-0" id="commitButtonsContainer">
                 <div class="row">
-                    <input class="col col-md-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteStockItem()" value="Delete This Stock Item">
+                    <input class="col col-md-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteStockItem()" value="Delete This Stock Item" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                     <span class="col col-md-3 offset-md-3" id="saveStockItemFeedbackSpan"></span>
-                    <input class="col col-md-3 btn btn-primary" id="saveButton" type="button" onclick="saveStockItemDetails()" value="Save">
+                    <input class="col col-md-3 btn btn-primary" id="saveButton" type="button" onclick="saveStockItemDetails()" value="Save" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                 </div>
             </div>
         </div>

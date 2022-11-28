@@ -37,7 +37,7 @@ def initApp(app):
 	# check if the admin user exists. This is used as a proxy for the database being set up
 	res = session.query(User).filter(User.username == 'admin').count()
 	if res == 0:
-		adminUser = User(username='admin', passwordHash=generate_password_hash('admin'), accessLevel=3)
+		adminUser = User(username='admin', passwordHash=generate_password_hash('admin'), accessLevel=2)
 		session.add(adminUser)
 		session.add(Settings())  # add a row to settings with the defaults from the DB schema
 
@@ -69,7 +69,7 @@ def getDbSession():
 			Session = sessionmaker(bind=engine)
 			g.dbSession = Session()
 		except Timeout:
-			abort("Database is locked", 500)
+			abort("Database is locked. Acquire lock timed out", 500)
 
 	return g.dbSession
 

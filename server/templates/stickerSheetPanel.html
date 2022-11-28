@@ -30,27 +30,27 @@ limitations under the License.
 			<form class="row  needs-validation" novalidate>
 				<label class="col-7" for="stickerSheetPageHeight">Page Height (mm)</label>
 				<div class="col-5">
-					<input id="stickerSheetPageHeight" class="form-control" type="number" oninput="updateSettings()">
+					<input id="stickerSheetPageHeight" class="form-control" type="number" oninput="updateSettings()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 				<label class="col-7" for="stickerSheetPageWidth">Page Width (mm)</label>
 				<div class="col-5">
-					<input id="stickerSheetPageWidth" class="form-control" type="number" oninput="updateSettings()">
+					<input id="stickerSheetPageWidth" class="form-control" type="number" oninput="updateSettings()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 				<label class="col-7" for="stickerSheetStickersHeight">Sticker Area Height (mm)</label>
 				<div class="col-5">
-					<input id="stickerSheetStickersHeight" class="form-control" type="number" oninput="updateSettings()">
+					<input id="stickerSheetStickersHeight" class="form-control" type="number" oninput="updateSettings()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 				<label class="col-7" for="stickerSheetStickersWidth">Sticker Area Width (mm)</label>
 				<div class="col-5">
-					<input id="stickerSheetStickersWidth" class="form-control" type="number" oninput="updateSettings()">
+					<input id="stickerSheetStickersWidth" class="form-control" type="number" oninput="updateSettings()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 				<label class="col-7" for="stickerSheetRowCount">Row Count</label>
 				<div class="col-5">
-					<input id="stickerSheetRowCount" class="form-control" type="number" oninput="updateSettings()">
+					<input id="stickerSheetRowCount" class="form-control" type="number" oninput="updateSettings()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 				<label class="col-7" for="stickerSheetColumnCount">Column Count</label>
 				<div class="col-5">
-					<input id="stickerSheetColumnCount" class="form-control" type="number" oninput="updateSettings()">
+					<input id="stickerSheetColumnCount" class="form-control" type="number" oninput="updateSettings()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 
 				<div class="col-12 py-2">

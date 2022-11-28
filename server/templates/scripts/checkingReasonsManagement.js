@@ -87,6 +87,8 @@ function updateReasonsTable(){
                 var delBtn = $("<input type='button' value='Delete'>");
                 delBtn.data("reasonId", responseData[i].id);
                 delBtn.on("click", function(){ deleteReason($(this).data("reasonId")); });
+                if($("#userCanCreate").val() == "0")
+                    delBtn.prop("disabled", true);
                 row.append($("<td>").append(delBtn));
                 $("#reasonTableBody").append(row);
             }

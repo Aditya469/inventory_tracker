@@ -21,7 +21,6 @@ limitations under the License.
 {% endblock %}
 
 {% block additionalHeadMaterial %}
-<!--	<link rel="stylesheet" href="{{ url_for('static', filename='manageUsers.css') }}">-->
 	<script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
 	<script type=text/javascript src="{{ url_for('scripts.getScriptFile', filename='manageUsers.js') }}"></script>
 {% endblock %}
@@ -58,9 +57,8 @@ limitations under the License.
 						<div class="col-7">
 							<select class="form-select" id="accessLevel">
 								<option value="0">Read-Only</option>
-								<option value="1">Edit</option>
-								<option value="2">Create</option>
-								<option value="3">Administrator</option>
+								<option value="1">Create</option>
+								<option value="2">Administrator</option>
 							</select>
 						</div>
 						<div class="col-7 offset-5 ps-5 form-check">
