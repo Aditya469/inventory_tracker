@@ -333,7 +333,7 @@ def processCheckStockInRequest():
 
 		if "jobIdString" in requestParams:
 			job = dbSession.query(Job).filter(Job.idString == requestParams['jobIdString']).first()
-			job.lastUpdated = func.current_time()
+			job.lastUpdated = func.current_timestamp()
 			checkInRecord.jobId = job.id
 
 		if 'binIdString' in requestParams:
@@ -424,7 +424,7 @@ def processCheckStockOutRequest():
 
 		if "jobIdString" in requestParams:
 			job = dbSession.query(Job).filter(Job.idString == requestParams['jobIdString']).first()
-			job.lastUpdated = func.current_time()
+			job.lastUpdated = func.current_timestamp()
 			checkOutRecord.jobId = job.id
 
 		if 'binIdString' in requestParams:

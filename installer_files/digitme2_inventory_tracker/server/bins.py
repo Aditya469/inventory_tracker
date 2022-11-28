@@ -18,7 +18,7 @@ import os
 
 from flask import (
     Blueprint, render_template, request, make_response, jsonify,
-    current_app
+    current_app, send_file
 )
 from werkzeug.exceptions import abort
 
@@ -57,13 +57,10 @@ def createBin():
     dbSession = getDbSession()
     newBin = Bin()
     dbSession.add(newBin)
-    newBin.idString = "bin_" + request.json["locationName"]
+    dbSession.flush()
+    newBin.idString = f"bin_{newBin.id}"
     newBin.locationName = request.json["locationName"]
-    newBin.qrCodeName = "bin_" + request.json["locationName"] + ".png"
 
-    idCard = generateBinIdQrCodeLabel(newBin.idString, newBin.locationName, dbSession)
-    qrCodePath = os.path.join(current_app.instance_path, newBin.qrCodeName)
-    idCard.save(qrCodePath)
     dbSession.commit()
 
     return make_response("New bin added", 200)
@@ -77,49 +74,27 @@ def deleteBin(binId):
     if not bin:
         return make_response("no such bin id", 400)
 
-    if bin.qrCodeName is not None:
-        qrCodePath = os.path.join(current_app.instance_path, bin.qrCodeName)
-        if os.path.exists(qrCodePath):
-            os.remove(qrCodePath)
-
     dbSession.delete(bin)
     dbSession.commit()
 
     return make_response("bin deleted", 200)
 
 
-# fairly sure this can be improved. TODO: make this better
-def generateBinIdQrCodeLabel(QrCodeString, LocationName, DbSession):
-    cardHeight_mm, cardWidth_mm, cardDpi, cardPadding_mm, showCardName, fontSize = DbSession.query(
-        Settings.idCardHeight_mm,
-        Settings.idCardWidth_mm,
-        Settings.idCardDpi,
-        Settings.idCardPadding_mm,
-        Settings.displayBinIdCardName,
-        Settings.idCardFontSize_px
-    ).first()
+@bp.route("/getBinIdCard")
+@login_required
+def getBinIdCard():
+    binId = request.args.get("binId", default=None)
+    if binId is None:
+        return make_response("binId must be provided", 400)
 
-    cardHeightPx = convertDpiAndMmToPx(length_mm=cardHeight_mm, DPI=cardDpi)
-    cardWidthPx = convertDpiAndMmToPx(length_mm=cardWidth_mm, DPI=cardDpi)
-    cardPaddingPx = convertDpiAndMmToPx(length_mm=cardPadding_mm, DPI=cardDpi)
+    dbSession = getDbSession()
+    bin = dbSession.query(Bin).filter(Bin.id == binId).first()
 
-    if showCardName:
-        idCard = generateIdCard(
-            idString=QrCodeString,
-            totalWidth=cardWidthPx,
-            totalHeight=cardHeightPx,
-            padding=cardPaddingPx,
-            label=LocationName,
-            labelFontSize=fontSize
-        )
-    else:
-        idCard = generateIdCard(
-            idString=QrCodeString,
-            totalWidth=cardWidthPx,
-            totalHeight=cardHeightPx,
-            padding=cardPaddingPx
-        )
+    if bin is None:
+        return make_response("invalid binId", 400)
 
-    return idCard
+    idCard = generateIdCard(idString=bin.idString, label=bin.locationName, labelFontSize=30, totalWidth=600, totalHeight=200)
+    qrCodePath = os.path.join(current_app.instance_path, "bin_qr_code.png")
+    idCard.save(qrCodePath)
 
-
+    return send_file(qrCodePath, as_attachment=True, download_name=f"{bin.locationName} ID card.png")

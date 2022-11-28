@@ -77,8 +77,9 @@ function updateBinsTable(){
                 row.append($("<td>").html(responseData[i].locationName));
 
                 var link = $("<a>");
-                var href = "{{ url_for('files.getFile', filename='')}}" + responseData[i].qrCodeName;
-                link.prop("href", href);
+                var url = new URL(window.location.origin + "{{ url_for('bins.getBinIdCard')}}");
+                url.searchParams.append("binId", responseData[i].id);
+                link.prop("href", url);
                 link.html("Download QR code");
                 row.append($("<td>").append(link));
 

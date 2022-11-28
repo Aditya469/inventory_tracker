@@ -18,7 +18,7 @@ limitations under the License.
 # one file for easy management
 
 
-instancePath = "ROOT_PATH/instance"
+instancePath = "ROOTPATH/instance"
 dbPath = f"{instancePath}/inventoryDB.sqlite"
 dbLockFilePath = f"{instancePath}/dbLockFile.lock"
 dbBackupStatusFilePath = f"{instancePath}/dbBackupStatusFile"

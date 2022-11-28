@@ -50,6 +50,7 @@ function openJobDetailsPanel(jobId){
         $("#deleteButton").prop("hidden", false);
         $("#saveTemplateButton").prop("hidden", true);
         $("#jobName").val("");
+        $("#jobNameLabel").html("Job Name:")
 
         var pickingListUrl = new URL(window.location.origin + '{{ url_for("jobs.getPickingList")}}');
         pickingListUrl.searchParams.append("jobId", jobId);
@@ -70,6 +71,7 @@ function openJobDetailsPanel(jobId){
         });
     }
     else{
+        $("#jobNameLabel").html("Job/Template Name:")
         $("#jobId").val(jobId);
         $("#jobQrCodeLink").prop("hidden", true);
         $("#stockUsedContainer").prop("hidden", true);
@@ -84,6 +86,7 @@ function populateJobPanel(jobData){
     assignedStockIdsToDelete = [];
     $("#jobId").val(jobData.id);
     $("#jobName").val(jobData.jobName);
+    $("#jobIdString").val(jobData.jobIdString);
 
     var idCardUrl = new URL(window.location.origin + "{{ url_for('jobs.getJobIdCard')}}");
     idCardUrl.searchParams.append("jobId", jobData.id);
@@ -273,6 +276,7 @@ function saveJobDetails(){
     // and a list of changed assignments, as well as the name and ID of the job.
     // validate inputs as we go
     var dataValid = true;
+    var jobIdStringValid = true;
 
     var changedStockAssignments = [];
     var changedRows = $(".changedAssignedQty");
@@ -308,9 +312,19 @@ function saveJobDetails(){
     requestArgs = {};
     requestArgs["jobId"] = $("#jobId").val();
     requestArgs["jobName"] = $("#jobName").val();
+    requestArgs["jobIdString"] = $("#jobIdString").val();
     requestArgs["newStockAssignments"] = newStockAssignments;
     requestArgs["changedStockAssignments"] = changedStockAssignments;
     requestArgs["deletedStockAssignments"] = assignedStockIdsToDelete;
+
+    // note jobIdString may be blank but must not start with anything other than "job_"
+    if(requestArgs["jobIdString"] != "" && !requestArgs["jobIdString"].startsWith("job_")){
+        jobIdStringValid = false;
+        $("#jobIdString").addClass("is-invalid");
+    }
+   else
+        $("#jobIdString").removeClass("is-invalid");
+
 
     if(requestArgs["jobName"] == ""){
         dataValid = false;
@@ -319,8 +333,14 @@ function saveJobDetails(){
     else
         $("#jobName").removeClass("is-invalid");
 
+
+
     if(dataValid == false){
         $("#saveJobFeedbackSpan").html("Please fill in the required fields");
+        return;
+    }
+    else if(jobIdStringValid == false){
+        $("#saveJobFeedbackSpan").html("Job ID string must be in the form \"job_xxxx\"");
         return;
     }
 
@@ -342,7 +362,7 @@ function saveJobDetails(){
         contentType: "application/json",
         cache: false,
         success: function(responseData){
-            openJobDetailsPanel(responseData.newJobId); // this is an east way to get the panel to reload into the state for an existing job
+            openJobDetailsPanel(responseData.updatedJobId); // this is an east way to get the panel to reload into the state for an existing job
             updateJobsTable();
             updateStockTables();
             $("#saveJobFeedbackSpan").html("Job saved");
@@ -405,6 +425,8 @@ function saveJobTemplate(){
     }
     else
         $("#jobName").removeClass("is-invalid");
+
+
 
     if(dataValid == false){
         $("#saveJobFeedbackSpan").html("Please fill in the required fields");

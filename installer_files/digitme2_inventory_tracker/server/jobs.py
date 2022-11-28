@@ -60,7 +60,7 @@ def createJob():
 	error = updateJobFromRequest(job.id, session)
 	if error is None:
 		session.commit()
-		return make_response({"newJobId": job.id}, 200)
+		return make_response({"updatedJobId": job.id}, 200)
 	else:
 		session.rollback()
 		return make_response(error, 400)
@@ -80,7 +80,7 @@ def updateJob():
 	error = updateJobFromRequest(request.json["jobId"], session)
 	if error is None:
 		session.commit()
-		return make_response("Changes Saved", 200)
+		return make_response({"updatedJobId": request.json["jobId"]}, 200)
 	else:
 		session.rollback()
 		return make_response(error, 400)
@@ -195,7 +195,7 @@ def deleteTemplate():
 	return make_response("Template deleted", 200)
 
 
-# process changes from overview page job panel. Encapsulted for reusability
+# process changes from overview page job panel.
 def updateJobFromRequest(jobId, dbSession):
 	error = None
 	if "jobName" not in request.json:
@@ -206,6 +206,10 @@ def updateJobFromRequest(jobId, dbSession):
 
 	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
 	job.jobName = request.json["jobName"]
+
+	jobIdString = request.json["jobIdString"]
+	if jobIdString != "" and jobIdString.startswith("job_"):
+		job.idString = jobIdString
 
 	if "newStockAssignments" in request.json:
 		for i in range(len(request.json['newStockAssignments'])):
@@ -550,7 +554,8 @@ def getJobIdCard():
 		return make_response("jobId must be provided", 400)
 	job = dbSession.query(Job).filter(Job.id == jobId).first()
 	qrCodePath = os.path.join(current_app.instance_path, "jobIdCard.png")
-	idCard = generateJobIdQrCodeLabel(QrCodeString=job.idString, JobName=job.jobName, DbSession=dbSession)
+	idCard = generateIdCard(idString=job.idString, label=job.jobName, labelFontSize=30, totalWidth=400, totalHeight=200)
+
 	idCard.save(qrCodePath)
 
 	return send_file(qrCodePath, as_attachment=True, download_name=f"{job.jobName}_id_card.png")
