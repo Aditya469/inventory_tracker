@@ -56,19 +56,14 @@ function updateUsersTable(){
                     accessLevelSel.append($("<option value='0'>Read-Only</option>"));
 
                 if(responseData[i]['accessLevel'] == "1")
-                    accessLevelSel.append($("<option value='1' selected>Edit</option>"));
+                    accessLevelSel.append($("<option value='1' selected>Create/Edit/Delete</option>"));
                 else
-                    accessLevelSel.append($("<option value='1'>Edit</option>"));
+                    accessLevelSel.append($("<option value='1'>Create</option>"));
 
                 if(responseData[i]['accessLevel'] == "2")
-                    accessLevelSel.append($("<option value='2' selected>Create</option>"));
+                    accessLevelSel.append($("<option value='2' selected>Admin</option>"));
                 else
-                    accessLevelSel.append($("<option value='2'>Create</option>"));
-
-                if(responseData[i]['accessLevel'] == "3")
-                    accessLevelSel.append($("<option value='3' selected>Admin</option>"));
-                else
-                    accessLevelSel.append($("<option value='3'>Admin</option>"));
+                    accessLevelSel.append($("<option value='2'>Admin</option>"));
 
                 if(responseData[i].username == "admin") // special case
                     accessLevelSel.prop("disabled", true);

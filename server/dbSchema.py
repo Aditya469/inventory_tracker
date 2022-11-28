@@ -357,13 +357,11 @@ class User(Base):
 		}
 
 	def hasAdminAccess(self):
-		return self.accessLevel == 3
+		return self.accessLevel == 2
 
 	def hasCreateAccess(self):
-		return self.accessLevel >= 2
-
-	def hasEditAccess(self):
 		return self.accessLevel >= 1
+
 
 
 class Settings(Base):
