@@ -133,7 +133,13 @@ def processAddStockRequest():
 
 		if 'idString' not in requestParams:
 			logging.error("Failed to process request to add item. idString not provided")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": "",
+					"operation": "skipped (err. No item ID)"
+				}
+			), 200)
 
 		# check the request ID to see if this request has been processed once already. If it has, send a nice message to
 		# inform the app and then finish.
@@ -144,7 +150,13 @@ def processAddStockRequest():
 
 		if existingCheckinRecord is not None or existingCheckoutRecord is not None:
 			logging.info(f"Skipping duplicate request {requestParams['requestId']}")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams['idString'],
+					"operation": "skipped (dup.)"
+				}
+			), 200)
 
 		logging.info(f"Adding item with ID number {requestParams['idString']}")
 
@@ -169,7 +181,13 @@ def processAddStockRequest():
 						.first()
 					if existingAliasRecord is not None:
 						logging.error("Got an idString that is already aliased to a stock item")
-						return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+						return make_response(jsonify(
+							{
+								"processedId": requestParams['requestId'],
+								"itemId": requestParams['idString'],
+								"operation": "skipped (ID in use.)"
+							}
+						), 200)
 
 					aliasRecord = IdAlias(idString=requestParams['idString'], stockItemAliased=stockItem.id)
 					dbSession.add(aliasRecord)
@@ -183,7 +201,13 @@ def processAddStockRequest():
 		if stockItem is not None:
 			if productType.tracksSpecificItems or not productType.tracksAllItemsOfProductType:
 				logging.error("Got an ID number that exists for a non-bulk product")
-				return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+				return make_response(jsonify(
+					{
+						"processedId": requestParams['requestId'],
+						 "itemId": requestParams['idString'],
+						 "operation": "skipped (ID in use.)"
+					}
+				), 200)
 
 			# stockItem is an existing bulk stock entry with a matching ID
 			bulkItemCount = 1
@@ -230,7 +254,13 @@ def processAddStockRequest():
 						stockItem.expiryDate = datetime.datetime.strptime(requestParams['expiryDate'], "%Y-%m-%d")
 					else:
 						dbSession.rollback()
-						return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+						return make_response(jsonify(
+							{
+								"processedId": requestParams['requestId'],
+								"itemId": requestParams['idString'],
+								"operation": "skipped (expiry not set)"
+							}
+						), 200)
 
 				stockItem.price = productType.expectedPrice
 	except Exception as e:
@@ -266,7 +296,13 @@ def processAddStockRequest():
 	dbSession.add(verificationRecord)
 	dbSession.commit()
 
-	return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+	return make_response(jsonify(
+		{
+			"processedId": requestParams['requestId'],
+			"itemId": requestParams['idString'],
+			"operation": "added"
+		}
+	), 200)
 
 
 # note, this function was adapted from the original worker function
@@ -282,7 +318,14 @@ def processCheckStockInRequest():
 
 		if 'idString' not in requestParams:
 			logging.error("Failed to process request to check in item. ID number not provided")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(
+				jsonify(
+					{
+						"processedId": requestParams['requestId'],
+						"itemId": "",
+						"operation": "skipped (err. No item ID)"
+					}
+				), 200)
 
 		# check the request ID to see if this request has been processed once already. If it has, send a nice message to
 		# inform the app and then finish.
@@ -293,7 +336,13 @@ def processCheckStockInRequest():
 
 		if existingCheckinRecord is not None or existingCheckoutRecord is not None:
 			logging.info(f"Skipping duplicate request {requestParams['requestId']}")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams['idString'],
+					"operation": "skipped (dup.)"
+				}
+			), 200)
 
 		logging.info(f"Processing check in request for stock item with ID number {requestParams['idString']}")
 
@@ -315,11 +364,23 @@ def processCheckStockInRequest():
 		if stockItem.isCheckedIn is True and dbSession.query(ProductType.tracksSpecificItems) \
 				.filter(ProductType.id == stockItem.productType).first()[0] is True:
 			logging.error("Attempting to check in specific item that is already checked in")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams['idString'],
+					"operation": "skipped (checked in)",
+				}
+			), 200)
 
 		if "quantity" not in requestParams:
 			logging.error("Failed to check in stock item. quantity must be provided")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams["idString"],
+					"operation": "error (quantity needed)"
+				}
+			), 200)
 
 		checkInRecord = CheckInRecord()
 		dbSession.add(checkInRecord)
@@ -329,7 +390,7 @@ def processCheckStockInRequest():
 		checkInRecord.createdByRequestId = requestParams["requestId"]
 
 		if 'timestamp' in requestParams:
-			checkInRecord.checkinTimestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
+			checkInRecord.timestamp = datetime.datetime.strptime(requestParams['timestamp'], "%Y-%m-%d %H:%M:%S")
 
 		if "jobIdString" in requestParams:
 			job = dbSession.query(Job).filter(Job.idString == requestParams['jobIdString']).first()
@@ -357,7 +418,13 @@ def processCheckStockInRequest():
 		# a positive response MUST be returned here so that the request can be cleared from
 		# the list in the app, regardless of whether the request was properly processed.
 		# If not, the same request will keep being sent.
-		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+		return make_response(jsonify(
+			{
+				"processedId": requestParams['requestId'],
+				"itemId": requestParams['idString'],
+				"operation": "checked in"
+			}
+		), 200)
 
 
 # note, this function was adapted from the original worker function
@@ -375,7 +442,14 @@ def processCheckStockOutRequest():
 			logging.error("Failed to process request to check out item. ID number not provided")
 			# note that even though this is an error, the response is a 200 so that the app can still
 			# delete the request, otherwise it'll just keep coming back
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(
+				jsonify(
+					{
+						"processedId": requestParams['requestId'],
+						"itemId": "",
+						"operation": "skipped (err. No item ID)"
+					}
+				), 200)
 
 		# check the request ID to see if this request has been processed once already. If it has, send a nice message to
 		# inform the app and then finish.
@@ -386,7 +460,13 @@ def processCheckStockOutRequest():
 
 		if existingCheckinRecord is not None or existingCheckoutRecord is not None:
 			logging.info(f"Skipping duplicate request {requestParams['requestId']}")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams['idString'],
+					"operation": "skipped (dup.)"
+				}
+			), 200)
 
 		logging.info(f"Processing check out request for stock item with ID number {requestParams['idString']}")
 
@@ -403,13 +483,25 @@ def processCheckStockOutRequest():
 
 		if stockItem is None:
 			logging.error(f"Stock Item {requestParams['idString']} does not exist in the database")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams["idString"],
+					"operation": "skipped (does not exist)"
+				}
+			), 200)
 
 		isSpecificItem = dbSession.query(ProductType.tracksSpecificItems)\
 			.filter(ProductType.id == stockItem.productType).first()[0]
 		if stockItem.isCheckedIn is False and isSpecificItem:
 			logging.error("Attempting to check out specific item that is already checked out")
-			return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+			return make_response(jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams["idString"],
+					"operation": "skipped (already checked out)"
+				}
+			), 200)
 
 		checkOutRecord = CheckOutRecord()
 		dbSession.add(checkOutRecord)
@@ -452,7 +544,13 @@ def processCheckStockOutRequest():
 	except Exception as e:
 		logging.error(e)
 	finally:
-		return make_response(jsonify({"processedId": requestParams['requestId']}), 200)
+		return make_response(jsonify(
+			{
+				"processedId": requestParams['requestId'],
+				"itemId": requestParams['idString'],
+				"operation": "checked out"
+			}
+		), 200)
 
 
 @bp.route("/host")
