@@ -71,13 +71,42 @@ public class MainActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
 
-        if(mDiscoverServerTimerTask != null)
-        {
-            mPeriodicActionsTimer.scheduleAtFixedRate(mDiscoverServerTimerTask, 1000, 15000);
-            Log.d(TAG, "mDiscoverServerTimerTask scheduled for repeated execution");
-        }
-        else
-            Log.d(TAG, "mDiscoverServerTimerTask is null. Skip scheduling");
+        mDiscoverServerTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                String TAG = "ServerDiscoveryTimerTask";
+                SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs_file_key),
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+
+                if(prefs.getBoolean(getString(R.string.prefs_use_server_discovery), true))
+                {
+                    Log.d(TAG, "Begin server discovery");
+                    ServerDiscovery.DiscoveryResult discoveryResult =
+                            ServerDiscovery.findServer(getApplicationContext());
+                    if(discoveryResult == null)
+                    {
+                        Log.i(TAG, "Failed to find server");
+                        return;
+                    }
+
+                    Log.i(TAG, "Found server. Base address is " + discoveryResult.serverBaseAddress);
+
+                    editor.putString(
+                            getString(R.string.prefs_server_protocol),
+                            discoveryResult.protocol);
+                    editor.putString(
+                            getString(R.string.prefs_server_url),
+                            discoveryResult.ipAddress + ":" + discoveryResult.port);
+                    editor.putString(
+                            getString(R.string.prefs_server_base_address),
+                            discoveryResult.serverBaseAddress);
+                }
+            }
+        };
+
+        mPeriodicActionsTimer.scheduleAtFixedRate(mDiscoverServerTimerTask, 1000, 15000);
+        Log.d(TAG, "mDiscoverServerTimerTask scheduled for repeated execution");
     }
 
     @Override
@@ -89,8 +118,6 @@ public class MainActivity extends AppCompatActivity
             mDiscoverServerTimerTask.cancel();
             Log.d(TAG, "mDiscoverServerTimerTask cancelled");
         }
-        else
-            Log.d(TAG, "mDiscoverServerTimerTask is null. Skip cancelling");
     }
 
     public void onBarcodeRead(String barcodeValue) {
@@ -183,41 +210,6 @@ public class MainActivity extends AppCompatActivity
             }
         };
         mPeriodicActionsTimer.scheduleAtFixedRate(mSendDataTimerTask, 1000, 10000);
-
-        // created here but scheduled in onResume and cancelled in onPause
-        mDiscoverServerTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                String TAG = "ServerDiscoveryTimerTask";
-                SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs_file_key),
-                        Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-
-                if(prefs.getBoolean(getString(R.string.prefs_use_server_discovery), true))
-                {
-                    Log.d(TAG, "Begin server discovery");
-                    ServerDiscovery.DiscoveryResult discoveryResult =
-                            ServerDiscovery.findServer(getApplicationContext());
-                    if(discoveryResult == null)
-                    {
-                        Log.i(TAG, "Failed to find server");
-                        return;
-                    }
-
-                    Log.i(TAG, "Found server. Base address is " + discoveryResult.serverBaseAddress);
-
-                    editor.putString(
-                            getString(R.string.prefs_server_protocol),
-                            discoveryResult.protocol);
-                    editor.putString(
-                            getString(R.string.prefs_server_url),
-                            discoveryResult.ipAddress + ":" + discoveryResult.port);
-                    editor.putString(
-                            getString(R.string.prefs_server_base_address),
-                            discoveryResult.serverBaseAddress);
-                }
-            }
-        };
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainer2, mModeSelectFragment).commit();
