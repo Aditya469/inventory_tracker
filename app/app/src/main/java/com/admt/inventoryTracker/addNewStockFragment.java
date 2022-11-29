@@ -285,8 +285,10 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         Handler mainHandler = new Handler(getContext().getMainLooper());
-        String expDateSystem = String.format("%d-%02d-%02d", year, month, day);
-        String expDateHumanReadable = String.format("%02d-%02d-%d", day, month, year);
+
+        // note month plus 1 as months are enum in calendar
+        String expDateSystem = String.format("%d-%02d-%02d", year, month + 1, day);
+        String expDateHumanReadable = String.format("%02d-%02d-%d", day, month + 1, year);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
