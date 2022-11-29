@@ -236,7 +236,9 @@ public abstract class StockHandlingRequestManager<T> {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d(TAG, error.getMessage());
+                                Log.d(TAG, error.toString());
+                                if(error.getMessage() != null)
+                                    Log.d(TAG, error.getMessage());
                             }
                         }
                 );
