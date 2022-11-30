@@ -88,7 +88,10 @@ limitations under the License.
 	<div class="row w-100 p-4 position-absolute bottom-0" id="commitButtonsContainer">
 		<div class="row">
 			<input class="col col-3 btn btn-danger" id="deleteButton" type="button" onclick="deleteProduct()" value="Delete This Product" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
-			<span class="col col-3 offset-3" id="saveProductFeedbackSpan"></span>
+			<span class="col col-3" id="saveProductFeedbackSpan"></span>
+			<div class="col col-3">
+				<input class="btn btn-primary col-12" id="addAnotherProductButton" type="button" onclick="openProductDetailsPanel(-1)" value="Add Another Product" hidden {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+			</div>
 			<input class="col col-3 btn btn-primary" id="saveButton" type="button" onclick="saveProductDetails()" value="Save" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 		</div>
 	</div>
