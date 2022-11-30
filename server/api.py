@@ -526,6 +526,9 @@ def processCheckStockOutRequest():
 			checkOutRecord.userId = \
 				dbSession.query(User.id).filter(User.idString == requestParams["userIdString"]).first()[0]
 
+		if "reasonId" in requestParams:
+			checkOutRecord.reasonId = requestParams["reasonId"]
+
 		if 'quantity' in requestParams:
 			checkOutRecord.quantity = decimal.Decimal(requestParams['quantity'])
 		else:
