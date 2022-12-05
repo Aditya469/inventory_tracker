@@ -85,27 +85,27 @@ def getAppCheckingReasons():
 	return make_response(jsonify(reasonList), 200)
 
 
-# fetch a dict of itemIds against product barcodes
+# fetch a list of itemIds against product barcodes.
 @bp.route("/getAppItemIdBarcodeList")
 def getAppStockData():
-	# the structure of this is probably really inefficient cos I'm half asleep today. TODO: revisit
 	dbSession = getDbSession()
+	itemIdList = dbSession.query(ItemId).order_by(ItemId.idNumber.asc()).all()
 
-	stockItems = dbSession.query(StockItem).filter(StockItem.associatedProduct != None).all()
 	stockBarcodeList = []
-	for stockItem in stockItems:
-		barcode = dbSession.query(ProductType.barcode).filter(ProductType.id == stockItem.productType).one()[0]
-		stockBarcodeList.append({"itemId": stockItem.idString, "barcode": barcode})
+	for itemId in itemIdList:
+		itemDict = {"itemId": itemId.idString}
+		if itemId.isAssigned:
+			stockItem = dbSession.query(StockItem).filter(StockItem.idString == itemId.idString).first()
 
-	aliasIds = dbSession.query(IdAlias).all()
-	for alias in aliasIds:
-		stockItem = dbSession.query(StockItem)\
-			.filter(StockItem.id == alias.stockItemAliased)\
-			.scalar()
+			if stockItem is None: # might be aliased
+				alias = dbSession.query(IdAlias).filter(IdAlias.idString == itemId.idString).first()
+				stockItem = dbSession.query(StockItem).filter(StockItem.id == alias.stockItemAliased).first()
 
-		if stockItem is not None:
-			barcode = dbSession.query(ProductType.barcode).filter(ProductType.id == stockItem.productType).one()[0]
-			stockBarcodeList.append({"itemId": alias.idString, "barcode": barcode})
+			if stockItem is not None:
+				productType = dbSession.query(ProductType).filter(ProductType.id == stockItem.productType).one()
+				itemDict['barcode'] = productType.barcode
+
+		stockBarcodeList.append(itemDict)
 
 	return make_response(jsonify(stockBarcodeList), 200)
 
