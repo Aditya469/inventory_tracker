@@ -139,9 +139,11 @@ def getStockDataFromRequest():
 	if "limitByPrice" in request.args:
 		if request.args.get("limitByPrice", default="false") == "true":
 			if "priceRangeStart" in request.args:
-				stmt = stmt.where(StockItem.price >= decimal.Decimal(request.args.get("priceRangeStart")))
+				priceRangeLowerLimit = decimal.Decimal(request.args.get("priceRangeStart"))
+				stmt = stmt.where(StockItem.price >= priceRangeLowerLimit)
 			if "priceRangeEnd" in request.args:
-				stmt = stmt.where(StockItem.price <= decimal.Decimal(request.args.get("priceRangeEnd")))
+				priceRangeUpperLimit = decimal.Decimal(request.args.get("priceRangeEnd"))
+				stmt = stmt.where(StockItem.price <= priceRangeUpperLimit)
 
 	if "hideZeroStockEntries" in request.args:
 		if request.args.get("hideZeroStockEntries", default="false") == "true":
@@ -161,9 +163,9 @@ def getStockDataFromRequest():
 			stmt = stmt.order_by(StockItem.addedTimestamp.asc())
 		elif request.args.get("sortBy") == "dateAddedDesc":
 			stmt = stmt.order_by(StockItem.addedTimestamp.desc())
-		elif request.args.get("sortby") == "expiryDateAsc":
+		elif request.args.get("sortBy") == "expiryDateAsc":
 			stmt = stmt.order_by(StockItem.expiryDate.asc())
-		elif request.args.get("sortby") == "expiryDateDesc":
+		elif request.args.get("sortBy") == "expiryDateDesc":
 			stmt = stmt.order_by(StockItem.expiryDate.desc())
 		# etc...
 	else:
