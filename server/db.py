@@ -65,7 +65,7 @@ def getDbSession():
 	if 'dbSession' not in g:
 		try:
 			dbLock.acquire()
-			engine = create_engine(f'sqlite:///{dbPath}', echo=True)
+			engine = create_engine(f'sqlite:///{dbPath}', echo=False)
 			Session = sessionmaker(bind=engine)
 			g.dbSession = Session()
 		except Timeout:
