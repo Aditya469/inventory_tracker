@@ -280,6 +280,8 @@ def processAddStockRequest():
 		checkInRecord.quantity = productType.initialQuantity
 	if 'quantityCheckingIn' in requestParams:
 		checkInRecord.quantity = decimal.Decimal(requestParams['quantityCheckingIn'])
+	elif 'bulkItemCount' in requestParams:
+		checkInRecord.quantity = decimal.Decimal(requestParams['bulkItemCount'])
 	checkInRecord.createdByRequestId = requestParams['requestId']
 
 	if 'binIdString' in requestParams:
