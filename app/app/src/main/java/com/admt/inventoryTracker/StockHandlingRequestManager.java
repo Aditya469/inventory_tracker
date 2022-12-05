@@ -216,8 +216,12 @@ public abstract class StockHandlingRequestManager<T> {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
-                                    Log.d(TAG, String.format("Got response. Processed ID: %s", response.getString("processedId")));
-                                    Utilities.showDebugMessage(mAppContextRef, String.format("Got response. Processed ID: %s", response.getString("processedId")));
+                                    String debugMessage = String.format("%s %s. Req. ID: %s",
+                                            response.getString("operation"),
+                                            response.getString("itemId"),
+                                            response.getString("processedId"));
+                                    Log.d(TAG, debugMessage);
+                                    Utilities.showDebugMessage(mAppContextRef, debugMessage);
                                     Runnable runnable = new Runnable() {
                                         @Override
                                         public void run() {
