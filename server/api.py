@@ -414,17 +414,6 @@ def processCheckStockInRequest():
 		dbSession.commit()
 	except Exception as e:
 		logging.error(e)
-	finally:
-		# a positive response MUST be returned here so that the request can be cleared from
-		# the list in the app, regardless of whether the request was properly processed.
-		# If not, the same request will keep being sent.
-		return make_response(jsonify(
-			{
-				"processedId": requestParams['requestId'],
-				"itemId": requestParams['idString'],
-				"operation": "checked in"
-			}
-		), 200)
 
 
 # note, this function was adapted from the original worker function
@@ -530,7 +519,17 @@ def processCheckStockOutRequest():
 			checkOutRecord.reasonId = requestParams["reasonId"]
 
 		if 'quantity' in requestParams:
-			checkOutRecord.quantity = decimal.Decimal(requestParams['quantity'])
+			quantity = decimal.Decimal(requestParams['quantity'])
+			if quantity > stockItem.quantityRemaining:
+				logging.error(f"Attempting to check out {quantity} of {stockItem.idString}. Quantity available is {stockItem.quantityRemaining}")
+				return make_response(jsonify(
+					{
+						"processedId": requestParams['requestId'],
+						"itemId": requestParams["idString"],
+						"operation": "skipped (quantity greater than available)"
+					}
+				), 200)
+			checkOutRecord.quantity = quantity
 		else:
 			if dbSession.query(ProductType.tracksSpecificItems).filter(ProductType.id == stockItem.productType).first()[0] is False:
 				logging.info(
@@ -546,14 +545,6 @@ def processCheckStockOutRequest():
 		dbSession.commit()
 	except Exception as e:
 		logging.error(e)
-	finally:
-		return make_response(jsonify(
-			{
-				"processedId": requestParams['requestId'],
-				"itemId": requestParams['idString'],
-				"operation": "checked out"
-			}
-		), 200)
 
 
 @bp.route("/host")
