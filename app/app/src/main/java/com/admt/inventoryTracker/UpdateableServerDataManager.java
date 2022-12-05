@@ -234,6 +234,8 @@ abstract class UpdateableServerDataManager<T> {
     // to be performed without a server sync.
     protected void addItem(T newItem) throws JSONException, IOException {
         String key = getItemDictKeyString(newItem);
+        if(mItemMap.containsKey(key))
+            mItemMap.remove(key);
         mItemMap.put(key, newItem);
 
         // immediately save to file to avoid loss of data if the app closes

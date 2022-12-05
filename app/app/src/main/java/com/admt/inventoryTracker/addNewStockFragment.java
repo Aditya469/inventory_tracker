@@ -330,23 +330,27 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
                 error = "Scan a product barcode first";
             else
             {
-                mAddStockRequestParameters.ItemId = BarcodeData;
-                if(UpdateBarcodeField)
-                {
-                    runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView tvItemId = (TextView) getActivity().findViewById(R.id.etAddStockItemQrCode);
-                            tvItemId.setText(BarcodeData);
+                // check if itemId is in the system list
+                if(mItemIdLookUpDataManager.get(BarcodeData) == null)
+                    error = "Item ID QR code is not in the system";
+                else {
+                    mAddStockRequestParameters.ItemId = BarcodeData;
+                    if (UpdateBarcodeField) {
+                        runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView tvItemId = (TextView) getActivity().findViewById(R.id.etAddStockItemQrCode);
+                                tvItemId.setText(BarcodeData);
 
-                            TextView tvPrompt = (TextView) getActivity().findViewById(R.id.tvAddStockPrompt);
-                            if (mCurrentProduct.CanExpire && mAddStockRequestParameters.LocationId == null)
-                                tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code_or_set_expiry));
-                            else
-                                tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code));
-                        }
-                    };
-                    mainHandler.post(runnable);
+                                TextView tvPrompt = (TextView) getActivity().findViewById(R.id.tvAddStockPrompt);
+                                if (mCurrentProduct.CanExpire && mAddStockRequestParameters.LocationId == null)
+                                    tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code_or_set_expiry));
+                                else
+                                    tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code));
+                            }
+                        };
+                        mainHandler.post(runnable);
+                    }
                 }
             }
         }

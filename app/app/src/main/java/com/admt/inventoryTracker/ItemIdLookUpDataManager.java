@@ -34,6 +34,8 @@ public class ItemIdLookUpDataManager extends UpdateableServerDataManager<ItemIdB
             itemIdBarcodeLookup.ItemId = ItemJson.getString("itemId");
         if(ItemJson.has("barcode"))
             itemIdBarcodeLookup.Barcode = ItemJson.getString("barcode");
+        else
+            itemIdBarcodeLookup.Barcode = null;
         return itemIdBarcodeLookup;
     }
 
@@ -41,7 +43,8 @@ public class ItemIdLookUpDataManager extends UpdateableServerDataManager<ItemIdB
     protected JSONObject parseItemToJsonObject(ItemIdBarcodeLookup Item) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("itemId", Item.ItemId);
-        jsonObject.put("barcode", Item.Barcode);
+        if(Item.Barcode != null)
+            jsonObject.put("barcode", Item.Barcode);
         return jsonObject;
     }
 

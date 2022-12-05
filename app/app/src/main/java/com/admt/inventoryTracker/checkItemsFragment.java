@@ -196,7 +196,7 @@ public class checkItemsFragment extends Fragment implements AdapterView.OnItemSe
 
             // get the itemLookup for this ID and retrieve the product name and barcode
             ItemIdBarcodeLookup itemIdBarcodeLookup = mItemIdLookUpDataManager.get(BarcodeData);
-            if(itemIdBarcodeLookup == null)
+            if(itemIdBarcodeLookup == null || itemIdBarcodeLookup.Barcode == null)
                 error = getString(R.string.error_check_stock_item_unknown);
             else {
                 final Product productType = mProductDataManger.get(itemIdBarcodeLookup.Barcode);
