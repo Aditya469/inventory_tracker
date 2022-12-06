@@ -23,11 +23,16 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from auth import login_required, create_access_required
-from db import getDbSession
+from db import getDbSession, close_db
 from dbSchema import Bin, Settings
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
 
 bp = Blueprint('bins', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/manageBins')

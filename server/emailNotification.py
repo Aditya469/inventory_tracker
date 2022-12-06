@@ -23,73 +23,66 @@ import threading
 
 from flask import request
 
-from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
+from db import getDbSession
 from dbSchema import Settings
 
 
 # the sending part of this runs on a different thread to prevent the system hanging
 def sendEmail(receiverAddressList, subject, emailBody):
-    try:
-        if request:
-            dbSession = getDbSession()
-        else:
-            dbSession = getDbSessionWithoutApplicationContext()
+    dbSession = getDbSession()
 
-        settings = dbSession.query(Settings).first()
-        if settings.sendEmails is not True:
-            logging.info("Skip sending email due to settings configuration")
-            return
+    settings = dbSession.query(Settings).first()
+    if settings.sendEmails is not True:
+        logging.info("Skip sending email due to settings configuration")
+        return
 
-        if len(receiverAddressList) == 0:
-            logging.info("Skip sending email due to empty recipient list")
-            return
+    if len(receiverAddressList) == 0:
+        logging.info("Skip sending email due to empty recipient list")
+        return
 
-        context = ssl.create_default_context()
+    context = ssl.create_default_context()
 
-        msg = email.message.Message()
-        msg['From'] = settings.emailAccountName
-        msg['To'] = ", ".join(receiverAddressList)
-        msg['Subject'] = subject
-        msg.add_header('Content-Type', 'text')
-        msg.set_payload(emailBody)
+    msg = email.message.Message()
+    msg['From'] = settings.emailAccountName
+    msg['To'] = ", ".join(receiverAddressList)
+    msg['Subject'] = subject
+    msg.add_header('Content-Type', 'text')
+    msg.set_payload(emailBody)
 
-        if settings.emailSecurityMethod == "SSL":
-            def sendEmailSSL(serverName, serverPort, context, accountName, accountPassword, msg):
-                with smtplib.SMTP_SSL(serverName, serverPort, context=context) as server:
-                    server.login(accountName, accountPassword)
-                    server.sendmail(msg['From'], msg['To'], msg.as_string())
+    if settings.emailSecurityMethod == "SSL":
+        def sendEmailSSL(serverName, serverPort, context, accountName, accountPassword, msg):
+            with smtplib.SMTP_SSL(serverName, serverPort, context=context) as server:
+                server.login(accountName, accountPassword)
+                server.sendmail(msg['From'], msg['To'], msg.as_string())
 
-            threading.Thread(
-                target=sendEmailSSL,
-                args=(
-                    settings.emailSmtpServerName,
-                    settings.emailSmtpServerPort,
-                    context,
-                    settings.emailAccountName,
-                    settings.emailAccountPassword,
-                    msg
-                )
-            ).start()
+        threading.Thread(
+            target=sendEmailSSL,
+            args=(
+                settings.emailSmtpServerName,
+                settings.emailSmtpServerPort,
+                context,
+                settings.emailAccountName,
+                settings.emailAccountPassword,
+                msg
+            )
+        ).start()
 
-        elif settings.emailSecurityMethod == 'TLS':
-            def sendEmailTLS(serverName, serverPort, context, accountName, accountPassword, msg):
-                with smtplib.SMTP(serverName, serverPort) as server:
-                    server.starttls(context=context)
-                    server.login(accountName, accountPassword)
-                    server.sendmail(msg['From'], msg['To'], msg.as_string())
+    elif settings.emailSecurityMethod == 'TLS':
+        def sendEmailTLS(serverName, serverPort, context, accountName, accountPassword, msg):
+            with smtplib.SMTP(serverName, serverPort) as server:
+                server.starttls(context=context)
+                server.login(accountName, accountPassword)
+                server.sendmail(msg['From'], msg['To'], msg.as_string())
 
-            threading.Thread(
-                target=sendEmailTLS,
-                args=(
-                    settings.emailSmtpServerName,
-                    settings.emailSmtpServerPort,
-                    context,
-                    settings.emailAccountName,
-                    settings.emailAccountPassword,
-                    msg
-                )
-            ).start()
+        threading.Thread(
+            target=sendEmailTLS,
+            args=(
+                settings.emailSmtpServerName,
+                settings.emailSmtpServerPort,
+                context,
+                settings.emailAccountName,
+                settings.emailAccountPassword,
+                msg
+            )
+        ).start()
 
-    finally:
-        if not request:
-            closeDbSessionWithoutApplicationContext(dbSession)

@@ -24,13 +24,18 @@ from flask import (
 from sqlalchemy import select, delete, func, or_, update, and_
 
 from auth import login_required, create_access_required
-from db import getDbSession, Settings
+from db import getDbSession, Settings, close_db
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
 	User, Job, CheckingReason
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets, generateIdCard
 from utilities import writeDataToCsvFile, formatStockAmount
 
 bp = Blueprint('stockManagement', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/stockManagement')

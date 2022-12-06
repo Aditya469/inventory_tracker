@@ -19,10 +19,15 @@ from flask import (
 )
 
 from auth import login_required, create_access_required
-from db import getDbSession
+from db import getDbSession, close_db
 from dbSchema import CheckingReason
 
 bp = Blueprint('checkingReasons', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/manageCheckingReasons')

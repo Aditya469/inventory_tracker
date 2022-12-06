@@ -25,13 +25,18 @@ from flask import (
 from sqlalchemy import select, func
 
 from auth import login_required, create_access_required
-from db import getDbSession
+from db import getDbSession, close_db
 from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType, JobTemplate, \
 	TemplateStockAssignment, Bin
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
 from utilities import writeDataToCsvFile
 
 bp = Blueprint('jobs', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route("/createJob", methods=("POST",))

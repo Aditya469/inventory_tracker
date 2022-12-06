@@ -24,5 +24,4 @@ dbBackupStatusFilePath = f"{instancePath}/dbBackupStatusFile"
 dbBackupDirPath = f"{instancePath}/dbBackupFiles"
 
 logPath = f"{instancePath}/server.log"
-scheduleWorkerLogPath= f"{instancePath}/scheduleTaskWorker.log"
 

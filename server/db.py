@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import logging
 import sqlite3
 
 from filelock import FileLock, Timeout
-from flask import g
+from flask import g, after_this_request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from werkzeug.exceptions import abort
@@ -26,6 +27,8 @@ from dbSchema import Base, User, ProductType, Settings, Bin
 from paths import dbPath, dbLockFilePath
 
 dbLock = FileLock(dbLockFilePath, timeout=1)
+# outsideContextConnectionCount = 0
+# outsideContextSession = None
 
 def initApp(app):
 	engine = create_engine(f'sqlite:///{dbPath}', echo=True)
@@ -64,7 +67,7 @@ def initApp(app):
 def getDbSession():
 	if 'dbSession' not in g:
 		try:
-			dbLock.acquire()
+			dbLock.acquire(timeout=5)
 			engine = create_engine(f'sqlite:///{dbPath}', echo=False)
 			Session = sessionmaker(bind=engine)
 			g.dbSession = Session()
@@ -76,23 +79,13 @@ def getDbSession():
 
 # TODO: test that this works
 def close_db(e=None):
-	db = g.pop('dbSession', None)
-	if db is not None:
-		try:
+	try:
+		db = g.pop('dbSession', None)
+		if db is not None:
+			logging.info("closing database")
 			db.close()
-		except sqlite3.ProgrammingError as e:
-			print(e)
-		finally:
-			dbLock.release()
+	except sqlite3.ProgrammingError as e:
+		print(e)
+	finally:
+		dbLock.release()
 
-
-def getDbSessionWithoutApplicationContext():
-	dbLock.acquire()
-	engine = create_engine(f'sqlite:///{dbPath}', echo=False)
-	Session = sessionmaker(bind=engine)
-	return Session()
-
-
-def closeDbSessionWithoutApplicationContext(Session):
-	Session.close()
-	dbLock.release()

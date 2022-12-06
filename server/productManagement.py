@@ -22,7 +22,7 @@ from flask import (
 from sqlalchemy import select, or_, func
 
 from auth import login_required, create_access_required
-from db import getDbSession, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
+from db import getDbSession, close_db
 from dbSchema import ProductType, StockItem, User
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
@@ -32,6 +32,10 @@ from utilities import writeDataToCsvFile
 
 bp = Blueprint('productManagement', __name__)
 
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 @bp.route('/productsAndNewStock')
 @login_required
@@ -196,35 +200,33 @@ reorder level and marks them appropriately in the database
 '''
 def findAndMarkProductsToReorder():
 	dbSession = getDbSessionWithoutApplicationContext()
-	try:
 
-		productList = dbSession.query(ProductType)\
-			.filter(ProductType.reorderLevel != None) \
-			.filter(ProductType.reorderLevel != "None") \
-			.all()
-		reorderNotificationIds = []
+	productList = dbSession.query(ProductType)\
+		.filter(ProductType.reorderLevel != None) \
+		.filter(ProductType.reorderLevel != "None") \
+		.all()
+	reorderNotificationIds = []
 
-		for product in productList:
-			stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
-				.filter(StockItem.productType == product.id)\
-				.first()[0]
+	for product in productList:
+		stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
+			.filter(StockItem.productType == product.id)\
+			.first()[0]
 
-			if stockQty is None or stockQty <= product.reorderLevel:
-				if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
-					product.needsReordering = True
-					if product.sendStockNotifications:
-						reorderNotificationIds.append(product.id)
-			else:
-				product.needsReordering = False
+		if stockQty is None or stockQty <= product.reorderLevel:
+			if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
+				product.needsReordering = True
+				if product.sendStockNotifications:
+					reorderNotificationIds.append(product.id)
+		else:
+			product.needsReordering = False
 
-		if len(reorderNotificationIds) > 0:
-			emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
-			message = getStockNeedsReorderingMessage(reorderNotificationIds)
-			sendEmail(emailAddressList, "Stock needs reordering", message)
+	if len(reorderNotificationIds) > 0:
+		emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
+		message = getStockNeedsReorderingMessage(reorderNotificationIds)
+		sendEmail(emailAddressList, "Stock needs reordering", message)
 
-		dbSession.commit()
-	finally:
-		closeDbSessionWithoutApplicationContext(dbSession)
+	dbSession.commit()
+	closeDbSessionWithoutApplicationContext()
 
 
 @bp.route("/getProductsCsvFile", methods=("GET",))

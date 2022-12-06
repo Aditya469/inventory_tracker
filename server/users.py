@@ -24,10 +24,15 @@ from sqlalchemy import delete, update
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from auth import admin_access_required
-from db import getDbSession, User
+from db import getDbSession, User, close_db
 from qrCodeFunctions import generateIdCard
 
 bp = Blueprint('users', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/manageUsers')

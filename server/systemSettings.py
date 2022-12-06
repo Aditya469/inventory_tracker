@@ -20,12 +20,17 @@ from flask import (
 )
 
 from auth import admin_access_required, login_required
-from db import getDbSession
+from db import getDbSession, close_db
 from dbSchema import Settings
 from emailNotification import sendEmail
 from messages import getTestEmailMessage
 
 bp = Blueprint('systemSettings', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/systemSettings')

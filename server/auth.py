@@ -22,10 +22,14 @@ from flask import (
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash
 
-from db import getDbSession, User
+from db import getDbSession, User, close_db
 
 bp = Blueprint('auth', __name__)
 
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():

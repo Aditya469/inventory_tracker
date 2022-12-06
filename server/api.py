@@ -24,13 +24,16 @@ from flask import (
 )
 from sqlalchemy import func
 
-from db import getDbSession
+from db import getDbSession, close_db
 from dbSchema import ProductType, StockItem, Bin, ItemId, CheckInRecord, VerificationRecord, IdAlias, CheckOutRecord, \
 	Job, User, CheckingReason
 
 bp = Blueprint('api', __name__)
 
 
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 # note that these functions doesn't have login requirement at the moment as
 # they're used by the app. TODO: secure this

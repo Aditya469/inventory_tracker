@@ -20,6 +20,7 @@ import sys
 from flask import Flask
 
 import paths
+from db import close_db
 
 
 def create_app():
