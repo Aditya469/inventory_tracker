@@ -199,7 +199,7 @@ Function to run periodically which finds products that are below the
 reorder level and marks them appropriately in the database
 '''
 def findAndMarkProductsToReorder():
-	dbSession = getDbSessionWithoutApplicationContext()
+	dbSession = getDbSession()
 
 	productList = dbSession.query(ProductType)\
 		.filter(ProductType.reorderLevel != None) \
@@ -226,7 +226,7 @@ def findAndMarkProductsToReorder():
 		sendEmail(emailAddressList, "Stock needs reordering", message)
 
 	dbSession.commit()
-	closeDbSessionWithoutApplicationContext()
+	close_db()
 
 
 @bp.route("/getProductsCsvFile", methods=("GET",))

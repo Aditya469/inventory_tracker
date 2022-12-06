@@ -65,11 +65,13 @@ def findAndRunScheduledTasks():
 
 		# other tasks go here...
 
+		close_db()
+
 		# now start running tasks
 		for i in range(len(functionsToBeRun)):
 			functionsToBeRun[i]()
-
-		close_db()
+			time.sleep(10) 	# a short sleep here is to allow any email notifications to be sent. This is decidedly
+							# a bodge, but it'll do as a quick fix. TODO: revisit
 
 
 def main():

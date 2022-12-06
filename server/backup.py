@@ -143,5 +143,7 @@ def backUpDatabase():
 			message = getDatabaseBackupFailureNotificationMessage(status)
 			sendEmail(emailAddressList, "ATTENTION REQUIRED. Inventory Tracker database backup failed", message)
 
+	close_db()
+
 	return status, backupSucceeded
 
