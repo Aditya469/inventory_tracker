@@ -17,6 +17,7 @@ limitations under the License.
 package com.admt.inventoryTracker;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Handler;
@@ -58,17 +59,22 @@ public class Utilities {
 
     public static void showDebugMessage(Context context, String messageText)
     {
-        Handler mainHandler = new Handler(context.getMainLooper());
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(
-                        context,
-                        messageText,
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
-        };
-        mainHandler.post(runnable);
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.prefs_file_key),
+                Context.MODE_PRIVATE);
+
+        if(prefs.getBoolean(context.getString(R.string.prefs_show_debug_messages), true)) {
+            Handler mainHandler = new Handler(context.getMainLooper());
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(
+                            context,
+                            messageText,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+            };
+            mainHandler.post(runnable);
+        }
     }
 }

@@ -206,7 +206,11 @@ public class MainActivity extends AppCompatActivity
         mSendDataTimerTask = new TimerTask() {
             @Override
             public void run() {
-                syncWithServer();
+                SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs_file_key),
+                        Context.MODE_PRIVATE);
+
+                if(prefs.getBoolean(getString(R.string.prefs_server_auto_sync), true))
+                    syncWithServer();
             }
         };
         mPeriodicActionsTimer.scheduleAtFixedRate(mSendDataTimerTask, 1000, 10000);

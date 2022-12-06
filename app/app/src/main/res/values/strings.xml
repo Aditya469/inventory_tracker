@@ -36,8 +36,6 @@ limitations under the License.
         <item>Front Camera</item>
         <item>Rear Camera</item>
     </string-array>
-    <string name="label_settings_password">Settings Password</string>
-    <string name="settings_password_hint">New password...</string>
     <string name="label_detection_delay">QR Code Detection Delay (seconds)</string>
     <string-array name="detection_delay_labels">
         <item>No delay</item>
@@ -46,6 +44,10 @@ limitations under the License.
         <item>2 seconds</item>
         <item>3 seconds</item>
     </string-array>
+    <string name="label_settings_password">Settings Password</string>
+    <string name="settings_password_hint">New password...</string>
+    <string name="label_settings_use_server_auto_sync">Use Server Auto-sync</string>
+    <string name="label_settings_show_debug_messages">Show Debug Messages</string>
 
 
     <!-- add stock fragment -->
@@ -105,12 +107,14 @@ limitations under the License.
     <string name="prefs_settings_password" translatable="false">prefsSettingsPassword</string>
     <string name="prefs_use_front_camera" translatable="false">prefsCameraToUse</string>
     <string name="prefs_camera_detection_delay" translatable="false">prefsCameraDetectionDelay</string>
-    <string name="prefs_use_fullscreen_confirmations" translatable="false">useFullscreenConfirmations</string>
-    <string name="prefs_minimum_wait_after_camera_send_barcode" translatable="false">minCameraBarcodeRepeatDelay</string>
+    <string name="prefs_use_fullscreen_confirmations" translatable="false">prefsUseFullscreenConfirmations</string>
+    <string name="prefs_minimum_wait_after_camera_send_barcode" translatable="false">prefsMinCameraBarcodeRepeatDelay</string>
+    <string name="prefs_show_debug_messages" translatable="false">prefsShowDebugMessages</string>
+    <string name="prefs_server_auto_sync" translatable="false">prefsServerAutoSync</string>
 
 
     <!--    System keywords. Kept here rather than have a list of repeated and typo-sensitive keys
-            distrubuted through the codebase -->
+            distributed through the codebase -->
     <string name="sys_prefix_item" translatable="false">item_</string>
     <string name="sys_prefix_location" translatable="false">bin_</string>
     <string name="sys_prefix_job" translatable="false">job_</string>

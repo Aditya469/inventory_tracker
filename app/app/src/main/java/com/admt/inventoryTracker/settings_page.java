@@ -42,22 +42,17 @@ public class settings_page extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        EditText tbServerURL = (EditText) findViewById(R.id.tbServerURL);
-        EditText tbSettingsPassword = (EditText) findViewById(R.id.tbSettingsPassword);
-        Switch swUseServerDiscovery = (Switch) findViewById(R.id.swUseServerDiscovery);
-        Button btnFindServerNow = (Button) findViewById(R.id.btnFindServerNow);
-        Spinner spCameraSelect = (Spinner) findViewById(R.id.spCameraSelect);
-        Spinner spDetectionDelay = (Spinner) findViewById(R.id.spDetectionDelay);
-
         SharedPreferences prefs = getSharedPreferences(
                 getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
 
+        // server URL and discovery.
+        EditText tbServerURL = (EditText) findViewById(R.id.tbServerURL);
         tbServerURL.setText(prefs.getString(
                 getString(R.string.prefs_server_base_address), "")
         );
-        tbSettingsPassword.setText(prefs.getString(
-                getString(R.string.prefs_settings_password), "1234"));
 
+        Switch swUseServerDiscovery = (Switch) findViewById(R.id.swUseServerDiscovery);
+        Button btnFindServerNow = (Button) findViewById(R.id.btnFindServerNow);
         if(prefs.getBoolean(getString(R.string.prefs_use_server_discovery), false)){
             swUseServerDiscovery.setChecked(true);
             btnFindServerNow.setEnabled(true);
@@ -74,6 +69,13 @@ public class settings_page extends AppCompatActivity {
         });
         btnFindServerNow.setOnClickListener(this::onFindServerBtnClicked);
 
+        // settings password
+        EditText tbSettingsPassword = (EditText) findViewById(R.id.tbSettingsPassword);
+        tbSettingsPassword.setText(prefs.getString(
+                getString(R.string.prefs_settings_password), "1234"));
+
+        // camera selection and detection delay
+        Spinner spCameraSelect = (Spinner) findViewById(R.id.spCameraSelect);
         boolean useFrontCamera = prefs.getBoolean(
                 getString(R.string.prefs_use_front_camera), true);
         if (useFrontCamera)
@@ -81,6 +83,7 @@ public class settings_page extends AppCompatActivity {
         else
             spCameraSelect.setSelection(1);
 
+        Spinner spDetectionDelay = (Spinner) findViewById(R.id.spDetectionDelay);
         // note times are in milliseconds
         long detectionDelay = prefs.getLong(getString(R.string.prefs_camera_detection_delay), 1000);
         if (detectionDelay == 0)
@@ -94,6 +97,13 @@ public class settings_page extends AppCompatActivity {
         else if (detectionDelay == 3000)
             spDetectionDelay.setSelection(4);
 
+        // auto sync
+        Switch swUseServerAutoSync = (Switch) findViewById(R.id.swUseServerAutoSync);
+        swUseServerAutoSync.setChecked(prefs.getBoolean(getString(R.string.prefs_server_auto_sync), true));
+
+        // show debug messages
+        Switch swShowDebugMessages = (Switch) findViewById(R.id.swShowDebugMessages);
+        swShowDebugMessages.setChecked(prefs.getBoolean(getString(R.string.prefs_show_debug_messages), true));
     }
 
     public void onUseServerDiscoveryChanged(){
@@ -137,25 +147,24 @@ public class settings_page extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs_file_key),
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        EditText tbServerURL = (EditText) findViewById(R.id.tbServerURL);
-        EditText tbSettingsPassword = (EditText) findViewById(R.id.tbSettingsPassword);
-        Switch swUseServerDiscovery = (Switch) findViewById(R.id.swUseServerDiscovery);
-        Spinner spCameraSelect = (Spinner) findViewById(R.id.spCameraSelect);
-        Spinner spDetectionDelay = (Spinner) findViewById(R.id.spDetectionDelay);
 
+        EditText tbServerURL = (EditText) findViewById(R.id.tbServerURL);
+        String serverBaseAddress = tbServerURL.getText().toString();
+        editor.putString(getString(R.string.prefs_server_base_address), serverBaseAddress);
+
+        EditText tbSettingsPassword = (EditText) findViewById(R.id.tbSettingsPassword);
+        String password = tbSettingsPassword.getText().toString();
+        editor.putString(getString(R.string.prefs_settings_password), password);
+
+        Spinner spCameraSelect = (Spinner) findViewById(R.id.spCameraSelect);
         int camOptionSelection = spCameraSelect.getSelectedItemPosition();
         boolean useFrontCamera = true;
         if (camOptionSelection == 1) {
             useFrontCamera = false;
         }
-
-        String serverBaseAddress = tbServerURL.getText().toString();
-        String password = tbSettingsPassword.getText().toString();
-
-        editor.putString(getString(R.string.prefs_server_base_address), serverBaseAddress);
-        editor.putString(getString(R.string.prefs_settings_password), password);
         editor.putBoolean(getString(R.string.prefs_use_front_camera), useFrontCamera);
 
+        Spinner spDetectionDelay = (Spinner) findViewById(R.id.spDetectionDelay);
         if (spDetectionDelay.getSelectedItemPosition() == 0)
             editor.putLong(getString(R.string.prefs_camera_detection_delay), 0);
         else if (spDetectionDelay.getSelectedItemPosition() == 1)
@@ -167,7 +176,14 @@ public class settings_page extends AppCompatActivity {
         else if (spDetectionDelay.getSelectedItemPosition() == 4)
             editor.putLong(getString(R.string.prefs_camera_detection_delay), 3000);
 
+        Switch swUseServerDiscovery = (Switch) findViewById(R.id.swUseServerDiscovery);
         editor.putBoolean(getString(R.string.prefs_use_server_discovery), swUseServerDiscovery.isChecked());
+
+        Switch swUseServerAutoSync = (Switch) findViewById(R.id.swUseServerAutoSync);
+        editor.putBoolean(getString(R.string.prefs_server_auto_sync), swUseServerAutoSync.isChecked());
+
+        Switch swShowDebugMessages = (Switch) findViewById(R.id.swShowDebugMessages);
+        editor.putBoolean(getString(R.string.prefs_show_debug_messages), swShowDebugMessages.isChecked());
 
         editor.commit();
 

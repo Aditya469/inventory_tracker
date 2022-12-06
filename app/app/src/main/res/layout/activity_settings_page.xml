@@ -97,6 +97,11 @@ limitations under the License.
                 android:enabled="false"
                 />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:barrierDirection="top" />
+
             <TextView
                 android:id="@+id/tvCameraSelect"
                 android:layout_width="match_parent"
@@ -109,6 +114,23 @@ limitations under the License.
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/camera_selection_options" />
+
+            <TextView
+                android:id="@+id/tvDetectionDelay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_detection_delay" />
+
+            <Spinner
+                android:id="@+id/spDetectionDelay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/detection_delay_labels"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:barrierDirection="top" />
 
             <TextView
                 android:id="@+id/tvSettingsPassword"
@@ -125,17 +147,25 @@ limitations under the License.
                 android:importantForAutofill="no"
                 android:inputType="textPassword" />
 
-            <TextView
-                android:id="@+id/tvDetectionDelay"
+            <androidx.constraintlayout.widget.Barrier
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_detection_delay" />
+                android:layout_height="match_parent"
+                app:barrierDirection="top" />
 
-            <Spinner
-                android:id="@+id/spDetectionDelay"
+            <Switch
+                android:id="@+id/swUseServerAutoSync"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/detection_delay_labels"/>
+                android:text="@string/label_settings_use_server_auto_sync"
+                />
+
+            <Switch
+                android:id="@+id/swShowDebugMessages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_settings_show_debug_messages"
+                />
+
 
 
 
