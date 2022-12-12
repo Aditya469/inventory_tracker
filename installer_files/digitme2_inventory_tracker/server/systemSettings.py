@@ -19,13 +19,18 @@ from flask import (
 	Blueprint, render_template, make_response, jsonify, request
 )
 
-from auth import admin_access_required
-from db import getDbSession
+from auth import admin_access_required, login_required
+from db import getDbSession, close_db
 from dbSchema import Settings
 from emailNotification import sendEmail
 from messages import getTestEmailMessage
 
 bp = Blueprint('systemSettings', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/systemSettings')
@@ -35,7 +40,7 @@ def getSystemSettingsPage():
 
 
 @bp.route('/loadSettings')
-@admin_access_required
+@login_required
 def getSystemSettings():
     settings = getDbSession().query(Settings).first()
     return make_response(jsonify(settings.toDict()), 200)

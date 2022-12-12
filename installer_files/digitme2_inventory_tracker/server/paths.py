@@ -17,7 +17,6 @@ limitations under the License.
 # simply a list of all configurable file and folder paths, all kept in
 # one file for easy management
 
-
 instancePath = "ROOTPATH/instance"
 dbPath = f"{instancePath}/inventoryDB.sqlite"
 dbLockFilePath = f"{instancePath}/dbLockFile.lock"
@@ -25,5 +24,4 @@ dbBackupStatusFilePath = f"{instancePath}/dbBackupStatusFile"
 dbBackupDirPath = f"{instancePath}/dbBackupFiles"
 
 logPath = f"{instancePath}/server.log"
-scheduleWorkerLogPath= f"{instancePath}/scheduleTaskWorker.log"
 

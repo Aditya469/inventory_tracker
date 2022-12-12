@@ -4,41 +4,44 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="allow expiry date to be hidden on stock panel for non-expiring stock">
+    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="adjustments to scheduled task worker to try adn make things run smoothly">
+      <change beforePath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/bins.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/bins.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/Analysis-00.toc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/COLLECT-00.toc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/EXE-00.toc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/PKG-00.toc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/PYZ-00.pyz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/PYZ-00.toc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/base_library.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/warn-wsgi.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/wsgi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/wsgi.pkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/build/wsgi/xref-wsgi.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/checkingReasons.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/checkingReasons.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbBackupFiles/inventory_tracker_db_backup_2022-09-21_17:15:08.sqlite" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbBackupFiles/inventory_tracker_db_backup_2022-09-21_17:25:12.sqlite" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbBackupFiles/inventory_tracker_db_backup_2022-09-21_17:25:55.sqlite" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbBackupStatusFile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbLockFile.lock" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbSchema.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbSchema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/device_discovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/device_discovery.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/inventoryDB.sqlite" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/jobs.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/jobs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/paths.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/paths.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/productManagement.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/productManagement.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/qrCodeFunctions.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/qrCodeFunctions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/apple-touch-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/apple-touch-icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-16x16.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-16x16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-32x32.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-32x32.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/mstile-150x150.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/mstile-150x150.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/site.webmanifest" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/site.webmanifest" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/stockManagement.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/stockManagement.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/systemSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/systemSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/jobPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/jobPanel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageBins.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageBins.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageCheckingReasons.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageCheckingReasons.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageUsers.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageUsers.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/overview.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/overview.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productManagement.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productManagement.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productPanel.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/binsManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/binsManagement.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/checkingReasonsManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/checkingReasonsManagement.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/jobPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/jobPanel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/manageUsers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/manageUsers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productManagement.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productPanel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/wsgi.spec" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbSchema.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbSchema.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jobs.py" beforeDir="false" afterPath="$PROJECT_DIR$/jobs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/jobPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/jobPanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/scripts/jobPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/scripts/jobPanel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stickerSheetPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stickerSheetPanel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockItemPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockItemPanel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockManagement.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockManagement.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +119,7 @@
       <recent name="$PROJECT_DIR$/templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.webapp">
+  <component name="RunManager" selected="Python.scheduleWorker">
     <configuration name="clockuser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -296,181 +299,6 @@
       <option name="presentableId" value="Default" />
       <updated>1651757426946</updated>
     </task>
-    <task id="LOCAL-00007" summary="Add email settings and test email functionality to the settings page">
-      <created>1664185853964</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1664185853964</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Bugfix for app interface failing to handle attempts to add items with invalid item IDs">
-      <created>1664202364479</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1664202364479</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Add CSV output for all persistent data tables related to stock (newly added stock and user, settings, etc are not included)">
-      <created>1664202417192</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1664202417192</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Add Job Templates to allow stock to be added automatically">
-      <created>1664811103106</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1664811103106</updated>
-    </task>
-    <task id="LOCAL-00011" summary="straighten out licensing so that it doesn't wind up client side">
-      <created>1664875210587</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1664875210587</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Split panels off into separate files for easier handling">
-      <created>1664877304086</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1664877304086</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Add a panel to set sticker sheet parameters and get sticker sheets">
-      <created>1664891181295</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1664891181295</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Add a panel to set sticker sheet parameters and get sticker sheets">
-      <created>1664961227308</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1664961227308</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Set up a local version of bootstrap and jquery, with files to allow this to be updated using npm. Theming, beautification, and visual tweaks">
-      <created>1664973989717</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1664973989717</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Add simple picking list generation">
-      <created>1665409743137</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1665409743137</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Add filter for hiding non-zero stock">
-      <created>1665999199438</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1665999199438</updated>
-    </task>
-    <task id="LOCAL-00018" summary="Bugfix for not adding partial Qty on new stock properly">
-      <created>1666185615701</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1666185615701</updated>
-    </task>
-    <task id="LOCAL-00019" summary="Set up logging">
-      <created>1666188393473</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1666188393473</updated>
-    </task>
-    <task id="LOCAL-00020" summary="Fix formatting of stock amounts in various places">
-      <created>1666188408814</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1666188408814</updated>
-    </task>
-    <task id="LOCAL-00021" summary="remove erroneous printing user from auth">
-      <created>1666188812660</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1666188812660</updated>
-    </task>
-    <task id="LOCAL-00022" summary="Fix job panel to get assigned qty col to a reasonable width. Fixed at 10ems">
-      <created>1666193284399</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1666193284399</updated>
-    </task>
-    <task id="LOCAL-00023" summary="Make the product details panel a bit prettier">
-      <created>1666268066343</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1666268066343</updated>
-    </task>
-    <task id="LOCAL-00024" summary="Bugfix to handle missing expiration dates on expirable stock">
-      <created>1666285112000</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1666285112000</updated>
-    </task>
-    <task id="LOCAL-00025" summary="Add function to go to stock page from all overview stock tables">
-      <created>1666607215157</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1666607215157</updated>
-    </task>
-    <task id="LOCAL-00026" summary="Add function to go to stock page from all overview stock tables">
-      <created>1666608479734</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1666608479734</updated>
-    </task>
-    <task id="LOCAL-00027" summary="Add function to go to stock page from all overview stock tables">
-      <created>1666609970558</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1666609970558</updated>
-    </task>
-    <task id="LOCAL-00028" summary="Add version string">
-      <created>1666610013938</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1666610013938</updated>
-    </task>
-    <task id="LOCAL-00029" summary="Add stock item ID card generation and download for individual items">
-      <created>1666613990626</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1666613990626</updated>
-    </task>
-    <task id="LOCAL-00030" summary="Update logo">
-      <created>1666631161223</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1666631161223</updated>
-    </task>
-    <task id="LOCAL-00031" summary="Add product|job|stock item updated check function (untested)">
-      <created>1666631282193</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1666631282193</updated>
-    </task>
     <task id="LOCAL-00032" summary="Add product|job|stock item updated check function">
       <created>1666700149577</created>
       <option name="number" value="00032" />
@@ -639,7 +467,182 @@
       <option name="project" value="LOCAL" />
       <updated>1669128036658</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="fix checking reasons not being deleted">
+      <created>1669385314794</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1669385314795</updated>
+    </task>
+    <task id="LOCAL-00057" summary="add job id string">
+      <created>1669385337211</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1669385337211</updated>
+    </task>
+    <task id="LOCAL-00058" summary="add job id string and allow to be set">
+      <created>1669385369114</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1669385369114</updated>
+    </task>
+    <task id="LOCAL-00059" summary="prevent duplicate checking reason names">
+      <created>1669386684238</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1669386684239</updated>
+    </task>
+    <task id="LOCAL-00060" summary="update icon">
+      <created>1669389152955</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1669389152955</updated>
+    </task>
+    <task id="LOCAL-00061" summary="disable access level selector for admin">
+      <created>1669389169395</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1669389169396</updated>
+    </task>
+    <task id="LOCAL-00062" summary="extra favicon files">
+      <created>1669631619432</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1669631619435</updated>
+    </task>
+    <task id="LOCAL-00063" summary="update permissions and access, and remove edit access">
+      <created>1669637494985</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1669637494986</updated>
+    </task>
+    <task id="LOCAL-00064" summary="disable checkbox for newly added stock for readonly users">
+      <created>1669637656490</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1669637656490</updated>
+    </task>
+    <task id="LOCAL-00065" summary="bugfix for access levels">
+      <created>1669641411380</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1669641411380</updated>
+    </task>
+    <task id="LOCAL-00066" summary="change itemID sticker text size">
+      <created>1669728408343</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1669728408344</updated>
+    </task>
+    <task id="LOCAL-00067" summary="fix timestamps on checking in stock and add nice feedback messages from api">
+      <created>1669743254436</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1669743254436</updated>
+    </task>
+    <task id="LOCAL-00068" summary="deleting stock also deleted associated verification and check-in/out records">
+      <created>1669804198594</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1669804198595</updated>
+    </task>
+    <task id="LOCAL-00069" summary="bugfix for checkout reason not being recorded">
+      <created>1669812618850</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1669812618851</updated>
+    </task>
+    <task id="LOCAL-00070" summary="update access level labelling when creating users">
+      <created>1669814756391</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1669814756392</updated>
+    </task>
+    <task id="LOCAL-00071" summary="Add &quot;add another product&quot; button to product panel">
+      <created>1669829621645</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1669829621646</updated>
+    </task>
+    <task id="LOCAL-00072" summary="Add &quot;add another product&quot; button to product panel">
+      <created>1669987843090</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1669987843090</updated>
+    </task>
+    <task id="LOCAL-00073" summary="bugfix for price filtering - fixed by changing DB schema">
+      <created>1670240456609</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1670240456610</updated>
+    </task>
+    <task id="LOCAL-00074" summary="prevent checking out greater than available quantities of stock">
+      <created>1670245052081</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1670245052081</updated>
+    </task>
+    <task id="LOCAL-00075" summary="turn off db echo">
+      <created>1670245060163</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1670245060163</updated>
+    </task>
+    <task id="LOCAL-00076" summary="fix bulkItemCount not being recorded">
+      <created>1670248953073</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1670248953073</updated>
+    </task>
+    <task id="LOCAL-00077" summary="add test for ItemID QR codes not being valid and rework getAppStockData appropriately">
+      <created>1670260458608</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1670260458608</updated>
+    </task>
+    <task id="LOCAL-00078" summary="bugfix for trying to send email notifications with an empty recipient list">
+      <created>1670333300087</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1670333300101</updated>
+    </task>
+    <task id="LOCAL-00079" summary="changes to close the database after each request">
+      <created>1670342912307</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1670342912307</updated>
+    </task>
+    <task id="LOCAL-00080" summary="adjustments to scheduled task worker to try adn make things run smoothly">
+      <created>1670344679612</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1670344679613</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -656,44 +659,44 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Add product|job|stock item updated check function (untested)" />
-    <MESSAGE value="Add product|job|stock item updated check function" />
-    <MESSAGE value="Fix update check on stock item panel" />
-    <MESSAGE value="Set version to indicate test" />
-    <MESSAGE value="add explicit instance path" />
-    <MESSAGE value="adjust job id cards to be generated on the fly" />
-    <MESSAGE value="Set up for wsgi" />
-    <MESSAGE value="Add favicon and page title" />
-    <MESSAGE value="cleaning up imports and wsgi setup" />
-    <MESSAGE value="make paths easier to set up" />
-    <MESSAGE value="move server discovery to a background thread" />
-    <MESSAGE value="add include paths.py to scheduledTasksWorker" />
-    <MESSAGE value="alteration to time defaults for DB" />
-    <MESSAGE value="Add sticker sheet gen for product barcodes and tidy up code a bit" />
-    <MESSAGE value="fix job update timestamps being set wrongly in api operations" />
-    <MESSAGE value="fix unassigned stock calculation. Now takes stock that has been assigned and used into account" />
-    <MESSAGE value="tweak to settings" />
-    <MESSAGE value="cleaning up unused commented out code" />
-    <MESSAGE value="bin qr code generation on demand" />
-    <MESSAGE value="bugfix" />
-    <MESSAGE value="bugfix on jobs not reloading corectly after details changed" />
-    <MESSAGE value="tweaks to adding products, changing the panel title to try and make it more obvious when it's in edit mode" />
-    <MESSAGE value="make job and bin ID cards be generated as required" />
-    <MESSAGE value="reduce size of text on sticker sheets" />
     <MESSAGE value="allow expiry date to be hidden on stock panel for non-expiring stock" />
-    <option name="LAST_COMMIT_MESSAGE" value="allow expiry date to be hidden on stock panel for non-expiring stock" />
+    <MESSAGE value="fix checking reasons not being deleted" />
+    <MESSAGE value="add job id string" />
+    <MESSAGE value="add job id string and allow to be set" />
+    <MESSAGE value="prevent duplicate checking reason names" />
+    <MESSAGE value="update icon" />
+    <MESSAGE value="disable access level selector for admin" />
+    <MESSAGE value="extra favicon files" />
+    <MESSAGE value="update permissions and access, and remove edit access" />
+    <MESSAGE value="disable checkbox for newly added stock for readonly users" />
+    <MESSAGE value="bugfix for access levels" />
+    <MESSAGE value="change itemID sticker text size" />
+    <MESSAGE value="fix timestamps on checking in stock and add nice feedback messages from api" />
+    <MESSAGE value="deleting stock also deleted associated verification and check-in/out records" />
+    <MESSAGE value="bugfix for checkout reason not being recorded" />
+    <MESSAGE value="update access level labelling when creating users" />
+    <MESSAGE value="Add &quot;add another product&quot; button to product panel" />
+    <MESSAGE value="bugfix for price filtering - fixed by changing DB schema" />
+    <MESSAGE value="prevent checking out greater than available quantities of stock" />
+    <MESSAGE value="turn off db echo" />
+    <MESSAGE value="fix bulkItemCount not being recorded" />
+    <MESSAGE value="add test for ItemID QR codes not being valid and rework getAppStockData appropriately" />
+    <MESSAGE value="bugfix for trying to send email notifications with an empty recipient list" />
+    <MESSAGE value="changes to close the database after each request" />
+    <MESSAGE value="adjustments to scheduled task worker to try adn make things run smoothly" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjustments to scheduled task worker to try adn make things run smoothly" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/users.py</url>
-          <line>127</line>
+          <line>132</line>
           <option name="timeStamp" value="62" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/api.py</url>
-          <line>191</line>
+          <line>218</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -702,24 +705,39 @@
           <option name="timeStamp" value="73" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/stockManagement.py</url>
-          <line>237</line>
-          <option name="timeStamp" value="79" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/stockManagement.py</url>
-          <line>247</line>
-          <option name="timeStamp" value="81" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/api.py</url>
-          <line>197</line>
+          <line>224</line>
           <option name="timeStamp" value="82" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/systemSettings.py</url>
-          <line>47</line>
+          <line>52</line>
           <option name="timeStamp" value="89" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/api.py</url>
+          <line>303</line>
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/api.py</url>
+          <line>391</line>
+          <option name="timeStamp" value="102" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/api.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/api.py</url>
+          <line>112</line>
+          <option name="timeStamp" value="104" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/api.py</url>
+          <line>35</line>
+          <option name="timeStamp" value="110" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -740,7 +758,10 @@
         <watch expression="self.stockItem" language="Python" />
       </configuration>
       <configuration name="PythonConfigurationType">
-        <watch expression="stockUsedTotals" language="Python" />
+        <watch expression="itemId" language="Python" />
+        <watch expression="stockItem" language="Python" />
+        <watch expression="productType" language="Python" />
+        <watch expression="stockBarcodeList" language="Python" />
       </configuration>
     </watches-manager>
   </component>

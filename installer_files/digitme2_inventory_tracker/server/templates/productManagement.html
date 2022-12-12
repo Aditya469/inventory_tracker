@@ -30,11 +30,12 @@ limitations under the License.
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
+	<input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{%else%}value="0"{% endif %} />
 	<div class="row row-cols-sm-1 row-cols-lg-2	">
 		<div id="productsContainer" class="col col-md-12 col-lg-6 border overflow-auto">
 			<h1>Known Products</h1>
 			<div id="productControls" class="row px-2">
-				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12 btn btn-primary" onclick="openProductDetailsPanel(-1)"/>
+				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12 btn btn-primary" onclick="openProductDetailsPanel(-1)" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 				<input id="productsSearchBar" placeholder="Start typing to search..." class="col col-12 my-1 form-control" oninput="updateProductsTable()">
 			</div>
 			<a href="" id="productsCsvDownloadLink">Download this data as a CSV file</a>
@@ -44,17 +45,17 @@ limitations under the License.
 		<div id="newStockDisplayContainer" class="col col-md-12 col-lg-6 border">
 			<h1>Newly Added Stock</h1>
 			<div id="stockSearchControls" class="pb-1 row px-2">
-				<input id="stockSearchBar" placeholder="Start typing to search..." class="col col-12 form-control" oninput="updateNewStockTable()">
+				<input id="stockSearchBar" placeholder="Start typing to search..." class="col col-12 form-control" oninput="updateNewStockTable()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				<div class="col col-12 form-check">
-					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" class="form-check-input" onclick="updateNewStockTable()">
+					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" class="form-check-input" onclick="updateNewStockTable()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					<label for="onlyShowUnknownProductsCheckbox" class="form-check-label">Only show stock with unknown product types</label>
 				</div>
 				<div class="col col-12 form-check">
-					<input id="selectAllCheckbox" type="checkbox" class="form-check-input" onclick="onSelectAllCheckboxClicked()">
+					<input id="selectAllCheckbox" type="checkbox" class="form-check-input" onclick="onSelectAllCheckboxClicked()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					<label for="selectAllCheckbox" class="form-check-label">Select all</label>
 				</div>
 				<input type="button" id="deleteSelectedNewStockButton" value="Delete selected items" class="col col-4 btn btn-danger" disabled onclick="deleteSelectedNewStockItems()">
-				<input id="verifyAllButton" onclick="verifyAllNewStock()" class="col col-4 offset-4	 btn btn-primary" value="Verify All New Stock" type="button"/>
+				<input id="verifyAllButton" onclick="verifyAllNewStock()" class="col col-4 offset-4	 btn btn-primary" value="Verify All New Stock" type="button" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 			</div>
 			<div id="stockOverviewTableContainer" class="overflow-auto">
 

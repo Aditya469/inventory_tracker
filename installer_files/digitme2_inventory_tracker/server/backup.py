@@ -24,13 +24,19 @@ from flask import (
 )
 
 from auth import admin_access_required
-from db import dbLock, getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext, close_db
+from db import dbLock, close_db, getDbSession
 from dbSchema import User, Settings
 from emailNotification import sendEmail
 from messages import getDatabaseBackupSuccessNotificationMessage, getDatabaseBackupFailureNotificationMessage
 from paths import dbBackupDirPath, dbPath
 
 bp = Blueprint('backup', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
+
 
 @bp.route("/initiateBackup", methods=("POST",))
 @admin_access_required
@@ -83,9 +89,9 @@ def backUpDatabase():
 	Moves each existing backup up one number, and then copies the existing database to the newly cleared position.
 	'''
 	backupFileNames = []
-	dbSession = getDbSessionWithoutApplicationContext()
+	dbSession = getDbSession()
 	backupCount = dbSession.query(Settings.dbNumberOfBackups).first()[0]
-	closeDbSessionWithoutApplicationContext(dbSession)
+	close_db()
 
 	# get a list of backup file names. If we have reached the maximum count, delete the oldest. Ensure that the directory exists first
 	if not os.path.exists(dbBackupDirPath):
@@ -122,7 +128,7 @@ def backUpDatabase():
 		dbLock.release()
 
 	# check if an email should be sent
-	dbSession = getDbSessionWithoutApplicationContext()
+	dbSession = getDbSession()
 	settings = dbSession.query(Settings).first()
 	if settings.sendEmails:
 		emailAddressList = [row[0] for row in
@@ -136,6 +142,8 @@ def backUpDatabase():
 		else:
 			message = getDatabaseBackupFailureNotificationMessage(status)
 			sendEmail(emailAddressList, "ATTENTION REQUIRED. Inventory Tracker database backup failed", message)
+
+	close_db()
 
 	return status, backupSucceeded
 

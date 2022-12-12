@@ -24,14 +24,19 @@ from flask import (
 )
 from sqlalchemy import select, func
 
-from auth import login_required, create_access_required, edit_access_required
-from db import getDbSession
+from auth import login_required, create_access_required
+from db import getDbSession, close_db
 from dbSchema import Job, Settings, AssignedStock, CheckInRecord, CheckOutRecord, ProductType, JobTemplate, \
 	TemplateStockAssignment, Bin
 from qrCodeFunctions import convertDpiAndMmToPx, generateIdCard
 from utilities import writeDataToCsvFile
 
 bp = Blueprint('jobs', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route("/createJob", methods=("POST",))
@@ -67,7 +72,7 @@ def createJob():
 
 
 @bp.route("/updateJob", methods=("POST",))
-@edit_access_required
+@create_access_required
 def updateJob():
 	error = None
 	if "jobId" not in request.json:
@@ -395,7 +400,7 @@ def getTotalStockUsedOnJob(job):
 
 
 @bp.route("/addAssignedStock", methods=("POST",))
-@edit_access_required
+@create_access_required
 def addAssignedStock():
 	error = None
 	if "productId" not in request.form:
@@ -421,7 +426,7 @@ def addAssignedStock():
 
 
 @bp.route("/deleteAssignedStock", methods=("POST",))
-@edit_access_required
+@create_access_required
 def deleteAssignedStock():
 	if "assignedItemId" not in request.form and "assignedItemList" not in request.form:
 		return make_response("Item ID or ID list must be provided")

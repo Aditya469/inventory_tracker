@@ -21,17 +21,23 @@ import smtplib
 import ssl
 import threading
 
+from flask import request
+
 from db import getDbSession
-# the sending part of this runs on a different thread to prevent the system hanging
 from dbSchema import Settings
 
 
+# the sending part of this runs on a different thread to prevent the system hanging
 def sendEmail(receiverAddressList, subject, emailBody):
-
     dbSession = getDbSession()
+
     settings = dbSession.query(Settings).first()
     if settings.sendEmails is not True:
         logging.info("Skip sending email due to settings configuration")
+        return
+
+    if len(receiverAddressList) == 0:
+        logging.info("Skip sending email due to empty recipient list")
         return
 
     context = ssl.create_default_context()
@@ -79,3 +85,4 @@ def sendEmail(receiverAddressList, subject, emailBody):
                 msg
             )
         ).start()
+

@@ -43,7 +43,8 @@ function addReason(){
         },
         error: function(jqXHR, textStatus, errorThrown){
             console.log(jqXHR.responseText);
-            $("#addReasonsFeedbackSpan").html(jqXHR.responseText);
+            $("#addReasonFeedbackSpan").html(jqXHR.responseText);
+            setTimeout(function(){$("#addReasonFeedbackSpan").html("");}, 5000);
         }
     });
 }
@@ -51,7 +52,7 @@ function addReason(){
 function deleteReason(reasonId){
     if(confirm("Delete this checking reason?")){
         $(this).prop("disabled", true);
-        var url = new URL("{{ url_for("checkingReasons.deleteCheckingReason") }}")
+        var url = new URL(window.location.origin + "{{ url_for("checkingReasons.deleteCheckingReason") }}")
         requestParams = {"reasonId": reasonId}
         $.ajax({
         url: url,
@@ -67,6 +68,7 @@ function deleteReason(reasonId){
             error: function(jqXHR, textStatus, errorThrown){
                 console.log(jqXHR.responseText);
                 $("#addReasonFeedbackSpan").html(jqXHR.responseText);
+                setTimeout(function(){$("#addReasonFeedbackSpan").html("");}, 5000);
             }
         });
     }
@@ -84,7 +86,9 @@ function updateReasonsTable(){
 
                 var delBtn = $("<input type='button' value='Delete'>");
                 delBtn.data("reasonId", responseData[i].id);
-                delBtn.on("click", function(){ deleteBin($(this).data("reasonId")); });
+                delBtn.on("click", function(){ deleteReason($(this).data("reasonId")); });
+                if($("#userCanCreate").val() == "0")
+                    delBtn.prop("disabled", true);
                 row.append($("<td>").append(delBtn));
                 $("#reasonTableBody").append(row);
             }

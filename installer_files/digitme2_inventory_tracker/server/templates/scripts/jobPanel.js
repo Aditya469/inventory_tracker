@@ -112,6 +112,8 @@ function populateJobPanel(jobData){
 
         var checkbox = $("<input type='checkbox' class='assignedStockSelectCheckbox'>")
         checkbox.on('click', function(){ onAssignedStockSelectCheckboxClicked(); });
+        if($("#userCanCreate").val() == "0")
+            checkbox.prop("disabled", true);
         row.append($("<td>").append(checkbox));
 
         row.append($("<td>").html(jobData.assignedStock[i].productName));
@@ -121,6 +123,8 @@ function populateJobPanel(jobData){
         var numberInput = $("<input type='number' class='assignedStockQuantity form-control'>");
         numberInput.on('input', function(){ $(this).parents("tr").first().addClass("changedAssignedQty"); } );
         numberInput.val(jobData.assignedStock[i].quantity)
+        if($("#userCanCreate").val() == "0")
+            numberInput.prop("disabled", true);
 
         var numberUnitSpan = $("<span class='input-group-text'>");
         numberUnitSpan.html(jobData.assignedStock[i].unit);

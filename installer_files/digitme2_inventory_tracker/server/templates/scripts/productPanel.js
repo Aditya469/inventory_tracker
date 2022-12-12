@@ -36,15 +36,20 @@ function openProductDetailsPanel(prodId){
     $("#greyout").prop("hidden", false);
     $("#editProductPanel").prop("hidden", false);
     if(prodId == -1){
+        $("#addAnotherProductButton").prop("hidden", true);
         $("#panelTitle").html("Create New Product");
         $("#deleteButton").prop("disabled", true);
+        $("#productId").val("-1");
     }
     else{
         $("#panelTitle").html("Edit Product Details");
         $("#addedTimestampLabel").prop("hidden", false);
         $("#addedTimestamp").prop("hidden", false);
         $("#btnGetBarcodeStickerSheet").prop("disabled", false);
-        $("#deleteButton").prop("disabled", false);
+        if($("#userCanCreate").val() == "0")
+            $("#deleteButton").prop("disabled", true);
+        else
+            $("#deleteButton").prop("disabled", false);
         var getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
         $.ajax({
             url: getDataUrl,
@@ -195,7 +200,7 @@ function saveProductDetails(){
     else
         fd.append("newStockOrdered", "false");
 
-    if($("#productId").val() == "")
+    if($("#productId").val() == "-1")
         var url = "{{ url_for('productManagement.addNewProductType') }}";
     else
         var url = "{{ url_for('productManagement.updateProductType') }}";
@@ -214,6 +219,12 @@ function saveProductDetails(){
                 setTimeout(function(){$("#saveProductFeedbackSpan").empty();}, 3000);
                 updateProductsTable();
                 updateNewStockTable();
+
+                // if we just saved a new product, make the addAnotherProduct button available, otherwise theres
+                // a strong tendency to end up changing details thinking you're adding another product
+                if($("#productId").val() == "-1")
+                    $("#addAnotherProductButton").prop("hidden", false);
+
                 openProductDetailsPanel(response.id); // most straightforward way to reset the update timer and stuff
             }
             else{
@@ -262,6 +273,7 @@ function closeProductDetailsPanel(){
     $("#newStockOrderedLabel").prop("hidden", true);
     $("#newStockOrdered").prop("hidden", true);
     $("#btnGetBarcodeStickerSheet").prop("disabled", true);
+    $("#addAnotherProductButton").prop("hidden", true);
     if(refreshCheckIntervalId != null)
         clearInterval(refreshCheckIntervalId);
 }

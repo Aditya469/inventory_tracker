@@ -37,10 +37,25 @@ class Numeric(types.TypeDecorator):
 		return str(value)
 
 	def process_result_value(self, value, dialect):
-		if value != "None" and value != None:
+		if value != "None" and value is not None:
 			return D(value)
 		return None
-#############################################################`
+
+
+class Price(types.TypeDecorator):
+	impl = types.Integer
+
+	def load_dialect_impl(self, dialect):
+		return dialect.type_descriptor(types.INTEGER)
+
+	def process_bind_param(self, value, dialect):
+		return int(value * 100)
+
+	def process_result_value(self, value, dialect):
+		if value != "None" and value is not None:
+			return D(value / 100.0)
+		return None
+
 
 class ItemId(Base):
 	__tablename__ = "itemIds"
@@ -77,7 +92,7 @@ class StockItem(Base):
 	addedTimestamp = Column(DateTime(timezone=True), default=datetime.datetime.now())
 	expiryDate = Column(Date, server_default=None)
 	quantityRemaining = Column(Numeric, default=0)
-	price = Column(Numeric)
+	price = Column(Price, default=0)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
 	lastUpdated = Column(DateTime(timezone=True), default=datetime.datetime.now())
 	associatedProduct = relationship("ProductType", back_populates="associatedStock")
@@ -132,7 +147,7 @@ class ProductType(Base):
 	addedTimestamp = Column(DateTime, default=datetime.datetime.now())
 	initialQuantity = Column(Numeric, default="")
 	quantityUnit = Column(String, default="")
-	expectedPrice = Column(Numeric, default=0)
+	expectedPrice = Column(Price, default=0)
 	barcode = Column(String, default="undefined")
 	canExpire = Column(Boolean, default=False)
 	reorderLevel = Column(Numeric, default=None)
@@ -173,9 +188,9 @@ class CheckInRecord(Base):
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
 	productType = Column(Integer, ForeignKey("productTypes.id"))
-	timestamp = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	timestamp = Column(DateTime(), default=datetime.datetime.now())
 	quantity = Column(Numeric, default=0)
-	binId = Column(Integer, ForeignKey("bins.id"), default=-1)
+	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
 	userId = Column(Integer, ForeignKey("users.id"))
 	reasonId = Column(Integer, ForeignKey("checkingReasons.id"))
@@ -205,7 +220,7 @@ class CheckOutRecord(Base):
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
 	productType = Column(Integer, ForeignKey("productTypes.id"))
-	timestamp = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	timestamp = Column(DateTime(), default=datetime.datetime.now())
 	quantity = Column(Numeric)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
@@ -355,6 +370,13 @@ class User(Base):
 			"receiveStockNotifications": self.receiveStockNotifications,
 			"receiveDbStatusNotifications": self.receiveDbStatusNotifications
 		}
+
+	def hasAdminAccess(self):
+		return self.accessLevel == 2
+
+	def hasCreateAccess(self):
+		return self.accessLevel >= 1
+
 
 
 class Settings(Base):

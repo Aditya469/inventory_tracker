@@ -22,10 +22,14 @@ from flask import (
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash
 
-from db import getDbSession, User
+from db import getDbSession, User, close_db
 
 bp = Blueprint('auth', __name__)
 
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -78,56 +82,28 @@ def login_required(view):
 	
 	return wrapped_view
 
+
 def admin_access_required(view):
 	@functools.wraps(view)
 	def wrapped_view(**kwargs):
 		if g.user is None:
 			return redirect(url_for('auth.login'))
-		elif g.user.accessLevel < 3:
+		elif not g.user.hasAdminAccess():
 			return abort(403)
 
 		return view(**kwargs)
 
 	return wrapped_view
+
 
 def create_access_required(view):
 	@functools.wraps(view)
 	def wrapped_view(**kwargs):
 		if g.user is None:
 			return redirect(url_for('auth.login'))
-		elif g.user.accessLevel < 2:
+		elif not g.user.hasCreateAccess():
 			return abort(403)
 
 		return view(**kwargs)
 
 	return wrapped_view
-
-def edit_access_required(view):
-	@functools.wraps(view)
-	def wrapped_view(**kwargs):
-		if g.user is None:
-			return redirect(url_for('auth.login'))
-		elif g.user.accessLevel < 1:
-			return abort(403)
-
-		return view(**kwargs)
-
-	return wrapped_view
-
-
-def userHasAdminAccess():
-	if g.user is not None and g.user.accessLevel == 3:
-		return True
-	return False
-
-
-def userHasCreateAccess():
-	if g.user is not None and g.user.accessLevel >= 2:
-		return True
-	return False
-
-
-def userHasEditAccess():
-	if g.user is not None and g.user.accessLevel >= 1:
-		return True
-	return False

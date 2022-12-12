@@ -31,6 +31,7 @@ limitations under the License.
 
 {% block content %}
 <div id="contentContainer" class="container mt-2">
+    <input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{% else %}value="0"{% endif %} />
     <div class="d-flex flex-row justify-content-between align-items-center">
         <h1>Items of Stock</h1>
         <input type="button" id="openStickerSheetPanelButton" class="btn btn-primary" onclick="openStickerSheetPanel()" value="Get ID Sticker Sheet">

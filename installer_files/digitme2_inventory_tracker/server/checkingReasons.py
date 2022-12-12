@@ -19,10 +19,15 @@ from flask import (
 )
 
 from auth import login_required, create_access_required
-from db import getDbSession
+from db import getDbSession, close_db
 from dbSchema import CheckingReason
 
 bp = Blueprint('checkingReasons', __name__)
+
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 
 @bp.route('/manageCheckingReasons')
@@ -47,6 +52,10 @@ def createCheckingReason():
         return make_response("reason must be defined", 400)
 
     dbSession = getDbSession()
+    existingReason = dbSession.query(CheckingReason).filter(CheckingReason.reason==request.json.get("reason")).first()
+    if existingReason is not None:
+        return make_response(f"{request.json.get('reason')} already exists", 400)
+
     dbSession.add(CheckingReason(reason=request.json.get("reason")))
     dbSession.commit()
 
@@ -57,9 +66,9 @@ def createCheckingReason():
 @create_access_required
 def deleteCheckingReason():
     dbSession = getDbSession()
-    reasonId = request.json.get("reasonId", default=None)
-    if reasonId is None:
+    if "reasonId" not in request.json:
         return make_response("reasonId must be provided", 400)
+    reasonId = request.json["reasonId"]
 
     reason = dbSession.query(CheckingReason).filter(CheckingReason.id == reasonId).first()
     dbSession.delete(reason)

@@ -21,9 +21,10 @@ import paths
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from __init__ import app
 import paths
 from backup import backUpDatabase
-from db import getDbSessionWithoutApplicationContext, closeDbSessionWithoutApplicationContext
+from db import getDbSession, close_db
 from dbSchema import Settings
 from productManagement import findAndMarkProductsToReorder
 
@@ -43,36 +44,37 @@ def setUpScheduler():
 
 def findAndRunScheduledTasks():
 	logging.debug("Running findAndRunScheduledTasks")
-	session = getDbSessionWithoutApplicationContext()
-	settings = session.query(Settings).first()
-	currentTimeFull = datetime.datetime.now().time()
-	currentTimeTrunc = datetime.time(hour=currentTimeFull.hour, minute=currentTimeFull.minute)
+	with app.app_context():
+		session = getDbSession()
+		settings = session.query(Settings).first()
+		currentTimeFull = datetime.datetime.now().time()
+		currentTimeTrunc = datetime.time(hour=currentTimeFull.hour, minute=currentTimeFull.minute)
 
-	# since some tasks require the DB to be locked, this function compiles a list of tasks to run
-	# and then runs them
-	functionsToBeRun = []
+		# since some tasks require the DB to be locked, this function compiles a list of tasks to run
+		# and then runs them
+		functionsToBeRun = []
 
-	# DB backup
-	if settings.dbBackupAtTime == currentTimeTrunc:
-		logging.info("Database backup needs to be run")
-		functionsToBeRun.append(backUpDatabase)
+		# DB backup
+		if settings.dbBackupAtTime == currentTimeTrunc:
+			logging.info("Database backup needs to be run")
+			functionsToBeRun.append(backUpDatabase)
 
-	if settings.stockLevelReorderCheckAtTime == currentTimeTrunc:
-		logging.info("Database stock level reorder check needs to be run")
-		functionsToBeRun.append(findAndMarkProductsToReorder)
+		if settings.stockLevelReorderCheckAtTime == currentTimeTrunc:
+			logging.info("Database stock level reorder check needs to be run")
+			functionsToBeRun.append(findAndMarkProductsToReorder)
 
-	# other tasks go here...
+		# other tasks go here...
 
-	closeDbSessionWithoutApplicationContext(session)
+		close_db()
 
-	# now start running tasks
-	for i in range(len(functionsToBeRun)):
-		functionsToBeRun[i]()
+		# now start running tasks
+		for i in range(len(functionsToBeRun)):
+			functionsToBeRun[i]()
+			time.sleep(10) 	# a short sleep here is to allow any email notifications to be sent. This is decidedly
+							# a bodge, but it'll do as a quick fix. TODO: revisit
 
 
 def main():
-	logging.basicConfig(filename=paths.scheduleWorkerLogPath, level=logging.DEBUG, format='%(asctime)s %(message)s')
-	logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 	scheduler = setUpScheduler()
 
 	while(True):
