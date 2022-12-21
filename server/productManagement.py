@@ -89,7 +89,7 @@ def getProduct(productId):
 @create_access_required
 def addNewProductType():
 	session = getDbSession()
-	existingProduct = session.query(ProductType).filter(ProductType.barcode == request.form.get("barcode", default=None)).first()
+	existingProduct = session.query(ProductType).filter(ProductType.barcode == request.form.get("barcode", default=None).strip()).first()
 	if existingProduct:
 		errorState = "A product with that barcode already exists"
 	else:
@@ -151,7 +151,7 @@ def updateProductFromRequestForm(session, product):
 	if error is not None:
 		return error, None
 
-	product.productName = request.form["productName"]
+	product.productName = request.form["productName"].strip()
 	if request.form["itemTrackingType"] == "specific":
 		product.tracksSpecificItems = True
 		product.tracksAllItemsOfProductType = False
@@ -160,16 +160,16 @@ def updateProductFromRequestForm(session, product):
 		product.tracksAllItemsOfProductType = True
 
 	if "quantityUnit" in request.form:
-		product.quantityUnit = request.form["quantityUnit"]
+		product.quantityUnit = request.form["quantityUnit"].strip()
 
 	product.initialQuantity = decimal.Decimal(request.form["initialQuantity"])
 	product.barcode = request.form["barcode"]
 	if "productDescriptor1" in request.form:
-		product.productDescriptor1 = request.form["productDescriptor1"]
+		product.productDescriptor1 = request.form["productDescriptor1"].strip()
 	if "productDescriptor2" in request.form:
-		product.productDescriptor2 = request.form["productDescriptor2"]
+		product.productDescriptor2 = request.form["productDescriptor2"].strip()
 	if "productDescriptor3" in request.form:
-		product.productDescriptor3 = request.form["productDescriptor3"]
+		product.productDescriptor3 = request.form["productDescriptor3"].strip()
 	if "expectedPrice" in request.form and request.form['expectedPrice'] != "":
 		product.expectedPrice = decimal.Decimal(request.form["expectedPrice"])
 

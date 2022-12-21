@@ -56,7 +56,7 @@ def createCheckingReason():
     if existingReason is not None:
         return make_response(f"{request.json.get('reason')} already exists", 400)
 
-    dbSession.add(CheckingReason(reason=request.json.get("reason")))
+    dbSession.add(CheckingReason(reason=request.json.get("reason").strip()))
     dbSession.commit()
 
     return make_response("New checking reason added", 200)

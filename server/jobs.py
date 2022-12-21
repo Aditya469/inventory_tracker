@@ -50,7 +50,7 @@ def createJob():
 
 	session = getDbSession()
 
-	if session.query(Job).filter(Job.jobName == request.json['jobName']).first():
+	if session.query(Job).filter(Job.jobName == request.json['jobName'].strip()).first():
 		error = "A job with that name exists. Job names must be unique"
 
 	if error:
@@ -126,7 +126,7 @@ def processJobTemplate():
 		template = JobTemplate()
 		dbSession.add(template)
 
-	template.templateName = request.json["templateName"]
+	template.templateName = request.json["templateName"].strip()
 	dbSession.flush()
 
 	existingAssignments = dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.jobTemplateId == template.id).all()
@@ -210,9 +210,9 @@ def updateJobFromRequest(jobId, dbSession):
 		return error
 
 	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
-	job.jobName = request.json["jobName"]
+	job.jobName = request.json["jobName"].strip()
 
-	jobIdString = request.json["jobIdString"]
+	jobIdString = request.json["jobIdString"].strip()
 	if jobIdString != "" and jobIdString.startswith("job_"):
 		job.idString = jobIdString
 
