@@ -156,6 +156,9 @@ function saveProductDetails(){
     var initialQuantity = $("#initialQuantity").val();
 
     var dataValid = true;
+    $("#productName").removeClass("is-invalid");
+    $("#barcode").removeClass("is-invalid");
+    $("#initialQuantity").removeClass("is-invalid");
 
     if(productName == ""){
         $("#productName").addClass("is-invalid")

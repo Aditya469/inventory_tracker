@@ -89,13 +89,23 @@ def getProduct(productId):
 @create_access_required
 def addNewProductType():
 	session = getDbSession()
-	existingProduct = session.query(ProductType).filter(ProductType.barcode == request.form.get("barcode", default=None).strip()).first()
-	if existingProduct:
+	errorState = None
+
+	existingProductByBarcode = session.query(ProductType).filter(
+		ProductType.barcode == request.form.get("barcode", default=None).strip()).first()
+	if existingProductByBarcode is not None:
 		errorState = "A product with that barcode already exists"
-	else:
+
+	existingProductByName = session.query(ProductType).filter(
+		ProductType.productName == request.form.get("productName", default=None).strip()).first()
+	if existingProductByName is not None:
+		errorState = "A product with that name already exists"
+
+	if errorState is None:
 		newProduct = ProductType()
 		session.add(newProduct)
 		errorState, product = updateProductFromRequestForm(session, newProduct)
+
 	if errorState is None:
 		session.commit()
 		updateNewStockWithNewProduct(product)
