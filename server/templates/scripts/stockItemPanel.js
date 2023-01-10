@@ -47,6 +47,7 @@ function openStockItemPanel(stockItemId){
             setStockItemTableSizes();
             var i;
             // populate bin select
+            $("#location").empty();
             for(i = 0; i < bins.length; i++){
                 var option = $("<option>");
                 option.prop("value", bins[i].id);
@@ -177,7 +178,8 @@ function saveStockItemDetails(){
     else
         data.append("canExpire", "false");
 
-    data.append("binId", $("#location").val());
+    if($("#location").data("locationUpdated") && $("#location").val() != -1)
+        data.append("binId", $("#location").val());
     data.append("price", $("#price").val());
 
 

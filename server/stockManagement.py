@@ -635,12 +635,13 @@ def updateStock():
 			CheckInRecord.timestamp.desc()).first()[0]
 
 		if binId != lastSeenBinId:
-			session.add(CheckInRecord(
+			newCheckInRecord = CheckInRecord(
 				stockItem=stockItem.id,
 				productType=stockItem.productType,
 				quantity=0,
-				binId=request.form.get("binId")
-			))
+				binId=request.form.get("binId", type=int)
+			)
+			session.add(newCheckInRecord)
 
 	stockItem.lastUpdated = func.current_timestamp()
 	session.commit()
