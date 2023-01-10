@@ -625,16 +625,22 @@ def updateStock():
 		stockItem.quantityRemaining = decimal.Decimal(request.form.get("quantityRemaining", type=float))
 
 	if "price" in request.form:
-		stockItem.price = request.form.get("price")
+		stockItem.price = decimal.Decimal(request.form.get("price", type=float))
 
 	# if the location of the stock has been changed, create a new check-in record to reflect this
 	if "binId" in request.form:
-		session.add(CheckInRecord(
-			stockItem=stockItem.id,
-			productType=stockItem.productType,
-			quantity=0,
-			binId=request.form.get("binId")
-		))
+		binId = request.form.get("binId", type=int)
+
+		lastSeenBinId = session.query(CheckInRecord.binId).filter(CheckInRecord.stockItem == stockItem.id).order_by(
+			CheckInRecord.timestamp.desc()).first()[0]
+
+		if binId != lastSeenBinId:
+			session.add(CheckInRecord(
+				stockItem=stockItem.id,
+				productType=stockItem.productType,
+				quantity=0,
+				binId=request.form.get("binId")
+			))
 
 	stockItem.lastUpdated = func.current_timestamp()
 	session.commit()

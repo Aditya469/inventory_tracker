@@ -178,6 +178,7 @@ function saveStockItemDetails(){
         data.append("canExpire", "false");
 
     data.append("binId", $("#location").val());
+    data.append("price", $("#price").val());
 
 
     $.ajax({
