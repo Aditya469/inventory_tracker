@@ -654,19 +654,24 @@ def updateStock():
 @bp.route('/deleteStockItem', methods=("POST",))
 @create_access_required
 def deleteStockItem():
-	# deletes the stock item and any associated verification and check-in/-out records
 	if "id" not in request.json:
 		return make_response("stockItem id not provided", 400)
 
+	deleteStockItemById(request.json.get("id"))
+
+	return make_response("stock deleted", 200)
+
+
+def deleteStockItemById(id):
+	# deletes the stock item and any associated verification and check-in/-out records
 	session = getDbSession()
-	stockItem = session.query(StockItem).filter(StockItem.id == request.json.get("id")).first()
+	stockItem = session.query(StockItem).filter(StockItem.id == id).first()
 	session.query(VerificationRecord).filter(VerificationRecord.associatedStockItemId == stockItem.id).delete()
 	session.query(CheckInRecord).filter(CheckInRecord.stockItem == stockItem.id).delete()
 	session.query(CheckOutRecord).filter(CheckOutRecord.stockItem == stockItem.id).delete()
 	session.delete(stockItem)
 	session.commit()
 
-	return make_response("stock deleted", 200)
 
 
 @bp.route('/deleteMultipleStockItems', methods=("POST",))

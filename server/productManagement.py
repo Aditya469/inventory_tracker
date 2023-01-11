@@ -23,11 +23,11 @@ from sqlalchemy import select, or_, func
 
 from auth import login_required, create_access_required
 from db import getDbSession, close_db
-from dbSchema import ProductType, StockItem, User
+from dbSchema import ProductType, StockItem, User, TemplateStockAssignment, AssignedStock
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
 from qrCodeFunctions import generateIdQrCodeSheets
-from stockManagement import updateNewStockWithNewProduct
+from stockManagement import updateNewStockWithNewProduct, deleteStockItemById
 from utilities import writeDataToCsvFile
 
 bp = Blueprint('productManagement', __name__)
@@ -138,10 +138,22 @@ def deleteProductType():
 	if 'id' not in request.form:
 		return make_response("Product type ID required", 400)
 
-	session = getDbSession()
-	productType = session.get(ProductType, request.form['id'])
-	session.delete(productType)
-	session.commit()
+	dbSession = getDbSession()
+	productType = dbSession.get(ProductType, request.form['id'])
+
+	# delete associated stock items first. Ideally this would be cascaded through by SqlAlchemy, but in the interests
+	# of getting this work quickly, I'm doing it this way. TODO: improve this.
+	stockItems = dbSession.query(StockItem).filter(StockItem.productType == productType.id).all()
+	for stockItem in stockItems:
+		deleteStockItemById(stockItem.id)
+
+	# any stock or template assignments referencing this product type also need to be deleted.
+	# TODO: set up cascading as above
+	dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.productId == productType.id).delete()
+	dbSession.query(AssignedStock).filter(AssignedStock.productId == productType.id).delete()
+
+	dbSession.delete(productType)
+	dbSession.commit()
 
 	return make_response("Product deleted", 200)
 

@@ -242,7 +242,7 @@ function saveProductDetails(){
 }
 
 function deleteProduct(){
-    if(confirm("Delete this product?")){
+    if(confirm("Delete this product?\n\nWARNING: THIS WILL ALSO DELETE ALL STOCK ITEMS OF THIS TYPE")){
         if(refreshCheckIntervalId != null)
             clearInterval(refreshCheckIntervalId);
         var productId = $("#productId").val();
