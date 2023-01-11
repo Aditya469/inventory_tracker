@@ -74,9 +74,9 @@ limitations under the License.
                     </div>
                     <div class="col-12">
                         <label for="startDate" class="">Expiry Range Start Date:</label>
-                        <input type="date" class="form-control form-control-sm" id="startDate" disabled oninput="updateStockTable()" value="{{ expiryStartDateValue}}"/>
+                        <input type="date" class="form-control form-control-sm" id="startDate" {% if not showExpiry %} disabled {% endif %} oninput="updateStockTable()" value="{{ expiryStartDateValue}}"/>
                         <label for="endDate" class="">Expiry Range End Date:</label>
-                        <input type="date" class="form-control form-control-sm" id="endDate" disabled oninput="updateStockTable()" value="{{ expiryEndDateValue}}"/>
+                        <input type="date" class="form-control form-control-sm" id="endDate" {% if not showExpiry %} disabled {% endif %} oninput="updateStockTable()" value="{{ expiryEndDateValue}}"/>
                     </div>
 
                 </div>

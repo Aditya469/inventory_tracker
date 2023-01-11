@@ -46,20 +46,22 @@ def getStockPage():
 	productName = request.args.get("productName", default=None)
 
 	showExpiry = False
-	expiryDayCount = request.args.get("expiryDayCount", default=None)
+	expiryDayCount = request.args.get("expiryDayCount", default=None) 	# note that if this is true, we are expecting to
+																		# see stock that expires within this many days
+	showExpiredOnly = request.args.get("showExpiredOnly", default=None)
+
 	if expiryDayCount is not None:
 		showExpiry = True
-		startDate = datetime.datetime.now() + datetime.timedelta(days=int(expiryDayCount))
-		expStartDateString = startDate.strftime("%Y-%m-%d")
-	else:
-		expStartDateString = ""
-
-	showExpiredOnly = request.args.get("showExpiredOnly", default=None)
-	if showExpiredOnly is not None and showExpiredOnly == "true":
+		expStartDateString = datetime.datetime.now().strftime("%Y-%m-%d")
+		endDate = datetime.datetime.now() + datetime.timedelta(days=int(expiryDayCount))
+		expEndDateString = endDate.strftime("%Y-%m-%d")
+	elif showExpiredOnly is not None and showExpiredOnly == "true":
 		showExpiry = True
 		yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
 		expEndDateString = yesterday.strftime("%Y-%m-%d")
+		expStartDateString = ""
 	else:
+		expStartDateString = ""
 		expEndDateString = ""
 
 	return render_template(
