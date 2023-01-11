@@ -418,6 +418,11 @@ function saveJobTemplate(){
         newStockAssignments.push({"productId": productId,"quantity": newQty});
     }
 
+    if(newStockAssignments.length == 0){
+        $("#saveJobFeedbackSpan").html("Template must contain at least one stock assignment");
+        return;
+    }
+
     requestArgs = {};
     requestArgs["templateId"] = $("#templateId").val();
     requestArgs["templateName"] = $("#jobName").val();
