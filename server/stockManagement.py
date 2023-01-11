@@ -26,7 +26,7 @@ from sqlalchemy import select, delete, func, or_, update, and_
 from auth import login_required, create_access_required
 from db import getDbSession, Settings, close_db
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
-	User, Job, CheckingReason
+	User, Job, CheckingReason, ItemId
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets, generateIdCard
 from utilities import writeDataToCsvFile, formatStockAmount
 
@@ -669,6 +669,7 @@ def deleteStockItemById(id):
 	session.query(VerificationRecord).filter(VerificationRecord.associatedStockItemId == stockItem.id).delete()
 	session.query(CheckInRecord).filter(CheckInRecord.stockItem == stockItem.id).delete()
 	session.query(CheckOutRecord).filter(CheckOutRecord.stockItem == stockItem.id).delete()
+	session.query(ItemId).filter(ItemId.idString == stockItem.idString).delete()
 	session.delete(stockItem)
 	session.commit()
 
