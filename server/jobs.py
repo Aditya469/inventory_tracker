@@ -117,11 +117,11 @@ def deleteJob(jobId):
 @create_access_required
 def processJobTemplate():
 	"""
-	Create a job template, or update an existing one based on ID
+	Create a job template, or update an existing one based on name
 	"""
 	dbSession = getDbSession()
 
-	template = dbSession.query(JobTemplate).filter(JobTemplate.id == request.json["templateId"]).first()
+	template = dbSession.query(JobTemplate).filter(JobTemplate.templateName == request.json["templateName"]).first()
 	if template is None:
 		template = JobTemplate()
 		dbSession.add(template)
@@ -129,9 +129,7 @@ def processJobTemplate():
 	template.templateName = request.json["templateName"].strip()
 	dbSession.flush()
 
-	existingAssignments = dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.jobTemplateId == template.id).all()
-	for assignment in existingAssignments:
-		dbSession.delete(assignment)
+	dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.jobTemplateId == template.id).delete()
 
 	for row in request.json["templateStockAssignments"]:
 		stockAssignment = TemplateStockAssignment(
@@ -143,7 +141,7 @@ def processJobTemplate():
 
 	dbSession.commit()
 
-	return make_response(jsonify({"templateId": template.id}), 200)
+	return make_response(jsonify({"templateId": template.id, "templateName": template.templateName}), 200)
 
 
 @bp.route("/getTemplateList")
@@ -171,6 +169,7 @@ def getTemplateStockAssignment():
 			ProductType.quantityUnit,
 			TemplateStockAssignment.quantity
 		)\
+		.filter(TemplateStockAssignment.jobTemplateId == request.args.get("templateId", default=-1, type=int))\
 		.join(TemplateStockAssignment)\
 		.order_by(ProductType.productName)\
 		.all()

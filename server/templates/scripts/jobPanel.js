@@ -424,7 +424,6 @@ function saveJobTemplate(){
     }
 
     requestArgs = {};
-    requestArgs["templateId"] = $("#templateId").val();
     requestArgs["templateName"] = $("#jobName").val();
     requestArgs["templateStockAssignments"] = newStockAssignments;
 
@@ -453,7 +452,6 @@ function saveJobTemplate(){
         cache: false,
         success: function(responseData){
             $("#saveJobFeedbackSpan").html("template saved");
-            $("#templateId").val(responseData.templateId);
             setTimeout(function(){$("#saveJobFeedbackSpan").empty();}, 5000);
         },
         error: function(jqXHR, textStatus, errorThrown){
