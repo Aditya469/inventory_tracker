@@ -191,6 +191,19 @@ public class checkItemsFragment extends Fragment implements AdapterView.OnItemSe
 
         mStockInteractionHandlingCallbacks.onBarcodeSeen();
 
+        if(
+                !mProductDataManger.isInitialised() ||
+                        !mLocationDataManager.isInitialised() ||
+                        !mItemIdLookUpDataManager.isInitialised() ||
+                        !mJobLookupDataManager.isInitialised() ||
+                        !mUserDataManager.isInitialised() ||
+                        !mCheckingReasonsDataManager.isInitialised()
+        )
+        {
+            Utilities.showDebugMessage(getContext(), "Unable to look up barcode. Sync device to server.");
+            return;
+        }
+
         if(BarcodeData.startsWith(getString(R.string.sys_prefix_item))) {
             mCurrentCheckingRequest.IdString = BarcodeData;
 

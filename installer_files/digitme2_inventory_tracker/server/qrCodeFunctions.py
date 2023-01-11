@@ -57,15 +57,51 @@ def generateIdCard(idString, label=None, labelFontSize=12, totalWidth=200, total
 	qrImg = qr.make_image()
 	finalImg = qrImg
 
-	# note, assumes that the label will not occupy more than half the total width and can be one line
+	# place the QR code on the right side of the image, and then attempt to place text. The width of the text is
+	# estimated and wrapped if necessary
 	if label is not None:
 		img = Image.new("RGB", (totalWidth, totalHeight), (255, 255, 255))
+
+		qrDimension = min(math.floor(totalWidth/2) - padding, totalHeight - (2 * padding))
+		qrImg = qrImg.resize((qrDimension, qrDimension))
+		qrImgLeftPos = totalWidth - (qrDimension + padding)
+		qrImgTopPos = padding
+		img.paste(qrImg, (qrImgLeftPos, qrImgTopPos))
+
 		font = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", labelFontSize)
+
+		textWidth = font.getlength(label)
+		availableSpace = qrImgLeftPos - padding
+		formattedText = ""
+		# if the label needs to be wrapped, attempt to find whitespace to replace with newlines
+		if textWidth > availableSpace:
+			textChars = []
+			lineLength = 0
+			lastWhitespaceInTextChars = -1
+			for i in range(len(label)):
+				lineLength += font.getlength(label[i])
+				if lineLength >= availableSpace:
+					if lastWhitespaceInTextChars != -1:
+						textChars[lastWhitespaceInTextChars] = '\n'
+						lastWhitespaceInTextChars = -1
+					else:
+						textChars.append('\n')
+					lineLength = 0
+				if label[i] == ' ':
+					lastWhitespaceInTextChars = len(textChars)
+				textChars.append(label[i])
+			formattedText = "".join(textChars)
+		else:
+			formattedText = label
+
+		textSize = font.getbbox(formattedText)
+		textHeight = textSize[3] - textSize[1]
+		textTop = (totalHeight / 2) - (textHeight / 2)
+		textLeft = padding
+
 		d = ImageDraw.Draw(img)
-		d.text((10+padding, totalHeight/2), label, font=font, fill=(0, 0, 0))
-		qrDim = min(math.floor(totalWidth/2) - padding, totalHeight - (2 * padding))
-		qrImg = qrImg.resize((qrDim, qrDim))
-		img.paste(qrImg, (math.floor(totalWidth/2), padding))
+		d.text((textLeft, textTop), formattedText, font=font, fill=(0, 0, 0))
+
 		finalImg = img
 
 	return finalImg

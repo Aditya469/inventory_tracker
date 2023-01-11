@@ -6,42 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="adjustments to scheduled task worker to try adn make things run smoothly">
       <change beforePath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/bins.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/bins.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/checkingReasons.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/checkingReasons.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbSchema.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbSchema.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/device_discovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/device_discovery.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/jobs.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/jobs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/productManagement.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/productManagement.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/qrCodeFunctions.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/qrCodeFunctions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/apple-touch-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/apple-touch-icon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-16x16.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-16x16.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-32x32.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon-32x32.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/mstile-150x150.png" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/mstile-150x150.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/site.webmanifest" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/site.webmanifest" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/stockManagement.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/stockManagement.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/systemSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/systemSettings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/jobPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/jobPanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageBins.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageBins.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageCheckingReasons.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageCheckingReasons.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageUsers.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageUsers.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/overview.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/overview.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productManagement.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productManagement.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productPanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/binsManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/binsManagement.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/checkingReasonsManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/checkingReasonsManagement.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/jobPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/jobPanel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/manageUsers.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/manageUsers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productManagement.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productPanel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stickerSheetPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stickerSheetPanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockItemPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockItemPanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockManagement.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockManagement.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +45,6 @@
     <setting file="file://$PROJECT_DIR$/__init__.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../lib/python3.8/site-packages/flask/app.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/templates/scripts/stockManagement.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file:///usr/lib/python3.8/threading.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/bins.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/base.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/stockManagement.py" root0="FORCE_HIGHLIGHTING" />
@@ -119,7 +83,7 @@
       <recent name="$PROJECT_DIR$/templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scheduleWorker">
+  <component name="RunManager" selected="Python.webapp">
     <configuration name="clockuser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -758,10 +722,13 @@
         <watch expression="self.stockItem" language="Python" />
       </configuration>
       <configuration name="PythonConfigurationType">
-        <watch expression="itemId" language="Python" />
-        <watch expression="stockItem" language="Python" />
-        <watch expression="productType" language="Python" />
-        <watch expression="stockBarcodeList" language="Python" />
+        <watch expression="len(label)" language="Python" />
+        <watch expression="textChars" language="Python" />
+        <watch expression="formattedText" language="Python" />
+        <watch expression="lineLength" language="Python" />
+        <watch expression="availableSpace" language="Python" />
+        <watch expression="lastWhitespaceInTextChars" language="Python" />
+        <watch expression="textSize" language="Python" />
       </configuration>
     </watches-manager>
   </component>

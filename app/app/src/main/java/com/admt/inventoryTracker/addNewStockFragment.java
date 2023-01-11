@@ -135,6 +135,11 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             public void afterTextChanged(Editable editable) {
                 // if the user types a barcode into the input field, this handler will fire
                 // to allow ID codes (not necessarily actual barcode numbers) to be entered
+                if(!mProductDataManager.isInitialised()){
+                    Utilities.showDebugMessage(getContext(), "Unable to look up barcode. Sync device to server.");
+                    return;
+                }
+
                 String barcode = editable.toString();
                 if(barcode == "")
                     mAddStockRequestParameters.Barcode = null;
@@ -319,6 +324,13 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         Handler mainHandler = new Handler(getContext().getMainLooper());
 
         mStockHandlingInteractionCallbacks.onBarcodeSeen();
+
+        if(!mProductDataManager.isInitialised() || !mLocationDataManager.isInitialised() ||
+                !mItemIdLookUpDataManager.isInitialised())
+        {
+            Utilities.showDebugMessage(getContext(), "Unable to look up barcode. Sync device to server.");
+            return;
+        }
 
         // add a new barcode to the collection of data for this request. Update
         // mAddStockRequestParameters and the screen as appropriate.

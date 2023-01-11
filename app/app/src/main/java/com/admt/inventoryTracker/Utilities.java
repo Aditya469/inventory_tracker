@@ -42,19 +42,24 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class Utilities {
-
+    static String TAG = "Utilities";
     public static boolean isWifiConnected(Context context) {
-        // temporary. TODO: REMOVE
-        //return true;
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkCapabilities networkCapabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+        try {
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkCapabilities networkCapabilities =
+                    connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
 
-        if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
-            return true;
+            if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+                return true;
 
-        return false;
+            return false;
+        }
+        catch (NullPointerException e)
+        {
+            Log.d(TAG, "isWifiConnected: got null pointer");
+            return false;
+        }
     }
 
     public static void showDebugMessage(Context context, String messageText)
