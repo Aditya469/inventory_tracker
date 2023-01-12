@@ -78,14 +78,16 @@ function openStockItemPanel(stockItemId){
             $("#productDescriptor3").html(stockItemDetails.productDescriptor3 ? stockItemDetails.productDescriptor3 : "");
 
             if(stockItemDetails.canExpire){
-                $("#expiryDate").prop("hidden", false);
+                $("#expiryDateContainer").prop("hidden", false);
                 $("#expiryDateLabel").prop("hidden", false);
                 $("#expiryDate").val(stockItemDetails.expiryDate);
             }
             else{
-                $("#expiryDate").prop("hidden", true);
+                $("#expiryDateContainer").prop("hidden", true);
                 $("#expiryDateLabel").prop("hidden", true);
             }
+
+            $("#idString").html(stockItemDetails.idNumber);
 
             var idCardUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockIdCard')}}");
             idCardUrl.searchParams.append("stockItemId", stockItemId);
