@@ -22,6 +22,21 @@ lastUpdateTimestamp = "";
 $(document).ready(function(){
     setJobStockTableSizes();
     $(window).resize(function(){ setJobStockTableSizes(); });
+    $("#jobName").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            saveJobDetails();
+    });
+    $("#jobIdString").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            saveJobDetails();
+    });
+    $("#quantityToAssign").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            onAddStockButtonClicked();
+    });
 });
 
 function closePanels(){
