@@ -46,10 +46,10 @@ limitations under the License.
 			<h1>Newly Added Stock</h1>
 			<div id="stockSearchControls" class="pb-1 row px-2">
 				<input id="stockSearchBar" placeholder="Start typing to search..." class="col col-12 form-control" oninput="updateNewStockTable()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
-				<div class="col col-12 form-check">
+				<!--<div class="col col-12 form-check">
 					<input id="onlyShowUnknownProductsCheckbox" type="checkbox" class="form-check-input" onclick="updateNewStockTable()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					<label for="onlyShowUnknownProductsCheckbox" class="form-check-label">Only show stock with unknown product types</label>
-				</div>
+				</div>-->
 				<div class="col col-12 form-check">
 					<input id="selectAllCheckbox" type="checkbox" class="form-check-input" onclick="onSelectAllCheckboxClicked()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					<label for="selectAllCheckbox" class="form-check-label">Select all</label>

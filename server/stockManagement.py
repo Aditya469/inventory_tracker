@@ -43,7 +43,19 @@ def afterRequest(self):
 def getStockPage():
 	# Get the stock page, possibly preloading search parameters.
 	dbSession = getDbSession()
+	searchTerm = ""
+	searchTermType = ""
 	productName = request.args.get("productName", default=None)
+	stockItemIdString = request.args.get("stockItemIdString", default=None)
+	stockItemIdToShow = request.args.get("stockItemIdToShow", default=None)
+
+	if productName is not None:
+		searchTerm = productName
+		searchTermType = "productName"
+	elif stockItemIdString is not None:
+		searchTerm = stockItemIdString
+		searchTermType = "stockItemIdString"
+
 
 	showExpiry = False
 	expiryDayCount = request.args.get("expiryDayCount", default=None) 	# note that if this is true, we are expecting to
@@ -66,7 +78,9 @@ def getStockPage():
 
 	return render_template(
 		"stockManagement.html",
-		productName=productName,
+		searchTerm = searchTerm,
+		searchTermType = searchTermType,
+		stockItemIdToShow = stockItemIdToShow,
 		showExpiry=showExpiry,
 		expiryStartDateValue=expStartDateString,
 		expiryEndDateValue=expEndDateString
@@ -709,10 +723,12 @@ def getNewlyAddedStock():
 		VerificationRecord.id,
 		StockItem.id,
 		StockItem.productType,
+		StockItem.idString,
 		ProductType.productName,
 		ProductType.quantityUnit,
 		CheckInRecord.id,
-		CheckInRecord.quantity
+		CheckInRecord.quantity,
+		CheckInRecord.timestamp
 	) \
 		.filter(VerificationRecord.isVerified == False) \
 		.filter(ProductType.productName.ilike(searchTerm)) \
@@ -732,10 +748,12 @@ def getNewlyAddedStock():
 		results.append({
 			"verificationRecordId": row[0],
 			"stockItemId": row[1],
-			"productName": row[3],
-			"productQuantityUnit": row[4],
-			"checkInRecordId": row[5],
-			"quantity": formatStockAmount(row[6], 2)
+			"stockItemIdString": row[3],
+			"productName": row[4],
+			"productQuantityUnit": row[5],
+			"checkInRecordId": row[6],
+			"quantity": formatStockAmount(row[7], 2),
+			"timestamp": row[8].strftime("%d/%m/%y %H:%M:%S"),
 		})
 
 	return make_response(jsonify(results), 200)

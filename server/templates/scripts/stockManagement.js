@@ -16,6 +16,11 @@ limitations under the License.
 
 $(document).ready(function (){
     updateStockTable();
+    var stockItemToShowId = $("#stockItemIdToShow").val();
+    if(stockItemToShowId != ""){
+        openStockItemPanel(stockItemToShowId);
+        //$("#stockItemIdToShow").val("")
+    }
 });
 
 function updateStockTable(){
