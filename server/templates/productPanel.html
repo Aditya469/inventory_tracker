@@ -35,15 +35,15 @@ limitations under the License.
 						<input type="button" disabled id="btnGetBarcodeStickerSheet" class="btn btn-primary " onclick="openStickerSheetPanel()" value="Get Barcode Sticker Sheet">
 					</div>
 				</div>
-				<span class="col mt-2">Bulk Product?:  </span>
+				<span class="col mt-2">Bulk Product?:</span>
 				<div class="col mt-2">
 					<div class="form-check">
 						<label class="form-check-label" for="bulkSelector">Bulk</label>
-						<input class="form-check-input" id="bulkSelector" type="radio" name="bulkSelectorRadio" value="bulk" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+						<input class="form-check-input bulkSelectorRadio" id="bulkSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" value="bulk" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					</div>
 					<div class="form-check">
 						<label class="form-check-label" for="specificItemSelector">Specific Item</label>
-						<input class="form-check-input" id="specificItemSelector" type="radio" name="bulkSelectorRadio" checked value="specificItem" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+						<input class="form-check-input bulkSelectorRadio" id="specificItemSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" checked value="specificItem" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					</div>
 				</div>
 				<label class="col mt-2" for="reorderLevel">Reorder Notify at Quantity:</label>
@@ -79,7 +79,7 @@ limitations under the License.
 					</div>
 				</div>
 				<div class="col ms-1 mt-2 form-check">
-					<label class="form-check-label" for="canExpire">Expires</label>
+					<label class="form-check-label" for="canExpire" id="canExpireLabel">Expires</label>
 					<input class="form-check-input editProductPanelInput" id="canExpire" type="checkbox" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 				</div>
 			</div>

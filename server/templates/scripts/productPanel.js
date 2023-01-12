@@ -37,10 +37,23 @@ function setProductPanelDetailsHeight(){
     $("#productPanelDetails").prop("style", newHeightStyling);
 }
 
+function onBulkSelectorRadioChanged(){
+    if($(".bulkSelectorRadio:checked").val() == "bulk"){
+        console.log("bulk");
+        $("#canExpireLabel").prop("hidden", true);
+        $("#canExpire").prop("hidden", true).prop("checked", false);
+    }
+    else{
+        console.log("specific");
+        $("#canExpireLabel").prop("hidden", false);
+        $("#canExpire").prop("hidden", false);
+    }
+}
+
 function openProductDetailsPanel(prodId){
     $("#greyout").prop("hidden", false);
-    $("#editProductPanel").prop("hidden", false);
     if(prodId == -1){
+        $("#editProductPanel").prop("hidden", false);
         $("#addAnotherProductButton").prop("hidden", true);
         $("#panelTitle").html("Create New Product");
         $("#deleteButton").prop("disabled", true);
@@ -61,16 +74,21 @@ function openProductDetailsPanel(prodId){
             type: "GET",
             success: function(responseData){
                 console.log(responseData);
+                $("#editProductPanel").prop("hidden", false);
                 $("#productId").val(responseData.id);
                 $("#productName").val(responseData.productName);
                 $("#barcode").val(responseData.barcode);
                 if(responseData.tracksSpecificItems){
                     $("#bulkSelector").prop("checked", false);
                     $("#specificItemSelector").prop("checked", true);
+                    $("#canExpireLabel").prop("hidden", false);
+                    $("#canExpire").prop("hidden", false);
                 }
                 else{
                     $("#bulkSelector").prop("checked", true);
                     $("#specificItemSelector").prop("checked", false);
+                    $("#canExpireLabel").prop("hidden", true);
+                    $("#canExpire").prop("hidden", true).prop("checked", false);
                 }
                 $("#descriptor1").val(responseData.productDescriptor1 ? responseData.productDescriptor1 : "");
                 $("#descriptor2").val(responseData.productDescriptor2 ? responseData.productDescriptor2 : "");
