@@ -14,6 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+$(document).ready(function(){
+    $(".changePasswordInput").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            changePassword();
+    });
+});
+
 function changePassword(){
     if($("#currentPassword").val() == ""){
         $("#feedback").html("Enter current password");
