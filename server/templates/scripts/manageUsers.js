@@ -16,6 +16,11 @@ limitations under the License.
 
 $(document).ready(function(){
     updateUsersTable();
+    $(".newUserInput").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            addNewUser();
+    });
 });
 
 function updateUsersTable(){
