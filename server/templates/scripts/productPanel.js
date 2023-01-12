@@ -20,6 +20,11 @@ lastUpdateTimestamp = "";
 $(document).ready(function(){
     setProductPanelDetailsHeight();
     $(window).resize(function(){ setProductPanelDetailsHeight(); });
+    $(".editProductPanelInput").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            saveProductDetails();
+    });
 });
 
 function setProductPanelDetailsHeight(){
