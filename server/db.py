@@ -88,4 +88,5 @@ def close_db(e=None):
 		print(e)
 	finally:
 		dbLock.release()
+		logging.info("dbLock released")
 

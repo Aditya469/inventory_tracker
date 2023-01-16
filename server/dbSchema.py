@@ -408,7 +408,21 @@ class Settings(Base):
 	dbNumberOfBackups = Column(Integer, default=5)
 	dbBackupAtTime = Column(Time(timezone=True))
 	dbMakeBackups = Column(Boolean, default=True)
+	dbBackupOnMonday = Column(Boolean, default=True)
+	dbBackupOnTuesday = Column(Boolean, default=True)
+	dbBackupOnWednesday = Column(Boolean, default=True)
+	dbBackupOnThursday = Column(Boolean, default=True)
+	dbBackupOnFriday = Column(Boolean, default=True)
+	dbBackupOnSaturday = Column(Boolean, default=True)
+	dbBackupOnSunday = Column(Boolean, default=True)
 	stockLevelReorderCheckAtTime = Column(Time(timezone=True))
+	stockCheckOnMonday = Column(Boolean, default=True)
+	stockCheckOnTuesday = Column(Boolean, default=True)
+	stockCheckOnWednesday = Column(Boolean, default=True)
+	stockCheckOnThursday = Column(Boolean, default=True)
+	stockCheckOnFriday = Column(Boolean, default=True)
+	stockCheckOnSaturday = Column(Boolean, default=True)
+	stockCheckOnSunday = Column(Boolean, default=True)
 
 	def toDict(self):
 		dataDict = {
@@ -437,6 +451,20 @@ class Settings(Base):
 			"sendEmails": self.sendEmails,
 			"dbNumberOfBackups": self.dbNumberOfBackups,
 			"dbMakeBackups": self.dbMakeBackups,
+			"dbBackupOnMonday": self.dbBackupOnMonday,
+			"dbBackupOnTuesday": self.dbBackupOnTuesday,
+			"dbBackupOnWednesday": self.dbBackupOnWednesday,
+			"dbBackupOnThursday": self.dbBackupOnThursday,
+			"dbBackupOnFriday": self.dbBackupOnFriday,
+			"dbBackupOnSaturday": self.dbBackupOnSaturday,
+			"dbBackupOnSunday": self.dbBackupOnSunday,
+			"stockCheckOnMonday": self.stockCheckOnMonday,
+			"stockCheckOnTuesday": self.stockCheckOnTuesday,
+			"stockCheckOnWednesday": self.stockCheckOnWednesday,
+			"stockCheckOnThursday": self.stockCheckOnThursday,
+			"stockCheckOnFriday": self.stockCheckOnFriday,
+			"stockCheckOnSaturday": self.stockCheckOnSaturday,
+			"stockCheckOnSunday": self.stockCheckOnSunday,
 		}
 		if self.dbBackupAtTime is None:
 			dataDict["dbBackupAtTime"] = None

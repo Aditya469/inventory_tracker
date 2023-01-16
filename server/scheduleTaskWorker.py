@@ -49,17 +49,32 @@ def findAndRunScheduledTasks():
 		settings = session.query(Settings).first()
 		currentTimeFull = datetime.datetime.now().time()
 		currentTimeTrunc = datetime.time(hour=currentTimeFull.hour, minute=currentTimeFull.minute)
+		currentDayOfWeek = datetime.datetime.now().weekday()
 
 		# since some tasks require the DB to be locked, this function compiles a list of tasks to run
 		# and then runs them
 		functionsToBeRun = []
 
 		# DB backup
-		if settings.dbBackupAtTime == currentTimeTrunc:
+		if settings.dbBackupAtTime == currentTimeTrunc \
+				and ((settings.dbBackupOnMonday and currentDayOfWeek == 0)
+					 or (settings.dbBackupOnTuesday and currentDayOfWeek == 1)
+					 or (settings.dbBackupOnWednesday and currentDayOfWeek == 2)
+					 or (settings.dbBackupOnThursday and currentDayOfWeek == 3)
+					 or (settings.dbBackupOnFriday and currentDayOfWeek == 4)
+					 or (settings.dbBackupOnSaturday and currentDayOfWeek == 5)
+					 or (settings.dbBackupOnSunday and currentDayOfWeek == 6)):
 			logging.info("Database backup needs to be run")
 			functionsToBeRun.append(backUpDatabase)
 
-		if settings.stockLevelReorderCheckAtTime == currentTimeTrunc:
+		if settings.stockLevelReorderCheckAtTime == currentTimeTrunc \
+				and ((settings.stockCheckOnMonday and currentDayOfWeek == 0)
+					 or (settings.stockCheckOnTuesday and currentDayOfWeek == 1)
+					 or (settings.stockCheckOnWednesday and currentDayOfWeek == 2)
+					 or (settings.stockCheckOnThursday and currentDayOfWeek == 3)
+					 or (settings.stockCheckOnFriday and currentDayOfWeek == 4)
+					 or (settings.stockCheckOnSaturday and currentDayOfWeek == 5)
+					 or (settings.stockCheckOnSunday and currentDayOfWeek == 6)):
 			logging.info("Database stock level reorder check needs to be run")
 			functionsToBeRun.append(findAndMarkProductsToReorder)
 
@@ -70,14 +85,14 @@ def findAndRunScheduledTasks():
 		# now start running tasks
 		for i in range(len(functionsToBeRun)):
 			functionsToBeRun[i]()
-			time.sleep(10) 	# a short sleep here is to allow any email notifications to be sent. This is decidedly
-							# a bodge, but it'll do as a quick fix. TODO: revisit
+			time.sleep(10)  # a short sleep here is to allow any email notifications to be sent. This is decidedly
+	# a bodge, but it'll do as a quick fix. TODO: revisit
 
 
 def main():
 	scheduler = setUpScheduler()
 
-	while(True):
+	while (True):
 		time.sleep(1)
 
 

@@ -101,11 +101,39 @@ def saveSystemSettings():
     if "dbBackupAtTime" in request.json:
         if request.json.get("dbBackupAtTime") != "":
             settings.dbBackupAtTime = datetime.strptime(request.json.get("dbBackupAtTime"), "%H:%M").time()
+    if "dbBackupOnMonday" in request.json:
+        settings.dbBackupOnMonday = request.json.get("dbBackupOnMonday")
+    if "dbBackupOnTuesday" in request.json:
+        settings.dbBackupOnTuesday = request.json.get("dbBackupOnTuesday")
+    if "dbBackupOnWednesday" in request.json:
+        settings.dbBackupOnWednesday = request.json.get("dbBackupOnWednesday")
+    if "dbBackupOnThursday" in request.json:
+        settings.dbBackupOnThursday = request.json.get("dbBackupOnThursday")
+    if "dbBackupOnFriday" in request.json:
+        settings.dbBackupOnFriday = request.json.get("dbBackupOnFriday")
+    if "dbBackupOnSaturday" in request.json:
+        settings.dbBackupOnSaturday = request.json.get("dbBackupOnSaturday")
+    if "dbBackupOnSunday" in request.json:
+        settings.dbBackupOnSunday = request.json.get("dbBackupOnSunday")
     if "dbMakeBackups" in request.json:
         settings.dbMakeBackups = request.json.get("dbMakeBackups")
     if "stockLevelReorderCheckAtTime" in request.json:
         if request.json.get("stockLevelReorderCheckAtTime") != "":
             settings.stockLevelReorderCheckAtTime = datetime.strptime(request.json.get("stockLevelReorderCheckAtTime"), "%H:%M").time()
+    if "stockCheckOnMonday" in request.json:
+        settings.stockCheckOnMonday = request.json.get("stockCheckOnMonday")
+    if "stockCheckOnTuesday" in request.json:
+        settings.stockCheckOnTuesday = request.json.get("stockCheckOnTuesday")
+    if "stockCheckOnWednesday" in request.json:
+        settings.stockCheckOnWednesday = request.json.get("stockCheckOnWednesday")
+    if "stockCheckOnThursday" in request.json:
+        settings.stockCheckOnThursday = request.json.get("stockCheckOnThursday")
+    if "stockCheckOnFriday" in request.json:
+        settings.stockCheckOnFriday = request.json.get("stockCheckOnFriday")
+    if "stockCheckOnSaturday" in request.json:
+        settings.stockCheckOnSaturday = request.json.get("stockCheckOnSaturday")
+    if "stockCheckOnSunday" in request.json:
+        settings.stockCheckOnSunday = request.json.get("stockCheckOnSunday")
 
     dbSession.commit()
 
