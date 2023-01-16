@@ -292,7 +292,7 @@ def getProductBarcodeStickerSheet():
 	dbSession = getDbSession()
 	product = dbSession.query(ProductType).filter(ProductType.id == request.args.get("productId")).first()
 
-	sheets, error = generateIdQrCodeSheets(idQty, product.barcode)
+	sheets, error = generateIdQrCodeSheets(idQty, product.barcode, sheetHeaderText=f"{product.productName} Identifier Sticker Sheet")
 
 	if error is not None:
 		return make_response(error)

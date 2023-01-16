@@ -107,7 +107,7 @@ def generateIdCard(idString, label=None, labelFontSize=12, totalWidth=200, total
 	return finalImg
 
 
-def createImageSheet(fileNames, totalWidthPx, totalHeightPx, arrayWidthPx, arrayHeightPx, rows, cols):
+def createImageSheet(fileNames, totalWidthPx, totalHeightPx, arrayWidthPx, arrayHeightPx, rows, cols, sheetHeaderText = ""):
 	if len(fileNames) > rows * cols:
 		raise Exception("filename count exceeds row * column count")
 	if arrayWidthPx > totalWidthPx:
@@ -123,6 +123,20 @@ def createImageSheet(fileNames, totalWidthPx, totalHeightPx, arrayWidthPx, array
 
 	mainImg = Image.new('RGB', (totalWidthPx, totalHeightPx))
 	mainImg.paste((255, 255, 255), [0, 0, totalWidthPx, totalHeightPx])
+
+	# add a header to the sheet
+	font = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 30)
+	textsize = font.getbbox(sheetHeaderText)
+	textHeight = textsize[3] - textsize[1]
+	textWidth = textsize[2] - textsize[0]
+	headerSpaceHeight = (totalHeightPx - arrayHeightPx) / 2
+	headerSpaceWidth = totalWidthPx
+	textTopPosition = (headerSpaceHeight / 2) - (textHeight / 2)
+	textLeftPosition = (headerSpaceWidth / 2) - (textWidth / 2)
+
+	d = ImageDraw.Draw(mainImg)
+	d.text((textLeftPosition, textTopPosition), sheetHeaderText, font=font, fill=(0, 0, 0))
+
 
 	rowIndex = 0
 	colIndex = 0
@@ -208,7 +222,8 @@ def generateItemIdQrCodeSheets(idCount, includeLabels=True):
 				totalWidthPx=pageWidth,
 				totalHeightPx=pageHeight,
 				arrayWidthPx=arrayWidth,
-				arrayHeightPx=arrayHeight
+				arrayHeightPx=arrayHeight,
+				sheetHeaderText="Item ID Stickers"
 			)
 		)
 
@@ -219,7 +234,7 @@ def generateItemIdQrCodeSheets(idCount, includeLabels=True):
 
 	return labelSheets, None
 
-def generateIdQrCodeSheets(idCount, idCardString, includeLabels=True):
+def generateIdQrCodeSheets(idCount, idCardString, includeLabels=True, sheetHeaderText = ""):
 	session = getDbSession()
 	pageWidth_mm = session.query(Settings.stickerSheetPageWidth_mm).first()[0]
 	pageHeight_mm = session.query(Settings.stickerSheetPageHeight_mm).first()[0]
@@ -271,7 +286,8 @@ def generateIdQrCodeSheets(idCount, idCardString, includeLabels=True):
 				totalWidthPx=pageWidth,
 				totalHeightPx=pageHeight,
 				arrayWidthPx=arrayWidth,
-				arrayHeightPx=arrayHeight
+				arrayHeightPx=arrayHeight,
+				sheetHeaderText=sheetHeaderText
 			)
 		)
 
