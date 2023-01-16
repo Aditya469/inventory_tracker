@@ -351,24 +351,28 @@ def getStockOverview():
 def getStockOverviewDataFromRequest():
 	overviewType = request.args.get('overviewType', default='totalStock')
 
+	if "searchTerm" in request.args:
+		searchTerm = "%" + request.args.get("searchTerm") + "%"
+	else:
+		searchTerm = "%"
+
+	# get how close to expiry an item of stock needs to be to be counted
+	dayCountLimit = request.args.get("dayCountLimit", type=int, default=10)
+
 	if overviewType == "totalStock":
-		stockList = getStockOverviewTotalsDataFromRequest()
+		stockList = getStockOverviewTotalsDataFromRequest(searchTerm)
 	elif overviewType == "availableStock":
-		stockList = getAvailableStockTotalsDataFromRequest()
+		stockList = getAvailableStockTotalsDataFromRequest(searchTerm)
 	elif overviewType == "nearExpiry":
-		stockList = getStockNearExpiryDataFromRequest()
+		stockList = getStockNearExpiryDataFromRequest(searchTerm, dayCountLimit)
 	elif overviewType == "expired":
-		stockList = getExpiredStockDataFromRequest()
+		stockList = getExpiredStockDataFromRequest(searchTerm)
 
 	return stockList
 
 
-def getStockOverviewTotalsDataFromRequest():
+def getStockOverviewTotalsDataFromRequest(searchTerm = "%"):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = None
 
 	query = session.query(
 		ProductType.id,
@@ -413,12 +417,8 @@ def getStockOverviewTotalsDataFromRequest():
 	return productList
 
 
-def getAvailableStockTotalsDataFromRequest():
+def getAvailableStockTotalsDataFromRequest(searchTerm = "%"):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = "%"
 
 	# get all the other data first
 	productTypesQueryResult = session.query(ProductType) \
@@ -494,21 +494,16 @@ def getAvailableStockTotalsDataFromRequest():
 	for product in productList:
 		if product['productId'] in stockDict:
 			product['stockAmount'] = formatStockAmount(stockDict[product['productId']], 2)
+			product['stockAmountRaw'] = stockDict[product['productId']]
 		else:
 			product['stockAmount'] = None
 
 	return productList
 
 
-def getStockNearExpiryDataFromRequest():
+def getStockNearExpiryDataFromRequest(searchTerm = "%", dayCountLimit = 10):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = "%"
 
-	# get how close to expiry an item of stock needs to be to be counted
-	dayCountLimit = request.args.get("dayCountLimit", type=int, default=10)
 	maxExpiryDate = datetime.date.today() + datetime.timedelta(days=dayCountLimit)
 	currentDate = datetime.date.today()
 
@@ -561,12 +556,8 @@ def getStockNearExpiryDataFromRequest():
 	return productList
 
 
-def getExpiredStockDataFromRequest():
+def getExpiredStockDataFromRequest(searchTerm = "%"):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = "%"
 
 	query = session.query(
 		ProductType.id,

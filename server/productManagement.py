@@ -21,13 +21,13 @@ from flask import (
 )
 from sqlalchemy import select, or_, func
 
-from auth import login_required, create_access_required
+from auth import login_required, create_access_required, admin_access_required
 from db import getDbSession, close_db
-from dbSchema import ProductType, StockItem, User, TemplateStockAssignment, AssignedStock
+from dbSchema import ProductType, StockItem, User, TemplateStockAssignment, AssignedStock, Settings
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
 from qrCodeFunctions import generateIdQrCodeSheets
-from stockManagement import updateNewStockWithNewProduct, deleteStockItemById
+from stockManagement import updateNewStockWithNewProduct, deleteStockItemById, getAvailableStockTotalsDataFromRequest
 from utilities import writeDataToCsvFile
 
 bp = Blueprint('productManagement', __name__)
@@ -216,12 +216,21 @@ def updateProductFromRequestForm(session, product):
 
 	return None, product
 
-'''
-Function to run periodically which finds products that are below the 
-reorder level and marks them appropriately in the database
-'''
+@bp.route('/runStockCheck', methods=('POST',))
+@admin_access_required
+def runStockCheck():
+	findAndMarkProductsToReorder()
+	return make_response("Stock Check Complete", 200)
+
+
 def findAndMarkProductsToReorder():
+	"""
+	Function to run periodically which finds products that are below the
+	reorder level and marks them appropriately in the database
+	"""
 	dbSession = getDbSession()
+
+	useAvailableStockTotals = dbSession.query(Settings.stockCheckAvailableLevels).first()[0]
 
 	productList = dbSession.query(ProductType)\
 		.filter(ProductType.reorderLevel != None) \
@@ -229,10 +238,20 @@ def findAndMarkProductsToReorder():
 		.all()
 	reorderNotificationIds = []
 
+	availableStock = getAvailableStockTotalsDataFromRequest()
+
 	for product in productList:
-		stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
-			.filter(StockItem.productType == product.id)\
-			.first()[0]
+		if useAvailableStockTotals:
+			# loop through availableStock to find this product. This is a very ugly way of doing this,
+			# but I'm short of time, so it'll do for now. TODO: rework this into something less cumbersome
+			for i in range(len(availableStock)):
+				if availableStock[i]['productId'] == product.id:
+					stockQty = availableStock[i]['stockAmountRaw']
+					break
+		else:
+			stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
+				.filter(StockItem.productType == product.id)\
+				.first()[0]
 
 		if stockQty is None or stockQty <= product.reorderLevel:
 			if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify

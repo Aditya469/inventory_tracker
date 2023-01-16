@@ -142,6 +142,14 @@ limitations under the License.
                     <input class="form-check-input align-self-start" id="stockCheckOnSunday" type="checkbox" onchange="saveSettings()">
                 </div>
             </div>
+            <br>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckAvailableLevels">Check available levels rather than total</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckAvailableLevels" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <input id="runStockCheckBtn" type="button" class="col-12 my-2 btn btn-primary" onclick="runStockCheck()" value="Run Stock Check Now">
             <hr class="col-12">
         </div>
         <div class="" id="emailSettings">

@@ -423,6 +423,7 @@ class Settings(Base):
 	stockCheckOnFriday = Column(Boolean, default=True)
 	stockCheckOnSaturday = Column(Boolean, default=True)
 	stockCheckOnSunday = Column(Boolean, default=True)
+	stockCheckAvailableLevels = Column(Boolean, default=True)
 
 	def toDict(self):
 		dataDict = {
@@ -465,6 +466,7 @@ class Settings(Base):
 			"stockCheckOnFriday": self.stockCheckOnFriday,
 			"stockCheckOnSaturday": self.stockCheckOnSaturday,
 			"stockCheckOnSunday": self.stockCheckOnSunday,
+			"stockCheckAvailableLevels": self.stockCheckAvailableLevels,
 		}
 		if self.dbBackupAtTime is None:
 			dataDict["dbBackupAtTime"] = None

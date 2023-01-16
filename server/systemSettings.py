@@ -134,6 +134,8 @@ def saveSystemSettings():
         settings.stockCheckOnSaturday = request.json.get("stockCheckOnSaturday")
     if "stockCheckOnSunday" in request.json:
         settings.stockCheckOnSunday = request.json.get("stockCheckOnSunday")
+    if "stockCheckAvailableLevels" in request.json:
+        settings.stockCheckAvailableLevels = request.json.get("stockCheckAvailableLevels")
 
     dbSession.commit()
 
