@@ -19,9 +19,13 @@ from flask import (
 )
 
 from auth import login_required
+from db import close_db
 
 bp = Blueprint('overview', __name__)
 
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 @bp.route('/overview')
 @bp.route('/')

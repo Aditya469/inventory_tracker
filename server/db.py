@@ -87,6 +87,6 @@ def close_db(e=None):
 	except sqlite3.ProgrammingError as e:
 		print(e)
 	finally:
-		dbLock.release()
+		dbLock.release(True)
 		logging.info("dbLock released")
 
