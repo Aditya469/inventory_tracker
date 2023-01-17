@@ -217,7 +217,7 @@ def processAddStockRequest():
 			if 'bulkItemCount' in requestParams:
 				bulkItemCount = int(requestParams['bulkItemCount'])
 			stockItem.quantityRemaining += productType.initialQuantity * bulkItemCount
-			checkInRecord.quantity = productType.initialQuantity * bulkItemCount
+			#checkInRecord.quantity = productType.initialQuantity * bulkItemCount
 			# continues below ...
 
 		# itemID is not attached to a stock item. Create one.
