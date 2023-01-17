@@ -473,9 +473,9 @@ def getPickingList():
 
 	'''
 
-	pageWidth = 80
+	pageWidth = 120
 	padWidth = 3
-	quantityWidth = 6
+	quantityWidth = 20
 	barcodeWidth = 16
 	binWidth = 20
 	# special as likely widest
@@ -514,7 +514,7 @@ def getPickingList():
 
 		rowDescription = {
 			"productName": product.productName,
-			"quantity": assignedStockRecord.quantity,
+			"quantity": f"{assignedStockRecord.quantity} {product.quantityUnit}",
 			"binName": binName,
 			"barcode": product.barcode
 		}
