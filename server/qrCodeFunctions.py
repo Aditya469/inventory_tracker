@@ -91,12 +91,16 @@ def generateIdCard(idString, label=None, labelFontSize=12, totalWidth=200, total
 					lastWhitespaceInTextChars = len(textChars)
 				textChars.append(label[i])
 			formattedText = "".join(textChars)
+			textWrapped = True
 		else:
 			formattedText = label
+			textWrapped = False
 
-		textSize = font.getbbox(formattedText)
-		textHeight = textSize[3] - textSize[1]
-		textTop = (totalHeight / 2) - (textHeight / 2)
+		if textWrapped:
+			textTop = padding * 2
+		else:
+			textTop = totalHeight / 3
+
 		textLeft = padding
 
 		d = ImageDraw.Draw(img)
