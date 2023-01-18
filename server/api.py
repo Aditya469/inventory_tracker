@@ -550,17 +550,3 @@ def processCheckStockOutRequest():
 		dbSession.commit()
 	except Exception as e:
 		logging.error(e)
-
-
-@bp.route("/host")
-def handleDiscovery():
-	hostname = flask.request.host
-	return make_response(jsonify({"inventoryTrackerHostName": hostname}), 200)
-
-
-@bp.route("/serverTest", methods=("GET", "POST"))
-def serverTest():
-	#print(request.json)
-	print("beep")
-	time.sleep(1)
-	return make_response("beep", 200)
