@@ -58,8 +58,8 @@ def getAppProductData():
 		if product.tracksAllItemsOfProductType:
 			associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()
 			if associatedStockItem is not None:
-				productDict["isAssignedId"] = True
-				productDict["assocaitedStockId"] = associatedStockItem.id
+				productDict["isAssignedStockId"] = True
+				productDict["associatedStockId"] = associatedStockItem.idString
 		productList.append(productDict)
 
 	return make_response(jsonify(productList), 200)
