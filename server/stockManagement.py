@@ -21,7 +21,7 @@ import os
 from flask import (
 	Blueprint, current_app, make_response, render_template, send_file, jsonify, request
 )
-from sqlalchemy import select, delete, func, or_, update, and_
+from sqlalchemy import select, delete, func, or_, update, and_, asc, desc
 
 from auth import login_required, create_access_required
 from db import getDbSession, Settings, close_db
@@ -177,9 +177,9 @@ def getStockDataFromRequest():
 	# ... and ordering
 	if "sortBy" in request.args:
 		if request.args.get("sortBy") == "productNameAsc":
-			stmt = stmt.order_by(ProductType.productName.asc())
+			stmt = stmt.order_by(asc(func.lower(ProductType.productName)))
 		elif request.args.get("sortBy") == "productNameDesc":
-			stmt = stmt.order_by(ProductType.productName.desc())
+			stmt = stmt.order_by(desc(func.lower(ProductType.productName)))
 		elif request.args.get("sortBy") == "dateAddedAsc":
 			stmt = stmt.order_by(StockItem.addedTimestamp.asc())
 		elif request.args.get("sortBy") == "dateAddedDesc":
@@ -385,7 +385,7 @@ def getStockOverviewTotalsDataFromRequest(searchTerm = "%"):
 		func.sum(StockItem.quantityRemaining)) \
 		.join(StockItem, StockItem.productType == ProductType.id) \
 		.group_by(StockItem.productType) \
-		.order_by(ProductType.productName.asc())
+		.order_by(asc(func.lower(ProductType.productName)))
 
 	if searchTerm:
 		query = query.where(
@@ -422,7 +422,7 @@ def getAvailableStockTotalsDataFromRequest(searchTerm = "%"):
 
 	# get all the other data first
 	productTypesQueryResult = session.query(ProductType) \
-		.order_by(ProductType.productName.asc()) \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.filter(
 		or_(
 			ProductType.productName.ilike(searchTerm),
@@ -521,7 +521,7 @@ def getStockNearExpiryDataFromRequest(searchTerm = "%", dayCountLimit = 10):
 		.filter(StockItem.productType == ProductType.id) \
 		.filter(ProductType.canExpire) \
 		.group_by(StockItem.productType) \
-		.order_by(ProductType.productName.asc()) \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.filter(StockItem.expiryDate <= maxExpiryDate) \
 		.filter(StockItem.expiryDate > currentDate)
 
@@ -572,7 +572,7 @@ def getExpiredStockDataFromRequest(searchTerm = "%"):
 		ProductType.barcode) \
 		.filter(StockItem.productType == ProductType.id) \
 		.group_by(StockItem.productType) \
-		.order_by(ProductType.productName.asc()) \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.filter(StockItem.expiryDate <= datetime.date.today()) \
 		.filter(ProductType.canExpire)
 
