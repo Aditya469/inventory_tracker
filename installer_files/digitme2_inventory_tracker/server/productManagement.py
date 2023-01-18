@@ -21,13 +21,13 @@ from flask import (
 )
 from sqlalchemy import select, or_, func
 
-from auth import login_required, create_access_required
+from auth import login_required, create_access_required, admin_access_required
 from db import getDbSession, close_db
-from dbSchema import ProductType, StockItem, User
+from dbSchema import ProductType, StockItem, User, TemplateStockAssignment, AssignedStock, Settings
 from emailNotification import sendEmail
 from messages import getStockNeedsReorderingMessage
 from qrCodeFunctions import generateIdQrCodeSheets
-from stockManagement import updateNewStockWithNewProduct
+from stockManagement import updateNewStockWithNewProduct, deleteStockItemById, getAvailableStockTotalsDataFromRequest
 from utilities import writeDataToCsvFile
 
 bp = Blueprint('productManagement', __name__)
@@ -89,13 +89,23 @@ def getProduct(productId):
 @create_access_required
 def addNewProductType():
 	session = getDbSession()
-	existingProduct = session.query(ProductType).filter(ProductType.barcode == request.form.get("barcode", default=None)).first()
-	if existingProduct:
+	errorState = None
+
+	existingProductByBarcode = session.query(ProductType).filter(
+		ProductType.barcode == request.form.get("barcode", default=None).strip()).first()
+	if existingProductByBarcode is not None:
 		errorState = "A product with that barcode already exists"
-	else:
+
+	existingProductByName = session.query(ProductType).filter(
+		ProductType.productName == request.form.get("productName", default=None).strip()).first()
+	if existingProductByName is not None:
+		errorState = "A product with that name already exists"
+
+	if errorState is None:
 		newProduct = ProductType()
 		session.add(newProduct)
 		errorState, product = updateProductFromRequestForm(session, newProduct)
+
 	if errorState is None:
 		session.commit()
 		updateNewStockWithNewProduct(product)
@@ -128,10 +138,22 @@ def deleteProductType():
 	if 'id' not in request.form:
 		return make_response("Product type ID required", 400)
 
-	session = getDbSession()
-	productType = session.get(ProductType, request.form['id'])
-	session.delete(productType)
-	session.commit()
+	dbSession = getDbSession()
+	productType = dbSession.get(ProductType, request.form['id'])
+
+	# delete associated stock items first. Ideally this would be cascaded through by SqlAlchemy, but in the interests
+	# of getting this work quickly, I'm doing it this way. TODO: improve this.
+	stockItems = dbSession.query(StockItem).filter(StockItem.productType == productType.id).all()
+	for stockItem in stockItems:
+		deleteStockItemById(stockItem.id)
+
+	# any stock or template assignments referencing this product type also need to be deleted.
+	# TODO: set up cascading as above
+	dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.productId == productType.id).delete()
+	dbSession.query(AssignedStock).filter(AssignedStock.productId == productType.id).delete()
+
+	dbSession.delete(productType)
+	dbSession.commit()
 
 	return make_response("Product deleted", 200)
 
@@ -151,7 +173,7 @@ def updateProductFromRequestForm(session, product):
 	if error is not None:
 		return error, None
 
-	product.productName = request.form["productName"]
+	product.productName = request.form["productName"].strip()
 	if request.form["itemTrackingType"] == "specific":
 		product.tracksSpecificItems = True
 		product.tracksAllItemsOfProductType = False
@@ -160,16 +182,16 @@ def updateProductFromRequestForm(session, product):
 		product.tracksAllItemsOfProductType = True
 
 	if "quantityUnit" in request.form:
-		product.quantityUnit = request.form["quantityUnit"]
+		product.quantityUnit = request.form["quantityUnit"].strip()
 
 	product.initialQuantity = decimal.Decimal(request.form["initialQuantity"])
 	product.barcode = request.form["barcode"]
 	if "productDescriptor1" in request.form:
-		product.productDescriptor1 = request.form["productDescriptor1"]
+		product.productDescriptor1 = request.form["productDescriptor1"].strip()
 	if "productDescriptor2" in request.form:
-		product.productDescriptor2 = request.form["productDescriptor2"]
+		product.productDescriptor2 = request.form["productDescriptor2"].strip()
 	if "productDescriptor3" in request.form:
-		product.productDescriptor3 = request.form["productDescriptor3"]
+		product.productDescriptor3 = request.form["productDescriptor3"].strip()
 	if "expectedPrice" in request.form and request.form['expectedPrice'] != "":
 		product.expectedPrice = decimal.Decimal(request.form["expectedPrice"])
 
@@ -194,12 +216,21 @@ def updateProductFromRequestForm(session, product):
 
 	return None, product
 
-'''
-Function to run periodically which finds products that are below the 
-reorder level and marks them appropriately in the database
-'''
+@bp.route('/runStockCheck', methods=('POST',))
+@admin_access_required
+def runStockCheck():
+	findAndMarkProductsToReorder()
+	return make_response("Stock Check Complete", 200)
+
+
 def findAndMarkProductsToReorder():
+	"""
+	Function to run periodically which finds products that are below the
+	reorder level and marks them appropriately in the database
+	"""
 	dbSession = getDbSession()
+
+	useAvailableStockTotals = dbSession.query(Settings.stockCheckAvailableLevels).first()[0]
 
 	productList = dbSession.query(ProductType)\
 		.filter(ProductType.reorderLevel != None) \
@@ -207,10 +238,20 @@ def findAndMarkProductsToReorder():
 		.all()
 	reorderNotificationIds = []
 
+	availableStock = getAvailableStockTotalsDataFromRequest()
+
 	for product in productList:
-		stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
-			.filter(StockItem.productType == product.id)\
-			.first()[0]
+		if useAvailableStockTotals:
+			# loop through availableStock to find this product. This is a very ugly way of doing this,
+			# but I'm short of time, so it'll do for now. TODO: rework this into something less cumbersome
+			for i in range(len(availableStock)):
+				if availableStock[i]['productId'] == product.id:
+					stockQty = availableStock[i]['stockAmountRaw']
+					break
+		else:
+			stockQty = dbSession.query(func.sum(StockItem.quantityRemaining))\
+				.filter(StockItem.productType == product.id)\
+				.first()[0]
 
 		if stockQty is None or stockQty <= product.reorderLevel:
 			if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
@@ -270,7 +311,7 @@ def getProductBarcodeStickerSheet():
 	dbSession = getDbSession()
 	product = dbSession.query(ProductType).filter(ProductType.id == request.args.get("productId")).first()
 
-	sheets, error = generateIdQrCodeSheets(idQty, product.barcode)
+	sheets, error = generateIdQrCodeSheets(idQty, product.barcode, sheetHeaderText=f"{product.productName} Identifier Sticker Sheet")
 
 	if error is not None:
 		return make_response(error)

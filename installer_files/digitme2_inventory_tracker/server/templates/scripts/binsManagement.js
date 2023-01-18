@@ -16,6 +16,11 @@ limitations under the License.
 
 $(document).ready(function(){
     updateBinsTable();
+    $("#newBinName").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            addBin();
+    });
 });
 
 function addBin(){
@@ -39,6 +44,8 @@ function addBin(){
         cache: false,
         success: function(responseData){
             console.log(responseData);
+            $("#addBinFeedbackSpan").html(newBinName + " added");
+            setTimeout(function(){$("#addBinFeedbackSpan").empty();}, 5000);
             updateBinsTable();
         },
         error: function(jqXHR, textStatus, errorThrown){

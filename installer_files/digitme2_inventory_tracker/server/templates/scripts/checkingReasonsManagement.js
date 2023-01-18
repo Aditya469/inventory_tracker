@@ -16,6 +16,11 @@ limitations under the License.
 
 $(document).ready(function(){
     updateReasonsTable();
+    $("#newReason").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            addReason();
+    });
 });
 
 function addReason(){
@@ -39,6 +44,8 @@ function addReason(){
         cache: false,
         success: function(responseData){
             console.log(responseData);
+            $("#addReasonFeedbackSpan").html(newReason + " added");
+            setTimeout(function(){$("#addReasonFeedbackSpan").html("");}, 5000);
             updateReasonsTable();
         },
         error: function(jqXHR, textStatus, errorThrown){

@@ -62,8 +62,8 @@ def addUser():
         return make_response("username already exists", 400)
 
     newUser = User(
-        username=request.form['newUsername'],
-        passwordHash=generate_password_hash(request.form['newPassword']),
+        username=request.form['newUsername'].strip(),
+        passwordHash=generate_password_hash(request.form['newPassword'].strip()),
         accessLevel=request.form["accessLevel"],
         emailAddress=request.form["emailAddress"],
         receiveStockNotifications=request.form["receiveStockNotifications"] == "true",
@@ -148,8 +148,8 @@ def updateUser():
 @admin_access_required
 def getUserIdCard(username):
     dbSession = getDbSession()
-    userIdString = dbSession.query(User.idString).filter(User.username == username).first()[0]
-    idCard = generateIdCard(idString=userIdString, label=username, labelFontSize=30, totalWidth=400, totalHeight=200)
+    user = dbSession.query(User).filter(User.username == username).first()
+    idCard = generateIdCard(idString=user.idString, label=username, labelFontSize=30, totalWidth=400, totalHeight=200)
     filepath = os.path.join(current_app.instance_path, "user_id.png")
     idCard.save(filepath)
 

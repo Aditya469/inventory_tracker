@@ -82,10 +82,11 @@ def close_db(e=None):
 	try:
 		db = g.pop('dbSession', None)
 		if db is not None:
-			logging.info("closing database")
+			logging.debug("closing database")
 			db.close()
 	except sqlite3.ProgrammingError as e:
 		print(e)
 	finally:
-		dbLock.release()
+		dbLock.release(True)
+		logging.debug("dbLock released")
 

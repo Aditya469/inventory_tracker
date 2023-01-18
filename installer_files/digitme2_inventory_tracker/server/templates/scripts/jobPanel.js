@@ -22,6 +22,21 @@ lastUpdateTimestamp = "";
 $(document).ready(function(){
     setJobStockTableSizes();
     $(window).resize(function(){ setJobStockTableSizes(); });
+    $("#jobName").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            saveJobDetails();
+    });
+    $("#jobIdString").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            saveJobDetails();
+    });
+    $("#quantityToAssign").keypress(function(event){
+        // on enter key pressed
+        if(event.which == 13)
+            onAddStockButtonClicked();
+    });
 });
 
 function closePanels(){
@@ -418,8 +433,12 @@ function saveJobTemplate(){
         newStockAssignments.push({"productId": productId,"quantity": newQty});
     }
 
+    if(newStockAssignments.length == 0){
+        $("#saveJobFeedbackSpan").html("Template must contain at least one stock assignment");
+        return;
+    }
+
     requestArgs = {};
-    requestArgs["templateId"] = $("#templateId").val();
     requestArgs["templateName"] = $("#jobName").val();
     requestArgs["templateStockAssignments"] = newStockAssignments;
 
@@ -448,7 +467,6 @@ function saveJobTemplate(){
         cache: false,
         success: function(responseData){
             $("#saveJobFeedbackSpan").html("template saved");
-            $("#templateId").val(responseData.templateId);
             setTimeout(function(){$("#saveJobFeedbackSpan").empty();}, 5000);
         },
         error: function(jqXHR, textStatus, errorThrown){

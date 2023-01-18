@@ -23,8 +23,13 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 from auth import login_required
+from db import close_db
 
 bp = Blueprint('files', __name__)
+
+@bp.teardown_request
+def afterRequest(self):
+	close_db()
 
 @bp.route("/getFile/<filename>")
 @login_required

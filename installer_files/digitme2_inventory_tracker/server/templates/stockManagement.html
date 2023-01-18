@@ -32,6 +32,7 @@ limitations under the License.
 {% block content %}
 <div id="contentContainer" class="container mt-2">
     <input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{% else %}value="0"{% endif %} />
+    <input type="hidden" id="stockItemIdToShow" {% if stockItemIdToShow %} value="{{ stockItemIdToShow }}" {% else %} value="" {% endif %}>
     <div class="d-flex flex-row justify-content-between align-items-center">
         <h1>Items of Stock</h1>
         <input type="button" id="openStickerSheetPanelButton" class="btn btn-primary" onclick="openStickerSheetPanel()" value="Get ID Sticker Sheet">
@@ -41,10 +42,10 @@ limitations under the License.
             <div id="searchControls" class="col-xs-12 col-sm-12 col-md-4 col-lg-3 border">
                 <h4>Text Search</h4>
                 <label class="" for="searchBar">Search Term:</label>
-                <input class="form-control" id="searchBar" {% if productName is not none %} value="{{ productName }}" {% endif %} placeholder="Start typing..." oninput="updateStockTable()">
+                <input class="form-control" id="searchBar" value="{{ searchTerm }}" placeholder="Start typing..." oninput="updateStockTable()">
                 <div class="form-check">
                     <label class="form-check-label" for="searchProductTypeName">Search by Product Names</label>
-                    <input class="form-check-input" type="checkbox" id="searchProductTypeName" onclick="updateStockTable()" {% if productName is not none %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="searchProductTypeName" onclick="updateStockTable()" {% if searchTermType == 'productName' %} checked {% endif %}>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label" for="searchByDescriptors">Search by Descriptors</label>
@@ -52,7 +53,7 @@ limitations under the License.
                 </div>
                 <div class="form-check">
                     <label class="form-check-label" for="searchByIdNumber">Search by Stock ID number</label>
-                    <input class="form-check-input" type="checkbox" id="searchByIdNumber" oninput="updateStockTable()">
+                    <input class="form-check-input" type="checkbox" id="searchByIdNumber" oninput="updateStockTable()" {% if searchTermType == 'stockItemIdString' %} checked {% endif %}>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label" for="searchByBarcode">Search by Product Barcode</label>
@@ -74,9 +75,9 @@ limitations under the License.
                     </div>
                     <div class="col-12">
                         <label for="startDate" class="">Expiry Range Start Date:</label>
-                        <input type="date" class="form-control form-control-sm" id="startDate" disabled oninput="updateStockTable()" value="{{ expiryStartDateValue}}"/>
+                        <input type="date" class="form-control form-control-sm" id="startDate" {% if not showExpiry %} disabled {% endif %} oninput="updateStockTable()" value="{{ expiryStartDateValue}}"/>
                         <label for="endDate" class="">Expiry Range End Date:</label>
-                        <input type="date" class="form-control form-control-sm" id="endDate" disabled oninput="updateStockTable()" value="{{ expiryEndDateValue}}"/>
+                        <input type="date" class="form-control form-control-sm" id="endDate" {% if not showExpiry %} disabled {% endif %} oninput="updateStockTable()" value="{{ expiryEndDateValue}}"/>
                     </div>
 
                 </div>

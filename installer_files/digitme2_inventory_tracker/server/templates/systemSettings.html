@@ -32,11 +32,55 @@ limitations under the License.
             <label class="col-7 form-check-label" for="dbMakeBackups">Make Automatic Backups</label>
             <input class="col-5 form-check-input align-self-start" id="dbMakeBackups" type="checkbox" onchange="saveSettings()">
             <div class="row col-12">
-                <label class="col-7" for="dbBackupAtTime">Nightly Backup Time</label>
+                <label class="col-7" for="dbBackupAtTime">Automatic Backup Time</label>
                 <div class="col-5">
                     <input class="form-control align-self-start" id="dbBackupAtTime" type="time" onchange="saveSettings()">
                 </div>
             </div>
+            <br>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnMonday">Run on Monday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnMonday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnTuesday">Run on Tuesday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnTuesday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnWednesday">Run on Wednesday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnWednesday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnThursday">Run on Thursday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnThursday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnFriday">Run on Friday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnFriday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnSaturday">Run on Saturday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnSaturday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="dbBackupOnSunday">Run on Sunday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="dbBackupOnSunday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <br>
             <div class="row col-12">
                 <label class="col-7" for="dbNumberOfBackups">Number Of Backups To Keep</label>
                 <div class="col-5">
@@ -55,6 +99,57 @@ limitations under the License.
                     <input class="form-control align-self-start" id="stockLevelReorderCheckAtTime" type="time" onchange="saveSettings()">
                 </div>
             </div>
+            <br>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnMonday">Run on Monday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnMonday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnTuesday">Run on Tuesday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnTuesday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnWednesday">Run on Wednesday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnWednesday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnThursday">Run on Thursday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnThursday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnFriday">Run on Friday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnFriday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnSaturday">Run on Saturday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnSaturday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckOnSunday">Run on Sunday</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckOnSunday" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <br>
+            <div class="row col-12">
+                <label class="col-7 form-check-label" for="stockCheckAvailableLevels">Check available levels rather than total</label>
+                <div class="col-5">
+                    <input class="form-check-input align-self-start" id="stockCheckAvailableLevels" type="checkbox" onchange="saveSettings()">
+                </div>
+            </div>
+            <input id="runStockCheckBtn" type="button" class="col-12 my-2 btn btn-primary" onclick="runStockCheck()" value="Run Stock Check Now">
             <hr class="col-12">
         </div>
         <div class="" id="emailSettings">

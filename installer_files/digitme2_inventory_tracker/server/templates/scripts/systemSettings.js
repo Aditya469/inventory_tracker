@@ -28,8 +28,23 @@ function loadSettings(){
             $("#settingsId").val(settings.id);
             $("#dbMakeBackups").prop("checked", settings.dbMakeBackups);
             $("#dbBackupAtTime").val(settings.dbBackupAtTime);
+            $("#dbBackupOnMonday").prop("checked", settings.dbBackupOnMonday);
+            $("#dbBackupOnTuesday").prop("checked", settings.dbBackupOnTuesday);
+            $("#dbBackupOnWednesday").prop("checked", settings.dbBackupOnWednesday);
+            $("#dbBackupOnThursday").prop("checked", settings.dbBackupOnThursday);
+            $("#dbBackupOnFriday").prop("checked", settings.dbBackupOnFriday);
+            $("#dbBackupOnSaturday").prop("checked", settings.dbBackupOnSaturday);
+            $("#dbBackupOnSunday").prop("checked", settings.dbBackupOnSunday);
             $("#dbNumberOfBackups").val(settings.dbNumberOfBackups);
             $("#stockLevelReorderCheckAtTime").val(settings.stockLevelReorderCheckAtTime);
+            $("#stockCheckOnMonday").prop("checked", settings.stockCheckOnMonday);
+            $("#stockCheckOnTuesday").prop("checked", settings.stockCheckOnTuesday);
+            $("#stockCheckOnWednesday").prop("checked", settings.stockCheckOnWednesday);
+            $("#stockCheckOnThursday").prop("checked", settings.stockCheckOnThursday);
+            $("#stockCheckOnFriday").prop("checked", settings.stockCheckOnFriday);
+            $("#stockCheckOnSaturday").prop("checked", settings.stockCheckOnSaturday);
+            $("#stockCheckOnSunday").prop("checked", settings.stockCheckOnSunday);
+            $("#stockCheckAvailableLevels").prop("checked", settings.stockCheckAvailableLevels);
             $("#sendEmails").prop("checked", settings.sendEmails);
             $("#emailSmtpServerName").val(settings.emailSmtpServerName);
             $("#emailSmtpServerPort").val(settings.emailSmtpServerPort);
@@ -45,8 +60,23 @@ function saveSettings(){
     newSettings.id = $("#settingsId").val();
     newSettings.dbMakeBackups = $("#dbMakeBackups").is(":checked");
     newSettings.dbBackupAtTime = $("#dbBackupAtTime").val();
+    newSettings.dbBackupOnMonday = $("#dbBackupOnMonday").is(":checked");
+    newSettings.dbBackupOnTuesday = $("#dbBackupOnTuesday").is(":checked");
+    newSettings.dbBackupOnWednesday = $("#dbBackupOnWednesday").is(":checked");
+    newSettings.dbBackupOnThursday = $("#dbBackupOnThursday").is(":checked");
+    newSettings.dbBackupOnFriday = $("#dbBackupOnFriday").is(":checked");
+    newSettings.dbBackupOnSaturday = $("#dbBackupOnSaturday").is(":checked");
+    newSettings.dbBackupOnSunday = $("#dbBackupOnSunday").is(":checked");
     newSettings.dbNumberOfBackups = $("#dbNumberOfBackups").val();
     newSettings.stockLevelReorderCheckAtTime = $("#stockLevelReorderCheckAtTime").val()
+    newSettings.stockCheckOnMonday = $("#stockCheckOnMonday").is(":checked");
+    newSettings.stockCheckOnTuesday = $("#stockCheckOnTuesday").is(":checked");
+    newSettings.stockCheckOnWednesday = $("#stockCheckOnWednesday").is(":checked");
+    newSettings.stockCheckOnThursday = $("#stockCheckOnThursday").is(":checked");
+    newSettings.stockCheckOnFriday = $("#stockCheckOnFriday").is(":checked");
+    newSettings.stockCheckOnSaturday = $("#stockCheckOnSaturday").is(":checked");
+    newSettings.stockCheckOnSunday = $("#stockCheckOnSunday").is(":checked");
+    newSettings.stockCheckAvailableLevels = $("#stockCheckAvailableLevels").is(":checked");
     newSettings.sendEmails = $("#sendEmails").is(":checked");
     newSettings.emailSmtpServerName = $("#emailSmtpServerName").val();
     newSettings.emailSmtpServerPort = $("#emailSmtpServerPort").val();
@@ -70,8 +100,25 @@ function saveSettings(){
     });
 }
 
+function runStockCheck(){
+    $("#runStockCheckBtn").prop("disabled", true).val("Stock Check In Progress");
+    $.ajax({
+        url: "{{ url_for('productManagement.runStockCheck')}}",
+        type: "POST",
+        success: function(){
+            setTimeout(function(){$("#runStockCheckBtn").val("Stock Check Completed");}, 3000);
+            setTimeout(function(){$("#runStockCheckBtn").prop("disabled", false).val("Run Stock Check Now");}, 6000);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            console.log(jqXHR.responseText);
+            $("#runStockCheckBtn").val("Error");
+            setTimeout(function(){$("#runStockCheckBtn").prop("disabled", false).val("Run Stock Check Now");}, 6000);
+        }
+    });
+}
+
 function initiateBackup(){
-    $("#initiateBackupBtn").prop("enabled", false).val("Backup In Progress");
+    $("#initiateBackupBtn").prop("disabled", true).val("Backup In Progress");
     $.ajax({
         url: "{{ url_for('backup.startBackupCommand')}}",
         type: "POST",

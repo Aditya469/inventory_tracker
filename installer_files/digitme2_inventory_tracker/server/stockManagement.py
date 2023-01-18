@@ -21,12 +21,12 @@ import os
 from flask import (
 	Blueprint, current_app, make_response, render_template, send_file, jsonify, request
 )
-from sqlalchemy import select, delete, func, or_, update, and_
+from sqlalchemy import select, delete, func, or_, update, and_, asc, desc
 
 from auth import login_required, create_access_required
 from db import getDbSession, Settings, close_db
 from dbSchema import StockItem, ProductType, AssignedStock, CheckInRecord, VerificationRecord, Bin, CheckOutRecord, \
-	User, Job, CheckingReason
+	User, Job, CheckingReason, ItemId
 from qrCodeFunctions import convertDpiAndMmToPx, generateItemIdQrCodeSheets, generateIdCard
 from utilities import writeDataToCsvFile, formatStockAmount
 
@@ -43,28 +43,44 @@ def afterRequest(self):
 def getStockPage():
 	# Get the stock page, possibly preloading search parameters.
 	dbSession = getDbSession()
+	searchTerm = ""
+	searchTermType = ""
 	productName = request.args.get("productName", default=None)
+	stockItemIdString = request.args.get("stockItemIdString", default=None)
+	stockItemIdToShow = request.args.get("stockItemIdToShow", default=None)
+
+	if productName is not None:
+		searchTerm = productName
+		searchTermType = "productName"
+	elif stockItemIdString is not None:
+		searchTerm = stockItemIdString
+		searchTermType = "stockItemIdString"
+
 
 	showExpiry = False
-	expiryDayCount = request.args.get("expiryDayCount", default=None)
+	expiryDayCount = request.args.get("expiryDayCount", default=None) 	# note that if this is true, we are expecting to
+																		# see stock that expires within this many days
+	showExpiredOnly = request.args.get("showExpiredOnly", default=None)
+
 	if expiryDayCount is not None:
 		showExpiry = True
-		startDate = datetime.datetime.now() + datetime.timedelta(days=int(expiryDayCount))
-		expStartDateString = startDate.strftime("%Y-%m-%d")
-	else:
-		expStartDateString = ""
-
-	showExpiredOnly = request.args.get("showExpiredOnly", default=None)
-	if showExpiredOnly is not None and showExpiredOnly == "true":
+		expStartDateString = datetime.datetime.now().strftime("%Y-%m-%d")
+		endDate = datetime.datetime.now() + datetime.timedelta(days=int(expiryDayCount))
+		expEndDateString = endDate.strftime("%Y-%m-%d")
+	elif showExpiredOnly is not None and showExpiredOnly == "true":
 		showExpiry = True
 		yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
 		expEndDateString = yesterday.strftime("%Y-%m-%d")
+		expStartDateString = ""
 	else:
+		expStartDateString = ""
 		expEndDateString = ""
 
 	return render_template(
 		"stockManagement.html",
-		productName=productName,
+		searchTerm = searchTerm,
+		searchTermType = searchTermType,
+		stockItemIdToShow = stockItemIdToShow,
 		showExpiry=showExpiry,
 		expiryStartDateValue=expStartDateString,
 		expiryEndDateValue=expEndDateString
@@ -161,9 +177,9 @@ def getStockDataFromRequest():
 	# ... and ordering
 	if "sortBy" in request.args:
 		if request.args.get("sortBy") == "productNameAsc":
-			stmt = stmt.order_by(ProductType.productName.asc())
+			stmt = stmt.order_by(asc(func.lower(ProductType.productName)))
 		elif request.args.get("sortBy") == "productNameDesc":
-			stmt = stmt.order_by(ProductType.productName.desc())
+			stmt = stmt.order_by(desc(func.lower(ProductType.productName)))
 		elif request.args.get("sortBy") == "dateAddedAsc":
 			stmt = stmt.order_by(StockItem.addedTimestamp.asc())
 		elif request.args.get("sortBy") == "dateAddedDesc":
@@ -335,24 +351,28 @@ def getStockOverview():
 def getStockOverviewDataFromRequest():
 	overviewType = request.args.get('overviewType', default='totalStock')
 
+	if "searchTerm" in request.args:
+		searchTerm = "%" + request.args.get("searchTerm") + "%"
+	else:
+		searchTerm = "%"
+
+	# get how close to expiry an item of stock needs to be to be counted
+	dayCountLimit = request.args.get("dayCountLimit", type=int, default=10)
+
 	if overviewType == "totalStock":
-		stockList = getStockOverviewTotalsDataFromRequest()
+		stockList = getStockOverviewTotalsDataFromRequest(searchTerm)
 	elif overviewType == "availableStock":
-		stockList = getAvailableStockTotalsDataFromRequest()
+		stockList = getAvailableStockTotalsDataFromRequest(searchTerm)
 	elif overviewType == "nearExpiry":
-		stockList = getStockNearExpiryDataFromRequest()
+		stockList = getStockNearExpiryDataFromRequest(searchTerm, dayCountLimit)
 	elif overviewType == "expired":
-		stockList = getExpiredStockDataFromRequest()
+		stockList = getExpiredStockDataFromRequest(searchTerm)
 
 	return stockList
 
 
-def getStockOverviewTotalsDataFromRequest():
+def getStockOverviewTotalsDataFromRequest(searchTerm = "%"):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = None
 
 	query = session.query(
 		ProductType.id,
@@ -365,7 +385,7 @@ def getStockOverviewTotalsDataFromRequest():
 		func.sum(StockItem.quantityRemaining)) \
 		.join(StockItem, StockItem.productType == ProductType.id) \
 		.group_by(StockItem.productType) \
-		.order_by(ProductType.productName.asc())
+		.order_by(asc(func.lower(ProductType.productName)))
 
 	if searchTerm:
 		query = query.where(
@@ -397,16 +417,12 @@ def getStockOverviewTotalsDataFromRequest():
 	return productList
 
 
-def getAvailableStockTotalsDataFromRequest():
+def getAvailableStockTotalsDataFromRequest(searchTerm = "%"):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = "%"
 
 	# get all the other data first
 	productTypesQueryResult = session.query(ProductType) \
-		.order_by(ProductType.productName.asc()) \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.filter(
 		or_(
 			ProductType.productName.ilike(searchTerm),
@@ -478,21 +494,16 @@ def getAvailableStockTotalsDataFromRequest():
 	for product in productList:
 		if product['productId'] in stockDict:
 			product['stockAmount'] = formatStockAmount(stockDict[product['productId']], 2)
+			product['stockAmountRaw'] = stockDict[product['productId']]
 		else:
 			product['stockAmount'] = None
 
 	return productList
 
 
-def getStockNearExpiryDataFromRequest():
+def getStockNearExpiryDataFromRequest(searchTerm = "%", dayCountLimit = 10):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = "%"
 
-	# get how close to expiry an item of stock needs to be to be counted
-	dayCountLimit = request.args.get("dayCountLimit", type=int, default=10)
 	maxExpiryDate = datetime.date.today() + datetime.timedelta(days=dayCountLimit)
 	currentDate = datetime.date.today()
 
@@ -510,7 +521,7 @@ def getStockNearExpiryDataFromRequest():
 		.filter(StockItem.productType == ProductType.id) \
 		.filter(ProductType.canExpire) \
 		.group_by(StockItem.productType) \
-		.order_by(ProductType.productName.asc()) \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.filter(StockItem.expiryDate <= maxExpiryDate) \
 		.filter(StockItem.expiryDate > currentDate)
 
@@ -545,12 +556,8 @@ def getStockNearExpiryDataFromRequest():
 	return productList
 
 
-def getExpiredStockDataFromRequest():
+def getExpiredStockDataFromRequest(searchTerm = "%"):
 	session = getDbSession()
-	if "searchTerm" in request.args:
-		searchTerm = "%" + request.args.get("searchTerm") + "%"
-	else:
-		searchTerm = "%"
 
 	query = session.query(
 		ProductType.id,
@@ -565,7 +572,7 @@ def getExpiredStockDataFromRequest():
 		ProductType.barcode) \
 		.filter(StockItem.productType == ProductType.id) \
 		.group_by(StockItem.productType) \
-		.order_by(ProductType.productName.asc()) \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.filter(StockItem.expiryDate <= datetime.date.today()) \
 		.filter(ProductType.canExpire)
 
@@ -625,16 +632,23 @@ def updateStock():
 		stockItem.quantityRemaining = decimal.Decimal(request.form.get("quantityRemaining", type=float))
 
 	if "price" in request.form:
-		stockItem.price = request.form.get("price")
+		stockItem.price = decimal.Decimal(request.form.get("price", type=float))
 
 	# if the location of the stock has been changed, create a new check-in record to reflect this
 	if "binId" in request.form:
-		session.add(CheckInRecord(
-			stockItem=stockItem.id,
-			productType=stockItem.productType,
-			quantity=0,
-			binId=request.form.get("binId")
-		))
+		binId = request.form.get("binId", type=int)
+
+		lastSeenBinId = session.query(CheckInRecord.binId).filter(CheckInRecord.stockItem == stockItem.id).order_by(
+			CheckInRecord.timestamp.desc()).first()[0]
+
+		if binId != lastSeenBinId:
+			newCheckInRecord = CheckInRecord(
+				stockItem=stockItem.id,
+				productType=stockItem.productType,
+				quantity=0,
+				binId=request.form.get("binId", type=int)
+			)
+			session.add(newCheckInRecord)
 
 	stockItem.lastUpdated = func.current_timestamp()
 	session.commit()
@@ -645,19 +659,25 @@ def updateStock():
 @bp.route('/deleteStockItem', methods=("POST",))
 @create_access_required
 def deleteStockItem():
-	# deletes the stock item and any associated verification and check-in/-out records
 	if "id" not in request.json:
 		return make_response("stockItem id not provided", 400)
 
+	deleteStockItemById(request.json.get("id"))
+
+	return make_response("stock deleted", 200)
+
+
+def deleteStockItemById(id):
+	# deletes the stock item and any associated verification and check-in/-out records
 	session = getDbSession()
-	stockItem = session.query(StockItem).filter(StockItem.id == request.json.get("id")).first()
+	stockItem = session.query(StockItem).filter(StockItem.id == id).first()
 	session.query(VerificationRecord).filter(VerificationRecord.associatedStockItemId == stockItem.id).delete()
 	session.query(CheckInRecord).filter(CheckInRecord.stockItem == stockItem.id).delete()
 	session.query(CheckOutRecord).filter(CheckOutRecord.stockItem == stockItem.id).delete()
+	session.query(ItemId).filter(ItemId.idString == stockItem.idString).delete()
 	session.delete(stockItem)
 	session.commit()
 
-	return make_response("stock deleted", 200)
 
 
 @bp.route('/deleteMultipleStockItems', methods=("POST",))
@@ -694,10 +714,12 @@ def getNewlyAddedStock():
 		VerificationRecord.id,
 		StockItem.id,
 		StockItem.productType,
+		StockItem.idString,
 		ProductType.productName,
 		ProductType.quantityUnit,
 		CheckInRecord.id,
-		CheckInRecord.quantity
+		CheckInRecord.quantity,
+		CheckInRecord.timestamp
 	) \
 		.filter(VerificationRecord.isVerified == False) \
 		.filter(ProductType.productName.ilike(searchTerm)) \
@@ -717,10 +739,12 @@ def getNewlyAddedStock():
 		results.append({
 			"verificationRecordId": row[0],
 			"stockItemId": row[1],
-			"productName": row[3],
-			"productQuantityUnit": row[4],
-			"checkInRecordId": row[5],
-			"quantity": formatStockAmount(row[6], 2)
+			"stockItemIdString": row[3],
+			"productName": row[4],
+			"productQuantityUnit": row[5],
+			"checkInRecordId": row[6],
+			"quantity": formatStockAmount(row[7], 2),
+			"timestamp": row[8].strftime("%d/%m/%y %H:%M:%S"),
 		})
 
 	return make_response(jsonify(results), 200)

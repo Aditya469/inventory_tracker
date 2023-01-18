@@ -4,7 +4,7 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="adjustments to scheduled task worker to try adn make things run smoothly">
+    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="make stock order by product name case insensitive">
       <change beforePath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
     </list>
@@ -43,17 +43,15 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/__init__.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../lib/python3.8/site-packages/flask/app.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/templates/scripts/stockManagement.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/bins.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/base.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/stockManagement.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/api.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/scripts/checkingReasonsManagement.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../lib/python3.8/site-packages/sqlalchemy/util/compat.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/templates/manageCheckingReasons.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/checkingReasons.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/dbSchema.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/stockManagement.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/api.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedIndex" value="2" />
@@ -83,7 +81,7 @@
       <recent name="$PROJECT_DIR$/templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.webapp">
+  <component name="RunManager" selected="Python.device_discovery">
     <configuration name="clockuser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -174,13 +172,14 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="PYDEVD_USE_CYTHON" value="NO" />
         <env name="FLASK_APP" value="server" />
         <env name="FLASK_ENV" value="development" />
         <env name="FLASK_DEBUG" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$PROJECT_DIR$/../bin/python" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../bin/flask" />
@@ -263,272 +262,6 @@
       <option name="presentableId" value="Default" />
       <updated>1651757426946</updated>
     </task>
-    <task id="LOCAL-00032" summary="Add product|job|stock item updated check function">
-      <created>1666700149577</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1666700149577</updated>
-    </task>
-    <task id="LOCAL-00033" summary="Fix update check on stock item panel">
-      <created>1666707959704</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1666707959704</updated>
-    </task>
-    <task id="LOCAL-00034" summary="Set version to indicate test">
-      <created>1666712131050</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1666712131050</updated>
-    </task>
-    <task id="LOCAL-00035" summary="add explicit instance path">
-      <created>1666712786580</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1666712786581</updated>
-    </task>
-    <task id="LOCAL-00036" summary="adjust job id cards to be generated on the fly">
-      <created>1666713346907</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1666713346907</updated>
-    </task>
-    <task id="LOCAL-00037" summary="Set up for wsgi">
-      <created>1666714699408</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1666714699408</updated>
-    </task>
-    <task id="LOCAL-00038" summary="Add favicon and page title">
-      <created>1666715352738</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1666715352738</updated>
-    </task>
-    <task id="LOCAL-00039" summary="cleaning up imports and wsgi setup">
-      <created>1666717872450</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1666717872450</updated>
-    </task>
-    <task id="LOCAL-00040" summary="make paths easier to set up">
-      <created>1666774933888</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1666774933888</updated>
-    </task>
-    <task id="LOCAL-00041" summary="move server discovery to a background thread">
-      <created>1666785521637</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1666785521637</updated>
-    </task>
-    <task id="LOCAL-00042" summary="add include paths.py to scheduledTasksWorker">
-      <created>1666876521495</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1666876521495</updated>
-    </task>
-    <task id="LOCAL-00043" summary="alteration to time defaults for DB">
-      <created>1666876954882</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1666876954882</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Add sticker sheet gen for product barcodes and tidy up code a bit">
-      <created>1667481987682</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1667481987683</updated>
-    </task>
-    <task id="LOCAL-00045" summary="fix job update timestamps being set wrongly in api operations">
-      <created>1668435216316</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1668435216317</updated>
-    </task>
-    <task id="LOCAL-00046" summary="fix unassigned stock calculation. Now takes stock that has been assigned and used into account">
-      <created>1668435612876</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1668435612876</updated>
-    </task>
-    <task id="LOCAL-00047" summary="tweak to settings">
-      <created>1668446625892</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1668446625892</updated>
-    </task>
-    <task id="LOCAL-00048" summary="cleaning up unused commented out code">
-      <created>1668596179508</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1668596179508</updated>
-    </task>
-    <task id="LOCAL-00049" summary="bin qr code generation on demand">
-      <created>1668689093696</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1668689093696</updated>
-    </task>
-    <task id="LOCAL-00050" summary="bugfix">
-      <created>1668689253886</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1668689253887</updated>
-    </task>
-    <task id="LOCAL-00051" summary="bugfix on jobs not reloading corectly after details changed">
-      <created>1668689283470</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1668689283470</updated>
-    </task>
-    <task id="LOCAL-00052" summary="tweaks to adding products, changing the panel title to try and make it more obvious when it's in edit mode">
-      <created>1668695114080</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1668695114081</updated>
-    </task>
-    <task id="LOCAL-00053" summary="make job and bin ID cards be generated as required">
-      <created>1669120622135</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1669120622135</updated>
-    </task>
-    <task id="LOCAL-00054" summary="reduce size of text on sticker sheets">
-      <created>1669125141482</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1669125141482</updated>
-    </task>
-    <task id="LOCAL-00055" summary="allow expiry date to be hidden on stock panel for non-expiring stock">
-      <created>1669128036658</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1669128036658</updated>
-    </task>
-    <task id="LOCAL-00056" summary="fix checking reasons not being deleted">
-      <created>1669385314794</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1669385314795</updated>
-    </task>
-    <task id="LOCAL-00057" summary="add job id string">
-      <created>1669385337211</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1669385337211</updated>
-    </task>
-    <task id="LOCAL-00058" summary="add job id string and allow to be set">
-      <created>1669385369114</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1669385369114</updated>
-    </task>
-    <task id="LOCAL-00059" summary="prevent duplicate checking reason names">
-      <created>1669386684238</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1669386684239</updated>
-    </task>
-    <task id="LOCAL-00060" summary="update icon">
-      <created>1669389152955</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1669389152955</updated>
-    </task>
-    <task id="LOCAL-00061" summary="disable access level selector for admin">
-      <created>1669389169395</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1669389169396</updated>
-    </task>
-    <task id="LOCAL-00062" summary="extra favicon files">
-      <created>1669631619432</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1669631619435</updated>
-    </task>
-    <task id="LOCAL-00063" summary="update permissions and access, and remove edit access">
-      <created>1669637494985</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1669637494986</updated>
-    </task>
-    <task id="LOCAL-00064" summary="disable checkbox for newly added stock for readonly users">
-      <created>1669637656490</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1669637656490</updated>
-    </task>
-    <task id="LOCAL-00065" summary="bugfix for access levels">
-      <created>1669641411380</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1669641411380</updated>
-    </task>
-    <task id="LOCAL-00066" summary="change itemID sticker text size">
-      <created>1669728408343</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1669728408344</updated>
-    </task>
-    <task id="LOCAL-00067" summary="fix timestamps on checking in stock and add nice feedback messages from api">
-      <created>1669743254436</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1669743254436</updated>
-    </task>
-    <task id="LOCAL-00068" summary="deleting stock also deleted associated verification and check-in/out records">
-      <created>1669804198594</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1669804198595</updated>
-    </task>
-    <task id="LOCAL-00069" summary="bugfix for checkout reason not being recorded">
-      <created>1669812618850</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1669812618851</updated>
-    </task>
     <task id="LOCAL-00070" summary="update access level labelling when creating users">
       <created>1669814756391</created>
       <option name="number" value="00070" />
@@ -606,7 +339,273 @@
       <option name="project" value="LOCAL" />
       <updated>1670344679613</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="strip whitespace from text field inputs">
+      <created>1671626838098</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1671626838104</updated>
+    </task>
+    <task id="LOCAL-00082" summary="version bump">
+      <created>1671626873396</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1671626873396</updated>
+    </task>
+    <task id="LOCAL-00083" summary="Fix products with the same name being allowed. Now produces an error message">
+      <created>1673352582430</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1673352582431</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Fix products with the same name being allowed. Now produces an error message">
+      <created>1673355319765</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1673355319765</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Fix products with the same name being allowed. Now produces an error message">
+      <created>1673355785421</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1673355785421</updated>
+    </task>
+    <task id="LOCAL-00086" summary="Fix stock item price changes not being recorded">
+      <created>1673357546211</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1673357546211</updated>
+    </task>
+    <task id="LOCAL-00087" summary="change timestamp defaults to func.now(). Bugfix for defaults only using the server startup timestamp">
+      <created>1673367195273</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1673367195274</updated>
+    </task>
+    <task id="LOCAL-00088" summary="change timestamp defaults to func.now(). Bugfix for defaults only using the server startup timestamp">
+      <created>1673367257368</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1673367257368</updated>
+    </task>
+    <task id="LOCAL-00089" summary="bugfix for stock location not updating correctly when changed on stockItem panel">
+      <created>1673367444332</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1673367444333</updated>
+    </task>
+    <task id="LOCAL-00090" summary="prevent adding a template with no stock assignment">
+      <created>1673433231951</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1673433231952</updated>
+    </task>
+    <task id="LOCAL-00091" summary="fix getting wrong expiry dates for stock page when selecting from near-expiry or expired tabs on overview page">
+      <created>1673434544392</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1673434544392</updated>
+    </task>
+    <task id="LOCAL-00092" summary="fix for deleting products breaking references. Deleting a product type now also removes stock items, stock assignments, and templates assignments that reference that product type">
+      <created>1673442602706</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1673442602706</updated>
+    </task>
+    <task id="LOCAL-00093" summary="fix for deleting products breaking references. Deleting a product type now also removes stock items, stock assignments, and templates assignments that reference that product type">
+      <created>1673452219414</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1673452219415</updated>
+    </task>
+    <task id="LOCAL-00094" summary="Fix templates not loading correctly">
+      <created>1673452235768</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1673452235768</updated>
+    </task>
+    <task id="LOCAL-00095" summary="bugfix on deleting stock not deleting associated ItemID">
+      <created>1673455997453</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1673455997453</updated>
+    </task>
+    <task id="LOCAL-00096" summary="pressing enter on new bin name adds the bin now. Also updated feedback message to show confirmation, and clear after a few seconds">
+      <created>1673520594171</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1673520594172</updated>
+    </task>
+    <task id="LOCAL-00097" summary="pressing enter on new checking reason name adds the reason now. Also updated feedback message to show confirmation, and clear after a few seconds">
+      <created>1673520889903</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1673520889903</updated>
+    </task>
+    <task id="LOCAL-00098" summary="added enter-press behaviour for jobs panel">
+      <created>1673522205689</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1673522205689</updated>
+    </task>
+    <task id="LOCAL-00099" summary="added enter-press behaviour for products panel">
+      <created>1673523219445</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1673523219445</updated>
+    </task>
+    <task id="LOCAL-00100" summary="added enter-press behaviour for users page">
+      <created>1673526696927</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1673526696927</updated>
+    </task>
+    <task id="LOCAL-00101" summary="added enter-press behaviour for change password page">
+      <created>1673528601086</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1673528601086</updated>
+    </task>
+    <task id="LOCAL-00102" summary="hide expires checkbox on product panel for bulk products">
+      <created>1673534733681</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1673534733682</updated>
+    </task>
+    <task id="LOCAL-00103" summary="hide expires checkbox on product panel for bulk products">
+      <created>1673535193556</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1673535193556</updated>
+    </task>
+    <task id="LOCAL-00104" summary="allow stock item to be jumped to from unverified stock list">
+      <created>1673544244669</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1673544244669</updated>
+    </task>
+    <task id="LOCAL-00105" summary="Show item ID string in stockItem panel">
+      <created>1673544807764</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1673544807765</updated>
+    </task>
+    <task id="LOCAL-00106" summary="Add identifier header text to sticker sheets">
+      <created>1673866015966</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1673866015967</updated>
+    </task>
+    <task id="LOCAL-00107" summary="Add days to run selection for DB backup and scheduled tasks">
+      <created>1673874791100</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1673874791100</updated>
+    </task>
+    <task id="LOCAL-00108" summary="Force db lockfile to be released in close_db(). Seems to prevent problems with scheduled worker. Likely a problem with a lock not getting released">
+      <created>1673877238158</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1673877238158</updated>
+    </task>
+    <task id="LOCAL-00109" summary="Adjust to allow stock level checks to work on available rather than total stock levels">
+      <created>1673887304931</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1673887304931</updated>
+    </task>
+    <task id="LOCAL-00110" summary="logging level tweaks in db">
+      <created>1673953464519</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1673953464524</updated>
+    </task>
+    <task id="LOCAL-00111" summary="fix greyout divs moving with scroll">
+      <created>1673956564102</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1673956564102</updated>
+    </task>
+    <task id="LOCAL-00112" summary="tweaks to id card label generation">
+      <created>1673962916907</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1673962916907</updated>
+    </task>
+    <task id="LOCAL-00113" summary="bugfix on add stock bulk check in quantity">
+      <created>1673974333272</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1673974333272</updated>
+    </task>
+    <task id="LOCAL-00114" summary="Add qty unit to picking lists">
+      <created>1673986426987</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1673986426988</updated>
+    </task>
+    <task id="LOCAL-00115" summary="remove junk">
+      <created>1674036212323</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1674036212324</updated>
+    </task>
+    <task id="LOCAL-00116" summary="fix some wrong names in getAppProductData()">
+      <created>1674039163741</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1674039163741</updated>
+    </task>
+    <task id="LOCAL-00117" summary="make stock order by product name case insensitive">
+      <created>1674039642463</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1674039642463</updated>
+    </task>
+    <task id="LOCAL-00118" summary="make stock order by product name case insensitive">
+      <created>1674039814543</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1674039814543</updated>
+    </task>
+    <option name="localTasksCounter" value="119" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -623,87 +622,35 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="allow expiry date to be hidden on stock panel for non-expiring stock" />
-    <MESSAGE value="fix checking reasons not being deleted" />
-    <MESSAGE value="add job id string" />
-    <MESSAGE value="add job id string and allow to be set" />
-    <MESSAGE value="prevent duplicate checking reason names" />
-    <MESSAGE value="update icon" />
-    <MESSAGE value="disable access level selector for admin" />
-    <MESSAGE value="extra favicon files" />
-    <MESSAGE value="update permissions and access, and remove edit access" />
-    <MESSAGE value="disable checkbox for newly added stock for readonly users" />
-    <MESSAGE value="bugfix for access levels" />
-    <MESSAGE value="change itemID sticker text size" />
-    <MESSAGE value="fix timestamps on checking in stock and add nice feedback messages from api" />
-    <MESSAGE value="deleting stock also deleted associated verification and check-in/out records" />
-    <MESSAGE value="bugfix for checkout reason not being recorded" />
-    <MESSAGE value="update access level labelling when creating users" />
-    <MESSAGE value="Add &quot;add another product&quot; button to product panel" />
-    <MESSAGE value="bugfix for price filtering - fixed by changing DB schema" />
-    <MESSAGE value="prevent checking out greater than available quantities of stock" />
-    <MESSAGE value="turn off db echo" />
-    <MESSAGE value="fix bulkItemCount not being recorded" />
-    <MESSAGE value="add test for ItemID QR codes not being valid and rework getAppStockData appropriately" />
-    <MESSAGE value="bugfix for trying to send email notifications with an empty recipient list" />
-    <MESSAGE value="changes to close the database after each request" />
-    <MESSAGE value="adjustments to scheduled task worker to try adn make things run smoothly" />
-    <option name="LAST_COMMIT_MESSAGE" value="adjustments to scheduled task worker to try adn make things run smoothly" />
+    <MESSAGE value="fix getting wrong expiry dates for stock page when selecting from near-expiry or expired tabs on overview page" />
+    <MESSAGE value="fix for deleting products breaking references. Deleting a product type now also removes stock items, stock assignments, and templates assignments that reference that product type" />
+    <MESSAGE value="Fix templates not loading correctly" />
+    <MESSAGE value="bugfix on deleting stock not deleting associated ItemID" />
+    <MESSAGE value="pressing enter on new bin name adds the bin now. Also updated feedback message to show confirmation, and clear after a few seconds" />
+    <MESSAGE value="pressing enter on new checking reason name adds the reason now. Also updated feedback message to show confirmation, and clear after a few seconds" />
+    <MESSAGE value="added enter-press behaviour for jobs panel" />
+    <MESSAGE value="added enter-press behaviour for products panel" />
+    <MESSAGE value="added enter-press behaviour for users page" />
+    <MESSAGE value="added enter-press behaviour for change password page" />
+    <MESSAGE value="hide expires checkbox on product panel for bulk products" />
+    <MESSAGE value="allow stock item to be jumped to from unverified stock list" />
+    <MESSAGE value="Show item ID string in stockItem panel" />
+    <MESSAGE value="Add identifier header text to sticker sheets" />
+    <MESSAGE value="Add days to run selection for DB backup and scheduled tasks" />
+    <MESSAGE value="Force db lockfile to be released in close_db(). Seems to prevent problems with scheduled worker. Likely a problem with a lock not getting released" />
+    <MESSAGE value="Adjust to allow stock level checks to work on available rather than total stock levels" />
+    <MESSAGE value="logging level tweaks in db" />
+    <MESSAGE value="fix greyout divs moving with scroll" />
+    <MESSAGE value="tweaks to id card label generation" />
+    <MESSAGE value="bugfix on add stock bulk check in quantity" />
+    <MESSAGE value="Add qty unit to picking lists" />
+    <MESSAGE value="remove junk" />
+    <MESSAGE value="fix some wrong names in getAppProductData()" />
+    <MESSAGE value="make stock order by product name case insensitive" />
+    <option name="LAST_COMMIT_MESSAGE" value="make stock order by product name case insensitive" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/users.py</url>
-          <line>132</line>
-          <option name="timeStamp" value="62" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>218</line>
-          <option name="timeStamp" value="70" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../timelogger_docker/timelogger/clockuser.py</url>
-          <line>3</line>
-          <option name="timeStamp" value="73" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>224</line>
-          <option name="timeStamp" value="82" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/systemSettings.py</url>
-          <line>52</line>
-          <option name="timeStamp" value="89" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>303</line>
-          <option name="timeStamp" value="97" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>391</line>
-          <option name="timeStamp" value="102" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>93</line>
-          <option name="timeStamp" value="103" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>112</line>
-          <option name="timeStamp" value="104" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/api.py</url>
-          <line>35</line>
-          <option name="timeStamp" value="110" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -722,13 +669,8 @@
         <watch expression="self.stockItem" language="Python" />
       </configuration>
       <configuration name="PythonConfigurationType">
-        <watch expression="len(label)" language="Python" />
-        <watch expression="textChars" language="Python" />
-        <watch expression="formattedText" language="Python" />
-        <watch expression="lineLength" language="Python" />
-        <watch expression="availableSpace" language="Python" />
-        <watch expression="lastWhitespaceInTextChars" language="Python" />
-        <watch expression="textSize" language="Python" />
+        <watch expression="checkInRecord" language="Python" />
+        <watch expression="product" language="Python" />
       </configuration>
     </watches-manager>
   </component>

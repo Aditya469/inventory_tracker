@@ -95,7 +95,9 @@ function updateNewStockTable(){
             var tr = $("<tr>");
             tr.append($("<th/>"));
             tr.append($("<th>Product Name</th>"));
-            tr.append($("<th>Quantity checked in</th>"));
+            tr.append($("<th>Quantity</th>"));
+            tr.append($("<th>Item ID</th>"));
+            tr.append($("<th>Timestamp</th>"));
             table.append(thead);
             thead.append(tr);
 
@@ -104,10 +106,17 @@ function updateNewStockTable(){
             for(var i = 0; i < responseData.length; i++){
                 tr = $("<tr>");
                 tr.data("verificationRecordId", responseData[i].verificationRecordId);
-                tr.click(function(){ });
+                tr.data("stockItemId", responseData[i].stockItemId);
+                tr.data("stockItemIdString", responseData[i].stockItemIdString);
+                tr.click(function(){
+                    var url = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage") }}");
+                    url.searchParams.append("stockItemIdString", $(this).data("stockItemIdString"));
+                    url.searchParams.append("stockItemIdToShow", $(this).data("stockItemId"));
+                    window.location.href = url;
+                });
 
                 var checkbox = $("<input type='checkbox' class='newStockSelectCheckbox form-check-input mt-2'>");
-                checkbox.on("click", function(){ onNewStockSelectCheckboxClicked() });
+                checkbox.on("click", function(event){ event.stopPropagation(); onNewStockSelectCheckboxClicked() });
                 checkbox.data("verificationRecordId", responseData[i].verificationRecordId);
                 if($("#userCanCreate").val() == "0")
                     checkbox.prop("disabled", true);
@@ -122,6 +131,8 @@ function updateNewStockTable(){
                         "</td>"
                     )
                 );
+                tr.append($("<td>" + responseData[i].stockItemIdString + "</td>"));
+                tr.append($("<td>" + responseData[i].timestamp + "</td>"));
 
                 tbody.append(tr);
             }

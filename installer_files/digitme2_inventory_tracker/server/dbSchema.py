@@ -89,12 +89,12 @@ class StockItem(Base):
 	id = Column(Integer, primary_key=True)  # ID in the database rather than QR code ID
 	idString = Column(String, ForeignKey("itemIds.idString"))
 	productType = Column(Integer, ForeignKey("productTypes.id"))
-	addedTimestamp = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	addedTimestamp = Column(DateTime(timezone=True), default=func.now())
 	expiryDate = Column(Date, server_default=None)
 	quantityRemaining = Column(Numeric, default=0)
 	price = Column(Price, default=0)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
-	lastUpdated = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	lastUpdated = Column(DateTime(timezone=True), default=func.now())
 	associatedProduct = relationship("ProductType", back_populates="associatedStock")
 
 	def toDict(self):
@@ -144,7 +144,7 @@ class ProductType(Base):
 	productDescriptor1 = Column(Text, default="")
 	productDescriptor2 = Column(Text, default="")
 	productDescriptor3 = Column(Text, default="")
-	addedTimestamp = Column(DateTime, default=datetime.datetime.now())
+	addedTimestamp = Column(DateTime, default=func.now())
 	initialQuantity = Column(Numeric, default="")
 	quantityUnit = Column(String, default="")
 	expectedPrice = Column(Price, default=0)
@@ -154,7 +154,7 @@ class ProductType(Base):
 	sendStockNotifications = Column(Boolean, default=False)
 	needsReordering = Column(Boolean, default=False)
 	stockReordered = Column(Boolean, default=False)
-	lastUpdated = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	lastUpdated = Column(DateTime(timezone=True), default=func.now())
 	associatedStock = relationship("StockItem", back_populates='associatedProduct')
 	associatedAssignedStock = relationship("AssignedStock", backref="productTypes")
 
@@ -188,7 +188,7 @@ class CheckInRecord(Base):
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
 	productType = Column(Integer, ForeignKey("productTypes.id"))
-	timestamp = Column(DateTime(), default=datetime.datetime.now())
+	timestamp = Column(DateTime(), default=func.now())
 	quantity = Column(Numeric, default=0)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
@@ -220,7 +220,7 @@ class CheckOutRecord(Base):
 	id = Column(Integer, primary_key=True)
 	stockItem = Column(Integer, ForeignKey("stockItems.id"))
 	productType = Column(Integer, ForeignKey("productTypes.id"))
-	timestamp = Column(DateTime(), default=datetime.datetime.now())
+	timestamp = Column(DateTime(), default=func.now())
 	quantity = Column(Numeric)
 	binId = Column(Integer, ForeignKey("bins.id"))
 	jobId = Column(Integer, ForeignKey("jobs.id"))
@@ -279,10 +279,10 @@ class Job(Base):
 
 	id = Column(Integer, primary_key=True)
 	idString = Column(String, unique=True)
-	addedTimestamp = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	addedTimestamp = Column(DateTime(timezone=True), default=func.now())
 	qrCodeName = Column(String)
 	jobName = Column(String)
-	lastUpdated = Column(DateTime(timezone=True), default=datetime.datetime.now())
+	lastUpdated = Column(DateTime(timezone=True), default=func.now())
 	associatedStockCheckins = relationship("CheckInRecord", backref='Job')
 	associatedStockCheckouts = relationship("CheckOutRecord", backref='Job')
 	associatedAssignedStock = relationship("AssignedStock", backref="Job")
@@ -408,7 +408,22 @@ class Settings(Base):
 	dbNumberOfBackups = Column(Integer, default=5)
 	dbBackupAtTime = Column(Time(timezone=True))
 	dbMakeBackups = Column(Boolean, default=True)
+	dbBackupOnMonday = Column(Boolean, default=True)
+	dbBackupOnTuesday = Column(Boolean, default=True)
+	dbBackupOnWednesday = Column(Boolean, default=True)
+	dbBackupOnThursday = Column(Boolean, default=True)
+	dbBackupOnFriday = Column(Boolean, default=True)
+	dbBackupOnSaturday = Column(Boolean, default=True)
+	dbBackupOnSunday = Column(Boolean, default=True)
 	stockLevelReorderCheckAtTime = Column(Time(timezone=True))
+	stockCheckOnMonday = Column(Boolean, default=True)
+	stockCheckOnTuesday = Column(Boolean, default=True)
+	stockCheckOnWednesday = Column(Boolean, default=True)
+	stockCheckOnThursday = Column(Boolean, default=True)
+	stockCheckOnFriday = Column(Boolean, default=True)
+	stockCheckOnSaturday = Column(Boolean, default=True)
+	stockCheckOnSunday = Column(Boolean, default=True)
+	stockCheckAvailableLevels = Column(Boolean, default=True)
 
 	def toDict(self):
 		dataDict = {
@@ -437,6 +452,21 @@ class Settings(Base):
 			"sendEmails": self.sendEmails,
 			"dbNumberOfBackups": self.dbNumberOfBackups,
 			"dbMakeBackups": self.dbMakeBackups,
+			"dbBackupOnMonday": self.dbBackupOnMonday,
+			"dbBackupOnTuesday": self.dbBackupOnTuesday,
+			"dbBackupOnWednesday": self.dbBackupOnWednesday,
+			"dbBackupOnThursday": self.dbBackupOnThursday,
+			"dbBackupOnFriday": self.dbBackupOnFriday,
+			"dbBackupOnSaturday": self.dbBackupOnSaturday,
+			"dbBackupOnSunday": self.dbBackupOnSunday,
+			"stockCheckOnMonday": self.stockCheckOnMonday,
+			"stockCheckOnTuesday": self.stockCheckOnTuesday,
+			"stockCheckOnWednesday": self.stockCheckOnWednesday,
+			"stockCheckOnThursday": self.stockCheckOnThursday,
+			"stockCheckOnFriday": self.stockCheckOnFriday,
+			"stockCheckOnSaturday": self.stockCheckOnSaturday,
+			"stockCheckOnSunday": self.stockCheckOnSunday,
+			"stockCheckAvailableLevels": self.stockCheckAvailableLevels,
 		}
 		if self.dbBackupAtTime is None:
 			dataDict["dbBackupAtTime"] = None

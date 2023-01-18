@@ -50,7 +50,7 @@ def createJob():
 
 	session = getDbSession()
 
-	if session.query(Job).filter(Job.jobName == request.json['jobName']).first():
+	if session.query(Job).filter(Job.jobName == request.json['jobName'].strip()).first():
 		error = "A job with that name exists. Job names must be unique"
 
 	if error:
@@ -117,21 +117,19 @@ def deleteJob(jobId):
 @create_access_required
 def processJobTemplate():
 	"""
-	Create a job template, or update an existing one based on ID
+	Create a job template, or update an existing one based on name
 	"""
 	dbSession = getDbSession()
 
-	template = dbSession.query(JobTemplate).filter(JobTemplate.id == request.json["templateId"]).first()
+	template = dbSession.query(JobTemplate).filter(JobTemplate.templateName == request.json["templateName"]).first()
 	if template is None:
 		template = JobTemplate()
 		dbSession.add(template)
 
-	template.templateName = request.json["templateName"]
+	template.templateName = request.json["templateName"].strip()
 	dbSession.flush()
 
-	existingAssignments = dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.jobTemplateId == template.id).all()
-	for assignment in existingAssignments:
-		dbSession.delete(assignment)
+	dbSession.query(TemplateStockAssignment).filter(TemplateStockAssignment.jobTemplateId == template.id).delete()
 
 	for row in request.json["templateStockAssignments"]:
 		stockAssignment = TemplateStockAssignment(
@@ -143,7 +141,7 @@ def processJobTemplate():
 
 	dbSession.commit()
 
-	return make_response(jsonify({"templateId": template.id}), 200)
+	return make_response(jsonify({"templateId": template.id, "templateName": template.templateName}), 200)
 
 
 @bp.route("/getTemplateList")
@@ -171,6 +169,7 @@ def getTemplateStockAssignment():
 			ProductType.quantityUnit,
 			TemplateStockAssignment.quantity
 		)\
+		.filter(TemplateStockAssignment.jobTemplateId == request.args.get("templateId", default=-1, type=int))\
 		.join(TemplateStockAssignment)\
 		.order_by(ProductType.productName)\
 		.all()
@@ -210,9 +209,9 @@ def updateJobFromRequest(jobId, dbSession):
 		return error
 
 	job = dbSession.query(Job).filter(Job.id == jobId).scalar()
-	job.jobName = request.json["jobName"]
+	job.jobName = request.json["jobName"].strip()
 
-	jobIdString = request.json["jobIdString"]
+	jobIdString = request.json["jobIdString"].strip()
 	if jobIdString != "" and jobIdString.startswith("job_"):
 		job.idString = jobIdString
 
@@ -474,9 +473,9 @@ def getPickingList():
 
 	'''
 
-	pageWidth = 80
+	pageWidth = 120
 	padWidth = 3
-	quantityWidth = 6
+	quantityWidth = 20
 	barcodeWidth = 16
 	binWidth = 20
 	# special as likely widest
@@ -515,7 +514,7 @@ def getPickingList():
 
 		rowDescription = {
 			"productName": product.productName,
-			"quantity": assignedStockRecord.quantity,
+			"quantity": f"{assignedStockRecord.quantity} {product.quantityUnit}",
 			"binName": binName,
 			"barcode": product.barcode
 		}

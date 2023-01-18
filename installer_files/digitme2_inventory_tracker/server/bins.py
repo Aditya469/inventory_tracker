@@ -57,11 +57,13 @@ def createBin():
         return make_response("locationName must be defined", 400)
 
     dbSession = getDbSession()
+    if dbSession.query(Bin).filter(Bin.locationName == request.json['locationName']).first() is not None:
+        return make_response("A bin with that name already exists", 400)
     newBin = Bin()
     dbSession.add(newBin)
     dbSession.flush()
     newBin.idString = f"bin_{newBin.id}"
-    newBin.locationName = request.json["locationName"]
+    newBin.locationName = request.json["locationName"].strip()
 
     dbSession.commit()
 

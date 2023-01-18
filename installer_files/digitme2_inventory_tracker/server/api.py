@@ -58,8 +58,8 @@ def getAppProductData():
 		if product.tracksAllItemsOfProductType:
 			associatedStockItem = dbSession.query(StockItem).filter(StockItem.productType == product.id).first()
 			if associatedStockItem is not None:
-				productDict["isAssignedId"] = True
-				productDict["assocaitedStockId"] = associatedStockItem.id
+				productDict["isAssignedStockId"] = True
+				productDict["associatedStockId"] = associatedStockItem.idString
 		productList.append(productDict)
 
 	return make_response(jsonify(productList), 200)
@@ -217,7 +217,7 @@ def processAddStockRequest():
 			if 'bulkItemCount' in requestParams:
 				bulkItemCount = int(requestParams['bulkItemCount'])
 			stockItem.quantityRemaining += productType.initialQuantity * bulkItemCount
-			checkInRecord.quantity = productType.initialQuantity * bulkItemCount
+			#checkInRecord.quantity = productType.initialQuantity * bulkItemCount
 			# continues below ...
 
 		# itemID is not attached to a stock item. Create one.
@@ -550,17 +550,3 @@ def processCheckStockOutRequest():
 		dbSession.commit()
 	except Exception as e:
 		logging.error(e)
-
-
-@bp.route("/host")
-def handleDiscovery():
-	hostname = flask.request.host
-	return make_response(jsonify({"inventoryTrackerHostName": hostname}), 200)
-
-
-@bp.route("/serverTest", methods=("GET", "POST"))
-def serverTest():
-	#print(request.json)
-	print("beep")
-	time.sleep(1)
-	return make_response("beep", 200)
