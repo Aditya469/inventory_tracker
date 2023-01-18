@@ -166,7 +166,16 @@ limitations under the License.
                 android:text="@string/label_settings_show_debug_messages"
                 />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:barrierDirection="top" />
 
+            <TextView
+                android:id="@+id/tvVersionIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_settings_app_version" />
 
 
         </LinearLayout>
