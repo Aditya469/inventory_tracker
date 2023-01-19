@@ -33,7 +33,7 @@ limitations under the License.
 	<input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{%else%}value="0"{% endif %} />
 	<div class="row row-cols-sm-1 row-cols-lg-2	">
 		<div id="productsContainer" class="col col-md-12 col-lg-6 border overflow-auto">
-			<h1>Known Products</h1>
+			<h1>Known Product Types</h1>
 			<div id="productControls" class="row px-2">
 				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12 btn btn-primary" onclick="openProductDetailsPanel(-1)" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 				<input id="productsSearchBar" placeholder="Start typing to search..." class="col col-12 my-1 form-control" oninput="updateProductsTable()">

@@ -4,8 +4,7 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="make stock order by product name case insensitive">
-      <change beforePath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/build/intermediates/apk/debug/app-debug.apk" afterDir="false" />
+    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="update stock check functionality to include expiring and expired stock">
       <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -261,20 +260,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1651757426946</updated>
-    </task>
-    <task id="LOCAL-00070" summary="update access level labelling when creating users">
-      <created>1669814756391</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1669814756392</updated>
-    </task>
-    <task id="LOCAL-00071" summary="Add &quot;add another product&quot; button to product panel">
-      <created>1669829621645</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1669829621646</updated>
     </task>
     <task id="LOCAL-00072" summary="Add &quot;add another product&quot; button to product panel">
       <created>1669987843090</created>
@@ -605,7 +590,21 @@
       <option name="project" value="LOCAL" />
       <updated>1674039814543</updated>
     </task>
-    <option name="localTasksCounter" value="119" />
+    <task id="LOCAL-00119" summary="update installer and app release">
+      <created>1674041342179</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1674041342180</updated>
+    </task>
+    <task id="LOCAL-00120" summary="update stock check functionality to include expiring and expired stock">
+      <created>1674130069187</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1674130069188</updated>
+    </task>
+    <option name="localTasksCounter" value="121" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -622,8 +621,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix getting wrong expiry dates for stock page when selecting from near-expiry or expired tabs on overview page" />
-    <MESSAGE value="fix for deleting products breaking references. Deleting a product type now also removes stock items, stock assignments, and templates assignments that reference that product type" />
     <MESSAGE value="Fix templates not loading correctly" />
     <MESSAGE value="bugfix on deleting stock not deleting associated ItemID" />
     <MESSAGE value="pressing enter on new bin name adds the bin now. Also updated feedback message to show confirmation, and clear after a few seconds" />
@@ -647,7 +644,9 @@
     <MESSAGE value="remove junk" />
     <MESSAGE value="fix some wrong names in getAppProductData()" />
     <MESSAGE value="make stock order by product name case insensitive" />
-    <option name="LAST_COMMIT_MESSAGE" value="make stock order by product name case insensitive" />
+    <MESSAGE value="update installer and app release" />
+    <MESSAGE value="update stock check functionality to include expiring and expired stock" />
+    <option name="LAST_COMMIT_MESSAGE" value="update stock check functionality to include expiring and expired stock" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

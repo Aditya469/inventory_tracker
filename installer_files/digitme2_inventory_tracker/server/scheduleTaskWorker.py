@@ -26,7 +26,7 @@ import paths
 from backup import backUpDatabase
 from db import getDbSession, close_db
 from dbSchema import Settings
-from productManagement import findAndMarkProductsToReorder
+from productManagement import performStockCheckAndReport
 
 
 def setUpScheduler():
@@ -76,7 +76,7 @@ def findAndRunScheduledTasks():
 					 or (settings.stockCheckOnSaturday and currentDayOfWeek == 5)
 					 or (settings.stockCheckOnSunday and currentDayOfWeek == 6)):
 			logging.info("Database stock level reorder check needs to be run")
-			functionsToBeRun.append(findAndMarkProductsToReorder)
+			functionsToBeRun.append(performStockCheckAndReport)
 
 		# other tasks go here...
 

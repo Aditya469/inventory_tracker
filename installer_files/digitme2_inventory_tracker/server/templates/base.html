@@ -41,7 +41,7 @@ limitations under the License.
 			<div class="navbar-brand">
 				<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
 				<br>
-				<span id="versionString">Version 1.0.0</span>
+				<span id="versionString">Version 2.0.0</span>
 			</div>
 			{% if g.user != None %}
 			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -50,7 +50,7 @@ limitations under the License.
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				<div class="navbar-nav">
 					<a class="nav-item nav-link m-2" href="{{ url_for('overview.getOverview') }}">Overview Page</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('productManagement.getProductManagementPage') }}">Products and New Stock</a>
+					<a class="nav-item nav-link m-2" href="{{ url_for('productManagement.getProductManagementPage') }}">Product Types and New Stock</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('stockManagement.getStockPage') }}">Stock Management</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('bins.manageBins') }}">Bins</a>
 					<a class="nav-item nav-link m-2" href="{{ url_for('checkingReasons.manageCheckingReasons') }}">Check-in/out Reasons</a>

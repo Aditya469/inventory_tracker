@@ -23,11 +23,11 @@ limitations under the License.
 	<input id="productId" type="hidden" class="editProductPanelInput">
 	<form class="needs-validation" novalidate>
 		<div class="row" id="productPanelDetails">
-			<div class="col row row-cols-2 mx-1">
-				<label class="col mt-2" for="productName">Product Name:</label>
-				<input class="col form-control editProductPanelInput" id="productName" type="text" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
-				<label class="col" for="barcode">Product Barcode:</label>
-				<div class="col-12 row mt-2">
+			<div class="col row row-cols-2 mx-1 d-flex flex-column">
+				<label class="col-12 mt-2" for="productName">Product Name:</label>
+				<input class="col-12 mx-2 mb-4 form-control editProductPanelInput" id="productName" type="text" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+				<label class="col-12" for="barcode">Product Barcode:</label>
+				<div class="col-12 row mb-4">
 					<div class="col">
 						<input class="form-control editProductPanelInput" id="barcode" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 					</div>
@@ -35,31 +35,35 @@ limitations under the License.
 						<input type="button" disabled id="btnGetBarcodeStickerSheet" class="btn btn-primary " onclick="openStickerSheetPanel()" value="Get Barcode Sticker Sheet">
 					</div>
 				</div>
-				<span class="col mt-2">Bulk Product?:</span>
-				<div class="col mt-2">
-					<div class="form-check">
-						<label class="form-check-label" for="bulkSelector">Bulk</label>
-						<input class="form-check-input bulkSelectorRadio" id="bulkSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" value="bulk" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+				<div class="col-12 row mb-4">
+					<span class="col-4 mt-2">Bulk Product?:</span>
+					<div class="col-8 mt-2">
+						<div class="form-check">
+							<label class="form-check-label" for="bulkSelector">Bulk</label>
+							<input class="form-check-input bulkSelectorRadio" id="bulkSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" value="bulk" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+						</div>
+						<div class="form-check">
+							<label class="form-check-label" for="specificItemSelector">Specific Item</label>
+							<input class="form-check-input bulkSelectorRadio" id="specificItemSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" checked value="specificItem" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+						</div>
 					</div>
-					<div class="form-check">
-						<label class="form-check-label" for="specificItemSelector">Specific Item</label>
-						<input class="form-check-input bulkSelectorRadio" id="specificItemSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" checked value="specificItem" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+				</div>
+				<div class="col-12 row">
+					<label class="col-8 mt-2" for="reorderLevel">Reorder Notify at Quantity:</label>
+					<div class="col-4 mt-2">
+						<input class="form-control editProductPanelInput" id="reorderLevel" type="number" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 					</div>
-				</div>
-				<label class="col mt-2" for="reorderLevel">Reorder Notify at Quantity:</label>
-				<div class="col mt-2">
-					<input class="form-control editProductPanelInput" id="reorderLevel" type="number" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
-				</div>
-				<div class="col-5 ms-2 form-check">
-					<label class="form-check-label" for="sendStockNotifications">Send Reorder Alerts</label>
-					<input class="form-check-input editProductPanelInput" id="sendStockNotifications" type="checkbox"  {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
-				</div>
-				<div class="col-6 ms-4 form-check">
-					<label class="form-check-label" hidden id="newStockOrderedLabel" for="newStockOrdered">New Stock Ordered?</label>
-					<input class="form-check-input editProductPanelInput" hidden id="newStockOrdered" type="checkbox"  {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+					<div class="col-12 ms-4 form-check">
+						<label class="form-check-label" for="sendStockNotifications">Send Reorder Alerts</label>
+						<input class="form-check-input editProductPanelInput" id="sendStockNotifications" type="checkbox"  {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+					</div>
+					<div class="col-12 ms-4 form-check">
+						<label class="form-check-label" hidden id="newStockOrderedLabel" for="newStockOrdered">New Stock Ordered?</label>
+						<input class="form-check-input editProductPanelInput" hidden id="newStockOrdered" type="checkbox"  {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+					</div>
 				</div>
 			</div>
-			<div class="col row row-cols-2 mx-1">
+			<div class="col row row-cols-2 mx-1 d-flex flex-column">
 				<label class="col mt-2" for="descriptor1">Product Descriptor 1:</label>
 				<input class="col form-control editProductPanelInput" id="descriptor1" type="text" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 				<label class="col mt-2" for="descriptor2">Product Descriptor 2:</label>
@@ -78,9 +82,19 @@ limitations under the License.
 						<input class="form-control editProductPanelInput" id="expectedPrice" type="number" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 					</div>
 				</div>
-				<div class="col ms-1 mt-2 form-check">
-					<label class="form-check-label" for="canExpire" id="canExpireLabel">Expires</label>
+				<div class="col-12 mt-2">
+					<label class="form-check-label me-2" for="canExpire" id="canExpireLabel">Expires</label>
 					<input class="form-check-input editProductPanelInput" id="canExpire" type="checkbox" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+				</div>
+				<div class="col-12 mt-2">
+					<label class="form-check-label me-2" for="notifyExpiry" id="notifyExpiryLabel">Notify When Near Expiration</label>
+					<input class="form-check-input editProductPanelInput" id="notifyExpiry" type="checkbox" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+				</div>
+				<div class="col-12 mt-2 row">
+					<label class="form-label col-9" for="expiryWarningDayCount" id="expiryWarningDayCountLabel">Notify within this many days of expiry</label>
+					<div class="col-3">
+						<input class="form-control editProductPanelInput" id="expiryWarningDayCount" type="number" value="7" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+					</div>
 				</div>
 			</div>
 		</div>

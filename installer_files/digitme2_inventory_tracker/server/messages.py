@@ -41,20 +41,38 @@ def getPasswordResetMessage(username, newPassword):
     return message
 
 
-def getStockNeedsReorderingMessage(productIdList):
+def getStockCheckInformationMessage(ProductsNeedingReorder, ExpiringStock, ExpiredStock):
     dbSession = getDbSession()
-    productList = dbSession.query(ProductType)\
-        .filter(ProductType.id.in_(productIdList))\
-        .order_by(ProductType.productName.asc())\
-        .all()
 
-    message = "Hi.\n\nThis is an automated message regarding stock levels. " \
-              "The following items are below specified minimum levels:\n\n"
+    message = "Hi.\n\nThis is an automated message with the results of a stock check.\n\n"
 
-    for product in productList:
-        message += f"{product.productName}\n"
+    if len(ProductsNeedingReorder) > 0:
+        message += "The following items are below specified minimum levels and should be reordered\n\n"
 
-    message += f"\nThis is an automated email. This inbox is not monitored"
+        for product in ProductsNeedingReorder:
+            message += f"{product.productName}\n"
+    else:
+        message += "No product types need reordering."
+
+    if len(ExpiringStock) > 0:
+        message += "\n\nThe following items are close to their expiry dates:\n"
+
+        message += "\n{:<15} {:<30} {:<20}".format("Item ID", "Product Type", "Expiry Date")
+        for stockItem in ExpiringStock:
+            message += f"\n{stockItem.idString:<15} {stockItem.associatedProduct.productName:<30} {stockItem.expiryDate.strftime('%d/%m/%Y')}"
+    else:
+        message += "\n\nNo stock items are close to expiring"
+
+    if len(ExpiredStock) > 0:
+        message += "\n\nThe following items have expired:\n"
+
+        message += "\n{:<15} {:<30} {:<20}".format("Item ID", "Product Type", "Expiry Date")
+        for stockItem in ExpiredStock:
+            message += f"\n{stockItem.idString:<15} {stockItem.associatedProduct.productName:<30} {stockItem.expiryDate.strftime('%d/%m/%Y')}"
+    else:
+        message += "\n\nNo stock items have expired"
+
+    message += f"\n\nThis is an automated email. This inbox is not monitored"
 
     return message
 
