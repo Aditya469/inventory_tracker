@@ -13,19 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+import datetime
 import decimal
 
 from flask import (
 	Blueprint, render_template, request, make_response, jsonify, send_file, current_app
 )
-from sqlalchemy import select, or_, func
+from sqlalchemy import select, or_, func, asc
 
 from auth import login_required, create_access_required, admin_access_required
 from db import getDbSession, close_db
 from dbSchema import ProductType, StockItem, User, TemplateStockAssignment, AssignedStock, Settings
 from emailNotification import sendEmail
-from messages import getStockNeedsReorderingMessage
+from messages import getStockCheckInformationMessage
 from qrCodeFunctions import generateIdQrCodeSheets
 from stockManagement import updateNewStockWithNewProduct, deleteStockItemById, getAvailableStockTotalsDataFromRequest
 from utilities import writeDataToCsvFile
@@ -201,6 +201,15 @@ def updateProductFromRequestForm(session, product):
 		else:
 			product.canExpire = False
 
+	if "notifyExpiry" in request.form:
+		if request.form["notifyExpiry"] == "true":
+			product.notifyExpiry = True
+		else:
+			product.notifyExpiry = False
+
+	if "expiryWarningDayCount" in request.form:
+		product.expiryWarningDayCount = int(request.form["expiryWarningDayCount"])
+
 	if "reorderLevel" in request.form and request.form["reorderLevel"] != "":
 		product.reorderLevel = decimal.Decimal(request.form["reorderLevel"])
 	else:
@@ -219,14 +228,18 @@ def updateProductFromRequestForm(session, product):
 @bp.route('/runStockCheck', methods=('POST',))
 @admin_access_required
 def runStockCheck():
-	findAndMarkProductsToReorder()
+	performStockCheckAndReport()
 	return make_response("Stock Check Complete", 200)
 
 
-def findAndMarkProductsToReorder():
+def performStockCheckAndReport():
 	"""
 	Function to run periodically which finds products that are below the
-	reorder level and marks them appropriately in the database
+	reorder level and marks them appropriately in the database.
+
+	Produces an email notification that includes a list of stock needing
+	reordering, and stock that is within its product-type's expiry warning
+	period.
 	"""
 	dbSession = getDbSession()
 
@@ -235,8 +248,14 @@ def findAndMarkProductsToReorder():
 	productList = dbSession.query(ProductType)\
 		.filter(ProductType.reorderLevel != None) \
 		.filter(ProductType.reorderLevel != "None") \
+		.order_by(asc(func.lower(ProductType.productName))) \
 		.all()
-	reorderNotificationIds = []
+
+	productsNeedingReorder = []
+	expiringStockItems = []
+	expiredStockItems = []
+
+
 
 	availableStock = getAvailableStockTotalsDataFromRequest()
 
@@ -254,17 +273,39 @@ def findAndMarkProductsToReorder():
 				.first()[0]
 
 		if stockQty is None or stockQty <= product.reorderLevel:
-			if product.needsReordering == False: # if not already logged, tag and possibly add to list to notify
-				product.needsReordering = True
-				if product.sendStockNotifications:
-					reorderNotificationIds.append(product.id)
+			product.needsReordering = True
+			if product.sendStockNotifications and not product.stockReordered:
+				productsNeedingReorder.append(product)
 		else:
 			product.needsReordering = False
 
-	if len(reorderNotificationIds) > 0:
-		emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
-		message = getStockNeedsReorderingMessage(reorderNotificationIds)
-		sendEmail(emailAddressList, "Stock needs reordering", message)
+		# check for expiring stock of this product type
+		currentDate = datetime.datetime.now().date()
+		if product.notifyExpiry:
+			expiryDateUpperLimit = datetime.datetime.now() + datetime.timedelta(product.expiryWarningDayCount)
+			expiringStock = dbSession.query(StockItem)\
+				.filter(StockItem.productType == product.id)\
+				.filter(StockItem.expiryDate >= currentDate)\
+				.filter(StockItem.expiryDate <= expiryDateUpperLimit)\
+				.filter(StockItem.quantityRemaining > 0)\
+				.all()
+
+			for stockItem in expiringStock:
+				expiringStockItems.append(stockItem)
+
+		# check for expired stock
+		expiredStock = dbSession.query(StockItem) \
+			.filter(StockItem.productType == product.id) \
+			.filter(StockItem.expiryDate < currentDate) \
+			.filter(StockItem.quantityRemaining > 0) \
+			.all()
+
+		for stockItem in expiredStock:
+			expiredStockItems.append(stockItem)
+
+	emailAddressList = [row[0] for row in dbSession.query(User.emailAddress).filter(User.receiveStockNotifications == True).all()]
+	message = getStockCheckInformationMessage(productsNeedingReorder, expiringStockItems, expiredStockItems)
+	sendEmail(emailAddressList, "Stock Check Information", message)
 
 	dbSession.commit()
 	close_db()

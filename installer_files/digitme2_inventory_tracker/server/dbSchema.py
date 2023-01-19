@@ -150,6 +150,8 @@ class ProductType(Base):
 	expectedPrice = Column(Price, default=0)
 	barcode = Column(String, default="undefined")
 	canExpire = Column(Boolean, default=False)
+	expiryWarningDayCount = Column(Integer, default=0)
+	notifyExpiry = Column(Boolean, default=False)
 	reorderLevel = Column(Numeric, default=None)
 	sendStockNotifications = Column(Boolean, default=False)
 	needsReordering = Column(Boolean, default=False)
@@ -174,6 +176,8 @@ class ProductType(Base):
 			"expectedPrice": self.expectedPrice,
 			"barcode": self.barcode,
 			"canExpire": self.canExpire,
+			"expiryWarningDayCount": self.expiryWarningDayCount,
+			"notifyExpiry": self.notifyExpiry,
 			"reorderLevel": self.reorderLevel,
 			"sendStockNotifications": self.sendStockNotifications,
 			"needsReordering": self.needsReordering,
