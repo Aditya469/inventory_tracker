@@ -48,7 +48,11 @@ limitations under the License.
     <string name="settings_password_hint">New password...</string>
     <string name="label_settings_use_server_auto_sync">Use Server Auto-sync</string>
     <string name="label_settings_show_debug_messages">Show Debug Messages</string>
+<<<<<<< HEAD
     <string name="label_settings_app_version">Version 2.0.0</string>
+=======
+    <string name="label_settings_app_version">Version 1.1.0</string>
+>>>>>>> 88468e95867e134b8fb5212d3db6a5e30447e33e
 
 
     <!-- add stock fragment -->
