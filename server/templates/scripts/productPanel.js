@@ -42,11 +42,19 @@ function onBulkSelectorRadioChanged(){
         console.log("bulk");
         $("#canExpireLabel").prop("hidden", true);
         $("#canExpire").prop("hidden", true).prop("checked", false);
+        $("#notifyExpiryLabel").prop("hidden", true);
+        $("#notifyExpiry").prop("hidden", true).prop("checked", false);
+        $("#expiryWarningDayCountLabel").prop("hidden", true);
+        $("#expiryWarningDayCount").prop("hidden", true).val("0");
     }
     else{
         console.log("specific");
         $("#canExpireLabel").prop("hidden", false);
         $("#canExpire").prop("hidden", false);
+        $("#notifyExpiryLabel").prop("hidden", false);
+        $("#notifyExpiry").prop("hidden", false);
+        $("#expiryWarningDayCountLabel").prop("hidden", false);
+        $("#expiryWarningDayCount").prop("hidden", false).val("7");
     }
 }
 
@@ -55,12 +63,12 @@ function openProductDetailsPanel(prodId){
     if(prodId == -1){
         $("#editProductPanel").prop("hidden", false);
         $("#addAnotherProductButton").prop("hidden", true);
-        $("#panelTitle").html("Create New Product");
+        $("#panelTitle").html("Create New Product Type");
         $("#deleteButton").prop("disabled", true);
         $("#productId").val("-1");
     }
     else{
-        $("#panelTitle").html("Edit Product Details");
+        $("#panelTitle").html("Edit Product Type Details");
         $("#addedTimestampLabel").prop("hidden", false);
         $("#addedTimestamp").prop("hidden", false);
         $("#btnGetBarcodeStickerSheet").prop("disabled", false);
@@ -95,10 +103,9 @@ function openProductDetailsPanel(prodId){
                 $("#descriptor3").val(responseData.productDescriptor3 ? responseData.productDescriptor3 : "");
                 $("#initialQuantity").val(responseData.initialQuantity);
                 $("#quantityUnit").val(responseData.quantityUnit ? responseData.quantityUnit : "");
-                if(responseData.canExpire)
-                    $("#canExpire").prop("checked", true);
-                else
-                    $("#canExpire").prop("checked", false);
+                $("#canExpire").prop("checked", responseData.canExpire);
+                $("#notifyExpiry").prop("checked", responseData.notifyExpiry)
+                $("#expiryWarningDayCount").val(responseData.expiryWarningDayCount);
                 $("#expectedPrice").val(responseData.expectedPrice);
                 $("#reorderLevel").val(responseData.reorderLevel);
                 if(responseData.sendStockNotifications)
@@ -212,15 +219,29 @@ function saveProductDetails(){
     fd.append("initialQuantity", initialQuantity);
     fd.append("expectedPrice", $("#expectedPrice").val());
     fd.append("quantityUnit", ($("#quantityUnit").val() ? $("#quantityUnit").val() : ""));
+
     if($("#canExpire").is(":checked"))
         fd.append("canExpire", "true");
     else
         fd.append("canExpire", "false");
+
+    if($("#notifyExpiry").is(":checked"))
+        fd.append("notifyExpiry", "true")
+    else
+        fd.append("notifyExpiry", "false")
+
+    if($("#expiryWarningDayCount").val() != "")
+        fd.append("expiryWarningDayCount", $("#expiryWarningDayCount").val());
+    else
+        fd.append("expiryWarningDayCount", 0);
+
     fd.append("reorderLevel", $("#reorderLevel").val());
+
     if($("#sendStockNotifications").is(":checked"))
         fd.append("sendStockNotifications", "true");
     else
         fd.append("sendStockNotifications", "false");
+
     if($("#newStockOrdered").is(":checked"))
         fd.append("newStockOrdered", "true");
     else
