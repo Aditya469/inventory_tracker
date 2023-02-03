@@ -48,6 +48,11 @@ sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > inventory_tracker_interface
 cp digitme2_inventory_tracker/server/paths.py tmp.txt
 sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > digitme2_inventory_tracker/server/paths.py
 
+# replace SECRET_KEY with a proper value
+# Change the secret key to a random string
+SECRET_KEY=$(echo $RANDOM | md5sum | head -c 20)
+sed -i "s/SECRET_KEY/$SECRET_KEY/g" __init__.py
+
 rm tmp.txt
 
 # set up python venv and install requirements

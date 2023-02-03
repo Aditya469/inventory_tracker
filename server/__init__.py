@@ -29,7 +29,7 @@ def create_app():
     # create and configure the app
     app = Flask(__name__, instance_path=paths.instancePath)
     app.config.from_mapping(
-        SECRET_KEY='1962136272684349133472405913972750818232233649501065113923313188986613290795758'
+        SECRET_KEY='SECRET_KEY'
     )
 
     app.config.from_pyfile('config.py', silent=True)

@@ -102,7 +102,8 @@ def getAppStockData():
 
 			if stockItem is None: # might be aliased
 				alias = dbSession.query(IdAlias).filter(IdAlias.idString == itemId.idString).first()
-				stockItem = dbSession.query(StockItem).filter(StockItem.id == alias.stockItemAliased).first()
+				if alias is not None:
+					stockItem = dbSession.query(StockItem).filter(StockItem.id == alias.stockItemAliased).first()
 
 			if stockItem is not None:
 				productType = dbSession.query(ProductType).filter(ProductType.id == stockItem.productType).one()
@@ -284,7 +285,7 @@ def processAddStockRequest():
 	if 'quantityCheckingIn' in requestParams:
 		checkInRecord.quantity = decimal.Decimal(requestParams['quantityCheckingIn'])
 	elif 'bulkItemCount' in requestParams:
-		checkInRecord.quantity = decimal.Decimal(requestParams['bulkItemCount'])
+		checkInRecord.quantity = decimal.Decimal(requestParams['bulkItemCount']) * productType.initialQuantity
 	checkInRecord.createdByRequestId = requestParams['requestId']
 
 	if 'binIdString' in requestParams:
@@ -417,6 +418,15 @@ def processCheckStockInRequest():
 		stockItem.lastUpdated = func.current_timestamp()
 
 		dbSession.commit()
+
+		return make_response(
+			jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams['idString'],
+					"operation": "checked in"
+				}
+			), 200)
 	except Exception as e:
 		logging.error(e)
 
@@ -548,5 +558,14 @@ def processCheckStockOutRequest():
 			stockItem.isCheckedIn = False
 
 		dbSession.commit()
+
+		return make_response(
+			jsonify(
+				{
+					"processedId": requestParams['requestId'],
+					"itemId": requestParams['idString'],
+					"operation": "checked out"
+				}
+			), 200)
 	except Exception as e:
 		logging.error(e)

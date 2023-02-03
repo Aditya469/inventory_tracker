@@ -4,8 +4,27 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="update stock check functionality to include expiring and expired stock">
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="Fix missing confirmation messages in the api interface. Fix failing if an ID is not a stock item or an alias. Version bump to 2.0.1">
+      <change beforePath="$PROJECT_DIR$/../app/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/release/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/release/app-release.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/release/output.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/java/com/admt/inventoryTracker/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/java/com/admt/inventoryTracker/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/layout-land/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/layout-land/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,14 +62,18 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/__init__.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/scripts/stockManagement.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/templates/productPanel.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/templates/scripts/productPanel.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/bins.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/base.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/stockManagement.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/api.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/productManagement.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/messages.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/scripts/checkingReasonsManagement.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/templates/manageCheckingReasons.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/checkingReasons.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/dbSchema.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/stockManagement.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/api.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedIndex" value="2" />
@@ -70,7 +93,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../timelogger_docker/timelogger/clockuser.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../sdf" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.tabs" />
   </component>
@@ -80,7 +103,7 @@
       <recent name="$PROJECT_DIR$/templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.device_discovery">
+  <component name="RunManager" selected="Python.webapp">
     <configuration name="clockuser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -233,11 +256,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.webapp" />
       <item itemvalue="Python.scheduleWorker" />
-      <item itemvalue="Python.test" />
+      <item itemvalue="Python.webapp" />
       <item itemvalue="Python.clockuser" />
       <item itemvalue="Python.device_discovery" />
+      <item itemvalue="Python.test" />
       <item itemvalue="Python tests.Python tests in inventory_tracker_testing" />
       <item itemvalue="Python tests.Python tests for runTests.StockCheckOutTestCases" />
       <item itemvalue="Python tests.Python tests in runTests.py" />
@@ -260,20 +283,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1651757426946</updated>
-    </task>
-    <task id="LOCAL-00072" summary="Add &quot;add another product&quot; button to product panel">
-      <created>1669987843090</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1669987843090</updated>
-    </task>
-    <task id="LOCAL-00073" summary="bugfix for price filtering - fixed by changing DB schema">
-      <created>1670240456609</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1670240456610</updated>
     </task>
     <task id="LOCAL-00074" summary="prevent checking out greater than available quantities of stock">
       <created>1670245052081</created>
@@ -604,7 +613,21 @@
       <option name="project" value="LOCAL" />
       <updated>1674130069188</updated>
     </task>
-    <option name="localTasksCounter" value="121" />
+    <task id="LOCAL-00121" summary="version bump to 2.0.0">
+      <created>1674130211036</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1674130211036</updated>
+    </task>
+    <task id="LOCAL-00122" summary="Fix missing confirmation messages in the api interface. Fix failing if an ID is not a stock item or an alias. Version bump to 2.0.1">
+      <created>1675417507914</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1675417507915</updated>
+    </task>
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -621,8 +644,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Fix templates not loading correctly" />
-    <MESSAGE value="bugfix on deleting stock not deleting associated ItemID" />
     <MESSAGE value="pressing enter on new bin name adds the bin now. Also updated feedback message to show confirmation, and clear after a few seconds" />
     <MESSAGE value="pressing enter on new checking reason name adds the reason now. Also updated feedback message to show confirmation, and clear after a few seconds" />
     <MESSAGE value="added enter-press behaviour for jobs panel" />
@@ -646,10 +667,19 @@
     <MESSAGE value="make stock order by product name case insensitive" />
     <MESSAGE value="update installer and app release" />
     <MESSAGE value="update stock check functionality to include expiring and expired stock" />
-    <option name="LAST_COMMIT_MESSAGE" value="update stock check functionality to include expiring and expired stock" />
+    <MESSAGE value="version bump to 2.0.0" />
+    <MESSAGE value="Fix missing confirmation messages in the api interface. Fix failing if an ID is not a stock item or an alias. Version bump to 2.0.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix missing confirmation messages in the api interface. Fix failing if an ID is not a stock item or an alias. Version bump to 2.0.1" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/api.py</url>
+          <line>317</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
