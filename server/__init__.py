@@ -29,7 +29,7 @@ def create_app():
     # create and configure the app
     app = Flask(__name__, instance_path=paths.instancePath)
     app.config.from_mapping(
-        SECRET_KEY='SECRET_KEY'
+        SECRET_KEY='change_this_key'
     )
 
     app.config.from_pyfile('config.py', silent=True)
@@ -90,3 +90,4 @@ app = create_app()
 
 if __name__ == "__main__":
     app.run()
+

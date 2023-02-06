@@ -20,11 +20,16 @@
 
 if (( `id -u`!=0 ))
 	then
-		echo "Must be run as root"
-		echo "USAGE: sudo ./installer.sh"
+		echo "Must be run as root. try 'sudo ./installer.sh'"
 		exit
 fi
-echo "begin setup"
+
+echo "This script will install or update the DigitME2 Basic Inventory Tracker"
+echo "WARNING: This will make changes to nginx configuration files. Continue? y/n"
+read confirmInput
+if [[ $confirmInput != "y" ]]; then 
+	exit 
+fi
 
 INSTALL_DIR=$(awk '{split($0,J,"/"); print "/"J[2]"/"J[3]"" }' <<< `pwd`)
 ROOT_DIR=$(awk '{split($0,J,"/"); print "/"J[2]"/"J[3]"/digitme2_inventory_tracker" }' <<< `pwd`)
@@ -33,27 +38,17 @@ USER=$(awk '{split($0,J,"/"); print J[3] }' <<< `pwd`)
 echo "Server will be installed under $ROOT_DIR"
 
 # set up files with the required root path
-cp inventory_tracker_scheduled_task_worker.service tmp.txt
-sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > inventory_tracker_scheduled_task_worker.service
+sed -i "s|ROOTPATH|$ROOT_DIR|g" inventory_tracker_scheduled_task_worker.service
+sed -i "s|ROOTPATH|$ROOT_DIR|g" inventory_tracker_discovery.service
+sed -i "s|ROOTPATH|$ROOT_DIR|g" inventory_tracker_server.service
+sed -i "s|ROOTPATH|$ROOT_DIR|g" inventory_tracker_interface
+sed -i "s|ROOTPATH|$ROOT_DIR|g" digitme2_inventory_tracker/server/paths.py
 
-cp inventory_tracker_discovery.service tmp.txt
-sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > inventory_tracker_discovery.service
-
-cp inventory_tracker_server.service tmp.txt
-sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > inventory_tracker_server.service
-
-cp inventory_tracker_interface tmp.txt
-sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > inventory_tracker_interface
-
-cp digitme2_inventory_tracker/server/paths.py tmp.txt
-sed "s|ROOTPATH|$ROOT_DIR|g" tmp.txt > digitme2_inventory_tracker/server/paths.py
-
-# replace SECRET_KEY with a proper value
+# Replace the placeholder secret key with a proper value
 # Change the secret key to a random string
 SECRET_KEY=$(echo $RANDOM | md5sum | head -c 20)
-sed -i "s/SECRET_KEY/$SECRET_KEY/g" __init__.py
+sed -i "s|change_this_key|$SECRET_KEY|g" digitme2_inventory_tracker/server/__init__.py
 
-rm tmp.txt
 
 # set up python venv and install requirements
 apt install software-properties-common -y
