@@ -26,7 +26,7 @@ from db import getDbSession, close_db
 from dbSchema import ProductType, StockItem, User, TemplateStockAssignment, AssignedStock, Settings
 from emailNotification import sendEmail
 from messages import getStockCheckInformationMessage
-from qrCodeFunctions import generateIdQrCodeSheets
+from qrCodeFunctions import generateIdQrCodeSheets, generateIdCard
 from stockManagement import updateNewStockWithNewProduct, deleteStockItemById, getAvailableStockTotalsDataFromRequest
 from utilities import writeDataToCsvFile
 
@@ -360,3 +360,17 @@ def getProductBarcodeStickerSheet():
 	sheets[0].save(f"{current_app.instance_path}/stickers.png")
 	return send_file(f"{current_app.instance_path}/stickers.png", as_attachment=True,
 					 download_name=f"{product.productName} ID Sticker Sheet.png")
+
+
+@bp.route("/getProductBarcodeStickerSingle")
+def getProductIdCard():
+	dbSession = getDbSession()
+	productId = request.args.get("productItemId", default=None)
+	if productId:
+		productType = dbSession.query(ProductType).filter(ProductType.id == productId).first()
+		idCard = generateIdCard(productType.barcode, label=productType.barcode, labelFontSize=30, totalWidth=400, totalHeight=200)
+		path = f"{current_app.instance_path}/idCard.png"
+		idCard.save(path)
+		return send_file(path, as_attachment=True, download_name=f"{productType.productName} ID card.png")
+	else:
+		return make_response("productItemId must be provided", 400)
