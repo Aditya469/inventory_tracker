@@ -53,7 +53,7 @@ class Price(types.TypeDecorator):
 
 	def process_result_value(self, value, dialect):
 		if value != "None" and value is not None:
-			return D(value / 100.0)
+			return round(D(value / 100.0),2)
 		return None
 
 
