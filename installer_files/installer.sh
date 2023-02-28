@@ -51,11 +51,9 @@ sed -i "s|change_this_key|$SECRET_KEY|g" digitme2_inventory_tracker/server/__ini
 
 
 # set up python venv and install requirements
-apt install software-properties-common -y
-add-apt-repository ppa:deadsnakes/ppa -y
-aup update
-apt install -y python3.8-venv
-python3.8 -m venv $ROOT_DIR
+apt install -y python3.10
+apt install -y python3.10-venv
+python3.10 -m venv $ROOT_DIR
 source $ROOT_DIR/bin/activate
 pip install -r requirements.txt
 
