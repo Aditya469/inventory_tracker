@@ -870,7 +870,7 @@ def getStockIdCard():
 
 	dbSession = getDbSession()
 	idString = dbSession.query(StockItem.idString).filter(StockItem.id == stockItemId).scalar()
-	idCard = generateIdCard(idString, label=idString)
+	idCard = generateIdCard(idString, label=idString, labelFontSize=30, totalWidth=400, totalHeight=200)
 	filePath = os.path.join(current_app.instance_path, "stockItemIdCard.png")
 	idCard.save(filePath)
 	return send_file(filePath, as_attachment=True, download_name=f"{idString}.png")

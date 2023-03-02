@@ -89,10 +89,6 @@ function openStockItemPanel(stockItemId){
 
             $("#idString").html(stockItemDetails.idNumber);
 
-            var idCardUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockIdCard')}}");
-            idCardUrl.searchParams.append("stockItemId", stockItemId);
-            $("#idCardDownloadLink").prop("href", idCardUrl);
-
             // generate stock movement table body
             $("#stockMovementTableBody").empty();
             for(var i = 0; i < stockItemDetails.movementRecords.length; i++){
@@ -229,3 +225,8 @@ function deleteStockItem(){
     }
 }
 
+function onGetIdLabelClick(){
+    var idCardUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockIdCard')}}");
+    idCardUrl.searchParams.append("stockItemId", $("#stockId").val());
+    window.location.href = idCardUrl;
+}
