@@ -368,7 +368,7 @@ def getProductIdCard():
 	productId = request.args.get("productItemId", default=None)
 	if productId:
 		productType = dbSession.query(ProductType).filter(ProductType.id == productId).first()
-		idCard = generateIdCard(productType.barcode, label=productType.barcode, labelFontSize=30, totalWidth=400, totalHeight=200)
+		idCard = generateIdCard(productType.barcode, label=f"{productType.productName} \n{productType.barcode}", labelFontSize=25, totalWidth=500, totalHeight=200)
 		path = f"{current_app.instance_path}/idCard.png"
 		idCard.save(path)
 		return send_file(path, as_attachment=True, download_name=f"{productType.productName} ID card.png")
