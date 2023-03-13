@@ -77,7 +77,8 @@ function openProductDetailsPanel(prodId){
             $("#deleteButton").prop("disabled", true);
         else
             $("#deleteButton").prop("disabled", false);
-        let getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
+        let getDataUrl = new URL(window.location.origin + "{{ url_for('productManagement.getProduct') }}");
+        getDataUrl.searchParams.append("productId", prodId);
         $.ajax({
             url: getDataUrl,
             type: "GET",

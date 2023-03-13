@@ -76,9 +76,12 @@ def getProductsDataFromRequest():
 	return productList
 
 
-@bp.route('/getProduct/<productId>')
+@bp.route('/getProduct')
 @login_required
-def getProduct(productId):
+def getProduct():
+	productId = request.args.get("productId", default=None)
+	if productId is None:
+		return make_response("productId is required", 400)
 	session = getDbSession()
 	product = session.query(ProductType).filter(ProductType.id == productId).first()
 
