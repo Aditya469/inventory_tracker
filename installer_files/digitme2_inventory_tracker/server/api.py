@@ -267,6 +267,16 @@ def processAddStockRequest():
 						), 200)
 
 				stockItem.price = productType.expectedPrice
+
+				if "batchNumber" in requestParams:
+					stockItem.batchNumber = requestParams['batchNumber']
+
+				if "serialNumber" in requestParams:
+					stockItem.serialNumber = requestParams['serialNumber']
+
+				if 'dateOfManufacture' in requestParams:
+					stockItem.dateOfManufacture = datetime.datetime.strptime(requestParams['dateOfManufacture'], "%Y-%m-%d")
+
 	except Exception as e:
 		logging.error(e)
 		# a positive response is returned even in the case of an error, as the app MUST remove the

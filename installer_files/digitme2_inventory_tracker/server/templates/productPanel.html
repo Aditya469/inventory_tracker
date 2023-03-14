@@ -28,16 +28,19 @@ limitations under the License.
 				<input class="col-12 mx-2 mb-4 form-control editProductPanelInput" id="productName" type="text" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 				<label class="col-12" for="barcode">Product Barcode:</label>
 				<div class="col-12 row mb-4">
-					<div class="col">
-						<input class="form-control editProductPanelInput" id="barcode" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+					<div class="col-5">
+						<input class="form-control editProductPanelInput" id="barcode" oninput="onBarcodeInput()" required {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 					</div>
-					<div class="col">
-						<input type="button" disabled id="btnGetBarcodeStickerSheet" class="btn btn-primary " onclick="openStickerSheetPanel()" value="Get Barcode Sticker Sheet">
+					<div class="col-7">
+						<input type="button" disabled id="btnGetBarcodeStickerSheet" class="btn btn-primary w-100" onclick="openStickerSheetPanel()" value="Get Barcode Sticker Sheet">
+					</div>
+					<div class="offset-5 col-7">
+						<input type="button" disabled id="btnGetBarcodeStickerSingle" class="mt-2 btn btn-primary w-100" onclick="getProductIdSticker()" value="Get Barcode Sticker (Single)">
 					</div>
 				</div>
 				<div class="col-12 row mb-4">
-					<span class="col-4 mt-2">Bulk Product?:</span>
-					<div class="col-8 mt-2">
+					<span class="col-5 mt-2">Bulk Product?:</span>
+					<div class="col-7 mt-2">
 						<div class="form-check">
 							<label class="form-check-label" for="bulkSelector">Bulk</label>
 							<input class="form-check-input bulkSelectorRadio" id="bulkSelector" type="radio" name="bulkSelectorRadio" onchange="onBulkSelectorRadioChanged()" value="bulk" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>

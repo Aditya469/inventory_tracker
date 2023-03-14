@@ -72,11 +72,13 @@ function openProductDetailsPanel(prodId){
         $("#addedTimestampLabel").prop("hidden", false);
         $("#addedTimestamp").prop("hidden", false);
         $("#btnGetBarcodeStickerSheet").prop("disabled", false);
+        $("#btnGetBarcodeStickerSingle").prop("disabled", false);
         if($("#userCanCreate").val() == "0")
             $("#deleteButton").prop("disabled", true);
         else
             $("#deleteButton").prop("disabled", false);
-        var getDataUrl = "{{ url_for('productManagement.getProduct', productId="") }}" + prodId; // temporary. TODO: improve this
+        let getDataUrl = new URL(window.location.origin + "{{ url_for('productManagement.getProduct') }}");
+        getDataUrl.searchParams.append("productId", prodId);
         $.ajax({
             url: getDataUrl,
             type: "GET",
@@ -320,7 +322,19 @@ function closeProductDetailsPanel(){
     $("#newStockOrderedLabel").prop("hidden", true);
     $("#newStockOrdered").prop("hidden", true);
     $("#btnGetBarcodeStickerSheet").prop("disabled", true);
+    $("#btnGetBarcodeStickerSingle").prop("disabled", true);
     $("#addAnotherProductButton").prop("hidden", true);
     if(refreshCheckIntervalId != null)
         clearInterval(refreshCheckIntervalId);
+}
+
+function getProductIdSticker(){
+    let stickerUrl = new URL(window.location.origin +  "{{ url_for('productManagement.getProductIdCard') }}");
+    stickerUrl.searchParams.append("productItemId", $("#productId").val())
+    window.location.href = stickerUrl;
+}
+
+function onBarcodeInput(){
+    $("#btnGetBarcodeStickerSheet").prop("disabled", true);
+    $("#btnGetBarcodeStickerSingle").prop("disabled", true);
 }
