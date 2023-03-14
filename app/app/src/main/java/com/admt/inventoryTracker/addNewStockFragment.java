@@ -54,6 +54,8 @@ import java.util.Calendar;
  */
 public class addNewStockFragment extends Fragment implements DatePickerDialog.OnDateSetListener
 {
+    enum DateType {expiryDate, dateOfManufacture};
+
     ProductDataManager mProductDataManager;
     LocationDataManager mLocationDataManager;
     AddStockManager mAddStockManager;
@@ -62,6 +64,9 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
     StockInteractionHandlingCallbacks mStockHandlingInteractionCallbacks;
     Product mCurrentProduct;
+
+    // this is a temporary fix for distinguishing between the different date types. TODO: improve
+    DateType mDateType;
 
     String TAG = "DigitME2InventoryTrackerAddStockFragment";
 
@@ -164,12 +169,18 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         trBulkQty.setVisibility(View.GONE);
         TableRow trSpecQty = (TableRow) view.findViewById(R.id.trAddStockSpecificItemQty);
         trSpecQty.setVisibility(View.GONE);
+        TableRow trBatchNumber = (TableRow) view.findViewById(R.id.trAddStockBatchNumber);
+        trBatchNumber.setVisibility(View.GONE);
+        TableRow trSerialNumber = (TableRow) view.findViewById(R.id.trAddStockSerialNumber);
+        trSerialNumber.setVisibility(View.GONE);
+        TableRow trDateOfManufacture = (TableRow) view.findViewById(R.id.trAddStockDateOfManufacture);
+        trDateOfManufacture.setVisibility(View.GONE);
 
         EditText etExpiry = (EditText) view.findViewById(R.id.etAddStockExpiryDate);
         etExpiry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDatePickerDialog(view);
+                showExpiryDatePickerDialog(view);
             }
         });
 
@@ -241,6 +252,50 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             }
         });
 
+        EditText etBatchNumber = (EditText) view.findViewById(R.id.etAddStockBatchNumber);
+        etBatchNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mAddStockRequestParameters.BatchNumber = editable.toString();
+            }
+        });
+
+        EditText etSerialNumber = (EditText) view.findViewById(R.id.etAddStockSerialNumber);
+        etSerialNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mAddStockRequestParameters.SerialNumber = editable.toString();
+            }
+        });
+
+        EditText etDateOfManufacture = (EditText) view.findViewById(R.id.etAddStockDateOfManufacture);
+        etDateOfManufacture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDateOfManufactureDatePickerDialog(view);
+            }
+        });
+
         view.setBackgroundColor(Color.WHITE);
 
         return view;
@@ -275,14 +330,16 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
             // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(requireContext(), onDateSetListener, year, month, day);
         }
-//
-//        public void onDateSet(DatePicker view, int year, int month, int day) {
-//            // Do something with the date chosen by the user
-//
-//        }
     }
 
-    public void showDatePickerDialog(View v) {
+    public void showExpiryDatePickerDialog(View v) {
+        mDateType = DateType.expiryDate;
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getParentFragmentManager(), "datePicker");
+    }
+
+    public void showDateOfManufactureDatePickerDialog(View v) {
+        mDateType = DateType.dateOfManufacture;
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getParentFragmentManager(), "datePicker");
     }
@@ -292,17 +349,25 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         Handler mainHandler = new Handler(getContext().getMainLooper());
 
         // note month plus 1 as months are enum in calendar
-        String expDateSystem = String.format("%d-%02d-%02d", year, month + 1, day);
-        String expDateHumanReadable = String.format("%02d-%02d-%d", day, month + 1, year);
+        String dateSystemFormat = String.format("%d-%02d-%02d", year, month + 1, day);
+        String dateHumanReadableFormat = String.format("%02d-%02d-%d", day, month + 1, year);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                EditText etExpiryDate = getActivity().findViewById(R.id.etAddStockExpiryDate);
-                etExpiryDate.setText(expDateHumanReadable);
+                EditText etDateField = null;
+                if(mDateType == DateType.expiryDate)
+                    etDateField = getActivity().findViewById(R.id.etAddStockExpiryDate);
+                else if(mDateType == DateType.dateOfManufacture)
+                    etDateField = getActivity().findViewById(R.id.etAddStockDateOfManufacture);
+                etDateField.setText(dateHumanReadableFormat);
             }
         };
         mainHandler.post(runnable);
-        mAddStockRequestParameters.ExpiryDate = expDateSystem;
+        if(mDateType == DateType.expiryDate)
+            mAddStockRequestParameters.ExpiryDate = dateSystemFormat;
+        else if(mDateType == DateType.dateOfManufacture)
+            mAddStockRequestParameters.DateOfManufacture = dateSystemFormat;
+
         if(isAddStockRequestValid()) {
             enableSaveButton();
             TextView tvPrompt = (TextView)(getActivity().
@@ -462,6 +527,16 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
                             TextView tvQtyUnit = (TextView) getActivity()
                                     .findViewById(R.id.tvAddStockPartialPackUnit);
                             tvQtyUnit.setText(mCurrentProduct.Unit);
+
+                            TableRow trBatchNumber = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockBatchNumber);
+                            trBatchNumber.setVisibility(View.VISIBLE);
+                            TableRow trSerialNumber = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockSerialNumber);
+                            trSerialNumber.setVisibility(View.VISIBLE);
+                            TableRow trDateOfManufacture = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockDateOfManufacture);
+                            trDateOfManufacture.setVisibility(View.VISIBLE);
                         }
                     }
                 };
@@ -501,7 +576,7 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
 
     private void onBtnSavePressed()
     {
-        AddStockRequestParameters requestToAdd = mAddStockRequestParameters;
+        AddStockRequestParameters requestToAdd = mAddStockRequestParameters.Clone();
         ConstraintLayout rootLayout = getActivity().findViewById(R.id.clAddStockLayout);
         Snackbar snackbar = Snackbar
                 .make(rootLayout, R.string.label_add_stock_item_added_confirmation, Snackbar.LENGTH_LONG)
@@ -563,6 +638,12 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         editText.setText("");
         TextView tvQtyUnit = (TextView) getActivity().findViewById(R.id.tvAddStockPartialPackUnit);
         tvQtyUnit.setText("");
+        editText = getActivity().findViewById(R.id.etAddStockSerialNumber);
+        editText.setText("");
+        editText = getActivity().findViewById(R.id.etAddStockBatchNumber);
+        editText.setText("");
+        editText = getActivity().findViewById(R.id.etAddStockDateOfManufacture);
+        editText.setText("");
 
         TextView prompt = (TextView) getActivity().findViewById(R.id.tvAddStockPrompt);
         prompt.setText(getString(R.string.prompt_add_stock_scan_product_barcode));
@@ -573,6 +654,12 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
         trBulkQty.setVisibility(View.GONE);
         TableRow trSpecQty = (TableRow) getActivity().findViewById(R.id.trAddStockSpecificItemQty);
         trSpecQty.setVisibility(View.GONE);
+        TableRow trBatchNumber = (TableRow) getActivity().findViewById(R.id.trAddStockBatchNumber);
+        trBatchNumber.setVisibility(View.GONE);
+        TableRow trSerialNumber = (TableRow) getActivity().findViewById(R.id.trAddStockSerialNumber);
+        trSerialNumber.setVisibility(View.GONE);
+        TableRow trDateOfManufacture = (TableRow) getActivity().findViewById(R.id.trAddStockDateOfManufacture);
+        trDateOfManufacture.setVisibility(View.GONE);
 
         mAddStockRequestParameters = new AddStockRequestParameters();
     }

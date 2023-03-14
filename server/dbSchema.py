@@ -95,6 +95,9 @@ class StockItem(Base):
 	price = Column(Price, default=0)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
 	lastUpdated = Column(DateTime(timezone=True), default=func.now())
+	batchNumber = Column(String)
+	serialNumber = Column(String)
+	dateOfManufacture = Column(Date, server_default=None)
 	associatedProduct = relationship("ProductType", back_populates="associatedStock")
 
 	def toDict(self):
@@ -107,10 +110,17 @@ class StockItem(Base):
 			"quantityRemaining": self.quantityRemaining,
 			"price": self.price,
 			"isCheckedIn": self.isCheckedIn,
-			"lastUpdated": self.lastUpdated.strftime("%d/%m/%y %H:%M:%S")
+			"lastUpdated": self.lastUpdated.strftime("%d/%m/%y %H:%M:%S"),
+			"batchNumber": self.batchNumber,
+			"serialNumber": self.serialNumber,
+			"dateOfManufacture": ""
 		}
 		if self.addedTimestamp:
 			dataDict["addedTimestamp"] = self.addedTimestamp.strftime("%d/%m/%y %H:%M")
+		if self.dateOfManufacture:
+			dataDict["dateOfManufacture"] = self.dateOfManufacture.strftime("%d/%m/%y")
+
+		return dataDict
 
 
 

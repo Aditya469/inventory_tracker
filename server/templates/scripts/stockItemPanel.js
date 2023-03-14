@@ -33,7 +33,9 @@ function closeStockItemPanel(){
 
 function openStockItemPanel(stockItemId){
     $("#stockId").val(stockItemId);
-    getUrl = "{{ url_for('stockManagement.getStockItemById', stockId="") }}" + "/" + stockItemId;
+    let getUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockItemById') }}");
+    getUrl.searchParams.append("stockId", stockItemId);
+
     $.ajax({
         url: getUrl,
         type: "GET",
@@ -59,6 +61,9 @@ function openStockItemPanel(stockItemId){
             $("#location").data("locationUpdated", false);
 
             $("#productTypeName").html(stockItemDetails.productTypeName);
+            $("#serialNumber").val(stockItemDetails.serialNumber);
+            $("#batchNumber").val(stockItemDetails.batchNumber);
+            $("#dateOfManufacture").val(stockItemDetails.dateOfManufacture);
             $("#quantityRemaining").val(stockItemDetails.quantityRemaining);
             $("#quantityUnitDisplay").html(stockItemDetails.quantityUnit);
 
@@ -167,6 +172,9 @@ function saveStockItemDetails(){
         clearInterval(refreshCheckIntervalId);
     var data = new FormData();
     data.append("id", $("#stockId").val());
+    data.append("serialNumber", $("#serialNumber").val());
+    data.append("batchNumber", $("#batchNumber").val());
+    data.append("dateOfManufacture", $("#dateOfManufacture").val());
     data.append("quantityRemaining", $("#quantityRemaining").val());
     var expiryDate = $("#expiryDate").val();
     if(expiryDate != "")

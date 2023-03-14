@@ -25,8 +25,23 @@ limitations under the License.
             <input id="stockId" type="hidden" class="editStockPanelInput" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
             <div class="col-5">
                 <div class="row">
-                    <label class="col-6 col-form-label" for="productTypeName">Product Type:</label>
+                    <label class="col-6 col-form-label" for="productTypeName">Product type:</label>
                     <span class="col-6 editStockPanelInput" id="productTypeName"></span>
+
+                    <label class="col-6 col-form-label" for="batchNumber">Batch number:</label>
+                    <div class="col-6">
+                        <input class="form-control editStockPanelInput" id="batchNumber" type="text" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+                    </div>
+
+                    <label class="col-6 col-form-label" for="serialNumber">Serial number:</label>
+                    <div class="col-6">
+                        <input class="form-control editStockPanelInput" id="serialNumber" type="text" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+                    </div>
+
+                    <label class="col-6 col-form-label" for="dateOfManufacture">Date of manufacture:</label>
+                    <div class="col-6">
+                        <input class="form-control editStockPanelInput" id="dateOfManufacture" type="date" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+                    </div>
 
                     <label class="col-6 col-form-label" for="quantityRemaining">Quantity Remaining:</label>
                     <div class="col-6">

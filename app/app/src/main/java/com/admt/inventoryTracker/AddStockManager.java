@@ -68,6 +68,12 @@ public class AddStockManager extends StockHandlingRequestManager<AddStockRequest
                     "quantityCheckingIn", Request.ItemQuantityToAdd);
         if(Request.ExpiryDate != null)
             addStockRequestJson.put("expiryDate", Request.ExpiryDate);
+        if(Request.BatchNumber != null)
+            addStockRequestJson.put("batchNumber", Request.BatchNumber);
+        if(Request.SerialNumber != null)
+            addStockRequestJson.put("serialNumber", Request.SerialNumber);
+        if(Request.DateOfManufacture != null)
+            addStockRequestJson.put("dateOfManufacture", Request.DateOfManufacture);
 
         return addStockRequestJson;
     }
@@ -87,6 +93,12 @@ public class AddStockManager extends StockHandlingRequestManager<AddStockRequest
             addStockRequestParameters.ItemQuantityToAdd = JsonObject.getDouble("quantityCheckingIn");
         if(JsonObject.has("expiryDate"))
             addStockRequestParameters.ExpiryDate = JsonObject.getString("expiryDate");
+        if(JsonObject.has("batchNumber"))
+            addStockRequestParameters.BatchNumber = JsonObject.getString("batchNumber");
+        if(JsonObject.has("serialNumber"))
+            addStockRequestParameters.SerialNumber = JsonObject.getString("serialNumber");
+        if(JsonObject.has("dateOfManufacture"))
+            addStockRequestParameters.DateOfManufacture = JsonObject.getString("dateOfManufacture");
 
         return addStockRequestParameters;
     }

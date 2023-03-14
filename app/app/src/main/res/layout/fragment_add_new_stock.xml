@@ -42,7 +42,7 @@ limitations under the License.
 
         <View
             android:id="@+id/divider"
-            android:layout_width="409dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
             android:background="?android:attr/listDivider"
@@ -50,10 +50,15 @@ limitations under the License.
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvAddStockPrompt" />
 
-
-        <TableLayout
-            android:layout_width="0dp"
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintBottom_toTopOf="@+id/buttonsLowerSet">
+
+            <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:stretchColumns="1, 2"
             android:shrinkColumns="1"
             app:layout_constraintBottom_toTopOf="@+id/buttonsLowerSet"
@@ -243,7 +248,82 @@ limitations under the License.
 
             </TableRow>
 
+            <TableRow
+                android:id="@+id/trAddStockBatchNumber"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelBatchNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_add_stock_batch_number" />
+
+                <EditText
+                    android:id="@+id/etAddStockBatchNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:gravity="right"
+                    android:text=""/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trAddStockSerialNumber"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabelSerialNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_add_stock_serial_number" />
+
+                <EditText
+                    android:id="@+id/etAddStockSerialNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:gravity="right"
+                    android:text=""/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/trAddStockDateOfManufacture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvLabeldateOfManufacture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="left"
+                    android:padding="3dp"
+                    android:text="@string/label_add_stock_date_of_manufacture"/>
+
+                <EditText
+                    android:id="@+id/etAddStockDateOfManufacture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:gravity="right"/>
+            </TableRow>
+
+
         </TableLayout>
+
+        </ScrollView>
 
         <LinearLayout
             android:id="@+id/buttonsLowerSet"

@@ -214,9 +214,13 @@ def getStockDataFromRequest():
 	return stockList
 
 
-@bp.route('/getStockDetails/<stockId>')
+@bp.route('/getStockDetails')
 @login_required
-def getStockItemById(stockId):
+def getStockItemById():
+	stockId = request.args.get("stockId", default=None)
+	if stockId is None:
+		return make_response("stockId must be provided", 400)
+
 	session = getDbSession()
 	stockItem = session.query(
 		StockItem.id,
@@ -235,7 +239,10 @@ def getStockItemById(stockId):
 		ProductType.productDescriptor3,
 		ProductType.tracksAllItemsOfProductType,
 		ProductType.tracksSpecificItems,
-		StockItem.lastUpdated
+		StockItem.lastUpdated,
+		StockItem.batchNumber,
+		StockItem.serialNumber,
+		StockItem.dateOfManufacture
 	) \
 		.filter(StockItem.id == stockId) \
 		.join(ProductType, ProductType.id == StockItem.productType) \
@@ -255,6 +262,11 @@ def getStockItemById(stockId):
 		expiryDate = stockItem[4].strftime("%Y-%m-%d")
 	else:
 		expiryDate = ""
+
+	if stockItem[19]:  # date of manufacture
+		dateOfManufacture = stockItem[19].strftime("%Y-%m-%d")
+	else:
+		dateOfManufacture = ""
 
 	# get a dictionary of all check-ins and -outs, formatted into a nice table-friendly structure, in reverse
 	# chronological order
@@ -315,6 +327,9 @@ def getStockItemById(stockId):
 			"productDescriptor3": stockItem[13],
 			"isBulk": stockItem[14],
 			"lastUpdated": stockItem[16].strftime("%d/%m/%y %H:%M:%S"),
+			"batchNumber": stockItem[17],
+			"serialNumber": stockItem[18],
+			"dateOfManufacture": dateOfManufacture,
 			"bin": binId,
 			"movementRecords": movementList
 		}
@@ -618,6 +633,16 @@ def updateStock():
 
 	if "productType" in request.form:
 		stockItem.productType = request.form.get("productType")
+
+	if "serialNumber" in request.form:
+		stockItem.serialNumber = request.form.get("serialNumber")
+
+	if "batchNumber" in request.form:
+		stockItem.batchNumber = request.form.get("batchNumber")
+
+	if "dateOfManufacture" in request.form:
+		dateOfManufacture = datetime.datetime.strptime(request.form.get("dateOfManufacture"), "%Y-%m-%d").date()
+		stockItem.dateOfManufacture = dateOfManufacture
 
 	if "expiryDate" in request.form:
 		expdate = datetime.datetime.strptime(request.form.get("expiryDate"), "%Y-%m-%d").date()

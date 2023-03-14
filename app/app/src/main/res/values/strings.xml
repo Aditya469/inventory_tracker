@@ -48,7 +48,7 @@ limitations under the License.
     <string name="settings_password_hint">New password...</string>
     <string name="label_settings_use_server_auto_sync">Use Server Auto-sync</string>
     <string name="label_settings_show_debug_messages">Show Debug Messages</string>
-    <string name="label_settings_app_version">Version 2.0.0</string>
+    <string name="label_settings_app_version">Version 2.1.0</string>
 
 
     <!-- add stock fragment -->
@@ -60,6 +60,9 @@ limitations under the License.
     <string name="label_add_stock_bulk_quantity_to_add">Packs to add:</string>
     <string name="label_add_stock_amount_in_pack">Amount in this pack:</string>
     <string name="label_add_stock_specific_item_partial_amount">Amount in this pack:</string>
+    <string name="label_add_stock_batch_number">Batch Number:</string>
+    <string name="label_add_stock_serial_number">Serial Number:</string>
+    <string name="label_add_stock_date_of_manufacture">Date of Manufacture:</string>
     <string name="label_add_stock_save">Save This Item</string>
     <string name="label_add_stock_item_added_confirmation">Item Added</string>
 

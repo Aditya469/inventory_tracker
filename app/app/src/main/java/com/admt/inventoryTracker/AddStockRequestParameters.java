@@ -25,6 +25,24 @@ public class AddStockRequestParameters {
     public Double BulkItemCount; // only applicable for bulk items
     public Double ItemQuantityToAdd; // allows for adding a partial pack to the system
     public String ExpiryDate;
+    public String BatchNumber;
+    public String SerialNumber;
+    public String DateOfManufacture;
 
     public AddStockRequestParameters(){}
+
+    public AddStockRequestParameters Clone(){
+        AddStockRequestParameters newParams = new AddStockRequestParameters();
+        newParams.Barcode = this.Barcode;
+        newParams.ItemId = this.ItemId;
+        newParams.LocationId = this.LocationId;
+        newParams.BulkItemCount = this.BulkItemCount;
+        newParams.ItemQuantityToAdd = this.ItemQuantityToAdd;
+        newParams.ExpiryDate = this.ExpiryDate;
+        newParams.BatchNumber = this.BatchNumber;
+        newParams.SerialNumber = this.SerialNumber;
+        newParams.DateOfManufacture = this.DateOfManufacture;
+
+        return newParams;
+    }
 }
