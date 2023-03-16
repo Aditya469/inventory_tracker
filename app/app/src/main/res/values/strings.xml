@@ -48,6 +48,7 @@ limitations under the License.
     <string name="settings_password_hint">New password...</string>
     <string name="label_settings_use_server_auto_sync">Use Server Auto-sync</string>
     <string name="label_settings_show_debug_messages">Show Debug Messages</string>
+    <string name="label_settings_enable_wifi_check">Enable Wifi Check</string>
     <string name="label_settings_app_version">Version 2.1.0</string>
 
 
@@ -115,6 +116,7 @@ limitations under the License.
     <string name="prefs_minimum_wait_after_camera_send_barcode" translatable="false">prefsMinCameraBarcodeRepeatDelay</string>
     <string name="prefs_show_debug_messages" translatable="false">prefsShowDebugMessages</string>
     <string name="prefs_server_auto_sync" translatable="false">prefsServerAutoSync</string>
+    <string name="prefs_enable_wifi_check" translatable="false">prefsEnableWifiCheck</string>
 
 
     <!--    System keywords. Kept here rather than have a list of repeated and typo-sensitive keys

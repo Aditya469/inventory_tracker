@@ -44,6 +44,13 @@ import java.util.concurrent.TimeoutException;
 public class Utilities {
     static String TAG = "Utilities";
     public static boolean isWifiConnected(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                context.getString(R.string.prefs_file_key), Context.MODE_PRIVATE);
+
+        // if the wifi check is disabled, always assume we have a connection.
+        if(!prefs.getBoolean(context.getString(R.string.prefs_enable_wifi_check), true))
+            return true;
+
         try {
             ConnectivityManager connectivityManager =
                     (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

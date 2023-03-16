@@ -104,6 +104,10 @@ public class settings_page extends AppCompatActivity {
         // show debug messages
         Switch swShowDebugMessages = (Switch) findViewById(R.id.swShowDebugMessages);
         swShowDebugMessages.setChecked(prefs.getBoolean(getString(R.string.prefs_show_debug_messages), true));
+
+        // enable wifi check
+        Switch swEnableWifiCheck = findViewById(R.id.swEnableWifiCheck);
+        swEnableWifiCheck.setChecked(prefs.getBoolean(getString(R.string.prefs_enable_wifi_check), true));
     }
 
     public void onUseServerDiscoveryChanged(){
@@ -184,6 +188,9 @@ public class settings_page extends AppCompatActivity {
 
         Switch swShowDebugMessages = (Switch) findViewById(R.id.swShowDebugMessages);
         editor.putBoolean(getString(R.string.prefs_show_debug_messages), swShowDebugMessages.isChecked());
+
+        Switch swEnableWifiCheck = findViewById(R.id.swEnableWifiCheck);
+        editor.putBoolean(getString(R.string.prefs_enable_wifi_check), swEnableWifiCheck.isChecked());
 
         editor.commit();
 

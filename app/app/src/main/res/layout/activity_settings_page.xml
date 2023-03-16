@@ -166,6 +166,13 @@ limitations under the License.
                 android:text="@string/label_settings_show_debug_messages"
                 />
 
+            <Switch
+                android:id="@+id/swEnableWifiCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_settings_enable_wifi_check"
+                />
+
             <androidx.constraintlayout.widget.Barrier
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
