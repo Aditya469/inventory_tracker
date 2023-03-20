@@ -46,7 +46,7 @@ function updateJobsTable(){
                 tr.on("click", function(){ openJobDetailsPanel($(this).data("jobId")); });
                 tr.append($("<td>" + responseData[i].jobName + "</td>"));
                 tr.append($("<td>" + responseData[i].addedTimestamp + "</td>"));
-                tr.append($("<td>" + responseData[i].totalCost + "</td>"));
+                tr.append($("<td>" + "£" + responseData[i].totalCost + "</td>"));
                 tbody.append(tr);
             }
             table.append(tbody);
@@ -158,20 +158,20 @@ function updateStockTables(){
 }
 
 function onTotalStockRowClicked(){
-    searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+    let searchUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockPage')}}");
     searchUrl.searchParams.append("productName",$(this).data("productName"));
     window.location.href = searchUrl.href;
 }
 
 function onNearExpiryRowClicked(){
-    searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+    let searchUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockPage')}}");
     searchUrl.searchParams.append("productName",$(this).data("productName"));
     searchUrl.searchParams.append("expiryDayCount", $("#stockDaysNearExpiry").val());
     window.location.href = searchUrl.href;
 }
 
 function onExpiredRowClicked(){
-    searchUrl = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage")}}");
+    let searchUrl = new URL(window.location.origin + "{{ url_for('stockManagement.getStockPage')}}");
     searchUrl.searchParams.append("productName",$(this).data("productName"));
     searchUrl.searchParams.append("showExpiredOnly", "true");
     window.location.href = searchUrl.href;
