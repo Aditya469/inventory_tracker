@@ -23,7 +23,7 @@ from flask import (
 from sqlalchemy import delete, update
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from auth import admin_access_required
+from auth import admin_access_required, login_required
 from db import getDbSession, User, close_db
 from emailNotification import sendEmail
 from messages import getUserCreatedMessage, getPasswordResetMessage
@@ -119,7 +119,7 @@ def resetPassword():
 
 
 @bp.route("/changePassword", methods=("GET", "POST"))
-@admin_access_required
+@login_required
 def changePassword():
     if request.method == "GET":
         return render_template("changePassword.html")
