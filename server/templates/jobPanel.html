@@ -17,14 +17,17 @@ limitations under the License.
 
 <div id="greyout" hidden class="greyout position-fixed top-0 start-0 vw-100 vh-100" onclick="closePanels()"></div>
 <div id="editJobPanel" hidden class="container h-100 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed">
+
 	<nav id="jobPanelNav" class="navbar bg-light navbar-light w-100">
-		<h1>Job Details</h1>
+		<h1 id="jobDetailsTitle">Job Details</h1>
 		<input class="btn-close" id="closeProductPanelBtn" type="button" onclick="closePanels()"/>
 	</nav>
-	<form class="row row-cols-xs-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2 overflow-scroll needs-validation" novalidate>
+
+	<form id="panelForm" class="row row-cols-xs-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2 overflow-scroll needs-validation" novalidate>
 		<input id="jobId" type="hidden" class="editJobInput">
 		<input id="templateId" type="hidden" class="editJobInput">
-        <div class="col">
+
+		<div class="col">
 			<div class="row" id="jobNameContainer">
 				<label class="col col-sm-4 col-form-label" for="jobName" id="jobNameLabel">Job/Template Name:</label>
 				<div class="col col-sm-8">
@@ -36,14 +39,15 @@ limitations under the License.
 				</div>
 				<a class="col-12 text-end" id="jobQrCodeLink"href="">Download Job Identifier QR Code</a>
 			</div>
-            <div id="stockUsedContainer" class="col-12 h-auto">
+
+			<div id="stockUsedContainer" class="col-12 h-auto">
 				<h3 >Stock Used</h3>
 				<div>
 					<span>Total Cost: </span>
 					<span id="totalCost" class="editJobInput"></span>
 				</div>
 				<div id="stockUsedTableContainer">
-					<table class="table">
+					<table class="table" id="stockUsedTable">
 						<thead>
 							<tr>
 								<td>Product Name</td>
@@ -58,14 +62,17 @@ limitations under the License.
 				</div>
 			</div>
 		</div>
+
 		<div class="col">
 			<h3 id="reqStockTitle">Required Stock</h3>
+
 			<div id="reqStockSearch" class="col-12 row">
 				<label class="col col-auto col-form-label" for="assignStockSearchBar">Search:</label>
 				<div class="col">
 					<input class="form-control editJobInput" id="assignStockSearchBar" placeholder="start typing..." oninput="onRequiredStockSearchBarInput()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				</div>
 			</div>
+
             <div id="reqStockAssign" class="col-12 row">
 				<div class="col-6">
                 	<select id="knownProductDropdown" class="form-select" onchange="onKnownProductSelectChange()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
@@ -81,7 +88,9 @@ limitations under the License.
 				<input value="Templates..." type="button" class="col col-3 offset-1 my-3 btn btn-secondary" id="openTemplatePanelButton" onclick="onOpenTemplatePanelButtonClicked()" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 				<input type="button" class="col col-3 offset-2 my-3 btn btn-secondary" id="assignStockButton" onclick="onAddStockButtonClicked()" value="Add" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
             </div>
+
 			<a href="" id="pickingListLink">Get Picking List</a>
+
 			<div id="assignedStockTableContainer" class="col-12 overflow-scroll">
 				<table class="table">
 					<thead>
@@ -101,44 +110,50 @@ limitations under the License.
 			</div>
 		</div>
 	</form>
+
 	<div class="col col-12 p-4 position-absolute bottom-0" id="commitButtonsContainer">
-			<div class="row g-1">
-				<div class="col col-3">
-					<input class="w-100 btn btn-danger" id="deleteButton" type="button" onclick="deleteJob()" value="Delete This Job" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
-				</div>
-				<div class="col col-3">
-					<span class="w-100" id="saveJobFeedbackSpan"></span>
-				</div>
-				<div class="col col-3">
-					<input class="w-100 btn btn-secondary" id="saveTemplateButton" type="button" onclick="saveJobTemplate()" value="Save As Template" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
-				</div>
-				<div class="col col-3">
-					<input class="w-100 btn btn-primary" id="saveButton" type="button" onclick="saveJobDetails()" value="Save Job" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
-				</div>
+		<div class="row g-1">
+			<div class="col col-3">
+				<input class="w-100 btn btn-danger" id="deleteButton" type="button" onclick="deleteJob()" value="Delete This Job" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+			</div>
+			<div class="col col-3">
+				<span class="w-100" id="saveJobFeedbackSpan"></span>
+			</div>
+			<div class="col col-3">
+				<input class="w-100 btn btn-secondary" id="saveTemplateButton" type="button" onclick="saveJobTemplate()" value="Save As Template" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
+			</div>
+			<div class="col col-3">
+				<input class="w-100 btn btn-primary" id="saveButton" type="button" onclick="saveJobDetails()" value="Save Job" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
 			</div>
 		</div>
+	</div>
 </div>
+
 <div id="templatesGreyout" hidden class="row greyout position-absolute top-0 start-0 w-100 h-100" onclick="closeTemplatesPanel()"></div>
 <div id="templatesPanel" hidden class="container w-50 align-middle border bg-body position-absolute top-50 start-50 translate-middle position-fixed" style="background: white;">
 	<nav id="templatesPanelNav" class="navbar bg-light navbar-light w-100">
 		<h1>Select Template</h1>
 		<input class="btn-close" id="closeTemplatesPanelBtn" type="button" onclick="closeTemplatePanel()"/>
 	</nav>
+
 	<div class="row">
 		<label class="col-3 form-label" for="templatesSearchBox">Search:</label>
 		<div class="col-9">
 			<input class="form-control" id="templatesSearchBox" placeholder="Start typing..." oninput="populateTemplateNameList()">
 		</div>
+
 		<label class="col-3 form-label" for="templateSelect">Select Template:</label>
 		<div class="col-9">
 			<select class="form-select" id="templateSelect">
 			</select>
 		</div>
+
 		<div class="col col-3">
-			<input type="button" class="w-100 btn btn-danger mt-5 mb-1" value="Delete Template" onclick="deleteSelectedTemplate()">
+			<input type="button" id="deleteTemplateBtn" class="w-100 btn btn-danger mt-5 mb-1" value="Delete Template" onclick="deleteSelectedTemplate()">
 		</div>
+
 		<div class="col col-9">
-			<input type="button" class="w-100 btn btn-primary mt-5 mb-1" value="Use This Template" onclick="onApplyTemplateButtonClicked()">
+			<input type="button" id="applyTemplateBtn" class="w-100 btn btn-primary mt-5 mb-1" value="Use This Template" onclick="onApplyTemplateButtonClicked()">
 		</div>
 	</div>
 

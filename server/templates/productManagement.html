@@ -35,7 +35,7 @@ limitations under the License.
 		<div id="productsContainer" class="col col-md-12 col-lg-6 border overflow-auto">
 			<h1>Known Product Types</h1>
 			<div id="productControls" class="row px-2">
-				<input id="openProductPanel" value="Add Product..." type="button" class="col col-12 btn btn-primary" onclick="openProductDetailsPanel(-1)" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
+				<input id="openProductPanelBtn" value="Add Product..." type="button" class="col col-12 btn btn-primary" onclick="openProductDetailsPanel(-1)" {% if not g.user.hasCreateAccess() %} disabled {% endif %}/>
 				<input id="productsSearchBar" placeholder="Start typing to search..." class="col col-12 my-1 form-control" oninput="updateProductsTable()">
 			</div>
 			<a href="" id="productsCsvDownloadLink">Download this data as a CSV file</a>

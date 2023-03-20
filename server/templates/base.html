@@ -38,40 +38,45 @@ limitations under the License.
 <body>
 	<nav id="nav" class="navbar navbar-expand-xxl navbar-dark bg-primary">
 		<div class="container-fluid">
+
 			<div class="navbar-brand">
 				<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
 				<br>
 				<span id="versionString">Version 2.1.0</span>
 			</div>
+
 			{% if g.user != None %}
 			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				<div class="navbar-nav">
-					<a class="nav-item nav-link m-2" href="{{ url_for('overview.getOverview') }}">Overview Page</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('productManagement.getProductManagementPage') }}">Product Types and New Stock</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('stockManagement.getStockPage') }}">Stock Management</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('bins.manageBins') }}">Bins</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('checkingReasons.manageCheckingReasons') }}">Check-in/out Reasons</a>
+					<a class="nav-item nav-link m-2" id="navLinkOverview" href="{{ url_for('overview.getOverview') }}">Overview Page</a>
+					<a class="nav-item nav-link m-2" id="navLinkProducts" href="{{ url_for('productManagement.getProductManagementPage') }}">Product Types and New Stock</a>
+					<a class="nav-item nav-link m-2" id="navLinkStock" href="{{ url_for('stockManagement.getStockPage') }}">Stock Management</a>
+					<a class="nav-item nav-link m-2" id="navLinkBins" href="{{ url_for('bins.manageBins') }}">Bins</a>
+					<a class="nav-item nav-link m-2" id="navLinkCheckingReasons" href="{{ url_for('checkingReasons.manageCheckingReasons') }}">Check-in/out Reasons</a>
+
 					{% if g.user.hasAdminAccess() %}
-					<a class="nav-item nav-link m-2" href="{{ url_for('users.manageUsers') }}">Users</a>
-					<a class="nav-item nav-link m-2" href="{{ url_for('systemSettings.getSystemSettingsPage') }}">Settings</a>
+					<a class="nav-item nav-link m-2" id="navLinkUsers" href="{{ url_for('users.manageUsers') }}">Users</a>
+					<a class="nav-item nav-link m-2" id="navLinkSettings" href="{{ url_for('systemSettings.getSystemSettingsPage') }}">Settings</a>
 					{% endif %}
-					<a class="nav-item nav-link m-2" href="{{ url_for('static', filename='manual.pdf') }}">Manual</a>
+
+					<a class="nav-item nav-link m-2" id="navLinkManual" href="{{ url_for('static', filename='manual.pdf') }}">Manual</a>
 				</div>
 				<div class="navbar-nav dropdown m-2">
 					<span class="nav-link dropdown-toggle" data-bs-toggle="dropdown">User</span>
 						<div class="dropdown-menu dropdown-menu-end">
-							<a class="dropdown-item" href="{{ url_for('users.changePassword') }}">Change Password</a>
-							<a class="dropdown-item" href="{{ url_for('auth.logout') }}">Log Out</a>
+							<a class="dropdown-item" id="navLinkChangePassword" href="{{ url_for('users.changePassword') }}">Change Password</a>
+							<a class="dropdown-item" id="navLinkLogout" href="{{ url_for('auth.logout') }}">Log Out</a>
 						</div>
 				</div>
-
 			</div>
 			{% endif %}
+
 		</div>
 	</nav>
+
 	<section id="pageContainer" class="container-fluid">
 		{% block content %}{% endblock %}
 	</section>
