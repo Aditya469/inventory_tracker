@@ -123,7 +123,10 @@ def getStockDataFromRequest():
 		StockItem.price,
 		ProductType.productName,
 		ProductType.barcode,
-		ProductType.quantityUnit
+		ProductType.quantityUnit,
+		StockItem.dateOfManufacture,
+		StockItem.batchNumber,
+		StockItem.serialNumber
 	).join(ProductType, StockItem.productType == ProductType.id)
 
 	# selection criteria...
@@ -141,6 +144,10 @@ def getStockDataFromRequest():
 				ProductType.productDescriptor2.ilike(searchTerm),
 				ProductType.productDescriptor3.ilike(searchTerm)
 			))
+		if request.args.get("searchBySerialNumber", default="false") == "true":
+			stmt = stmt.where(StockItem.serialNumber.ilike(searchTerm))
+		if request.args.get("searchByBatchNumber", default="false") == "true":
+			stmt = stmt.where(StockItem.batchNumber.ilike(searchTerm))
 
 	if "onlyShowExpirableStock" in request.args:
 		if request.args.get("onlyShowExpirableStock", default="false") == "true":
@@ -156,6 +163,16 @@ def getStockDataFromRequest():
 				expRangeEndDate = datetime.datetime.strptime(request.args.get("expiryEndDate"), "%Y-%m-%d") \
 					.replace(hour=11, minute=59)
 				stmt = stmt.where(StockItem.expiryDate <= expRangeEndDate)
+
+	if "limitDateOfManufacture" in request.args:
+		if request.args.get("limitDateOfManufacture", default="false") == "true":
+			if "dateOfManufactureStartDate" in request.args:
+				domStartDate = datetime.datetime.strptime(request.args.get("dateOfManufactureStartDate"), "%Y-%m-%d")
+				stmt = stmt.where(StockItem.dateOfManufacture >= domStartDate)
+
+			if "dateOfManufactureEndDate" in request.args:
+				domEndDate = datetime.datetime.strptime(request.args.get("dateOfManufactureEndDate"), "%Y-%m-%d")
+				stmt = stmt.where(StockItem.dateOfManufacture <= domEndDate)
 
 	if "limitByPrice" in request.args:
 		if request.args.get("limitByPrice", default="false") == "true":
@@ -209,6 +226,12 @@ def getStockDataFromRequest():
 		rowDict["productName"] = row[6]
 		rowDict["productBarcode"] = row[7]
 		rowDict["quantityUnit"] = row[8]
+		if row[9] is not None:
+			rowDict["dateOfManufacture"] = row[9].strftime("%Y-%m-%d")
+		else:
+			rowDict["dateOfManufacture"] = ""
+		rowDict["batchNumber"] = row[10]
+		rowDict["serialNumber"] = row[11]
 		stockList.append(rowDict)
 
 	return stockList
@@ -862,6 +885,9 @@ def getStockCsvFile():
 		{"heading": "Expiry Date", "dataName": "expiryDate"},
 		{"heading": "Cost at Purchase", "dataName": "price"},
 		{"heading": "Barcode", "dataName": "productBarcode"},
+		{"heading": "Batch Number", "dataName": "batchNumber"},
+		{"heading": "Serial Number", "dataName": "serialNumber"},
+		{"heading": "Date of Manufacture", "dataName": "dateOfManufacture"},
 		{"heading": "Identifier", "dataName": "idNumber"},
 	]
 	csvPath = writeDataToCsvFile(headingsDictList=headingDictList, dataDictList=stockData)

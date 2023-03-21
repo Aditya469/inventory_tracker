@@ -26,7 +26,7 @@ function updateProductsTable(){
         type: "GET",
         data: productSearchParams,
         success: function(responseData){
-            var table = $("<table id='productsTable' class='table'>");
+            var table = $("<table id='productsTable' class='table table-striped'>");
             var thead = $("<thead>");
             var tr = $("<tr>");
             tr.append($("<th>Product Name</th>"));
@@ -90,7 +90,7 @@ function updateNewStockTable(){
                 "onlyShowUnknownProducts": onlyShowUnknownProducts
             },
         success: function(responseData){
-            var table = $("<table id='productsTable' class='table'>");
+            var table = $("<table id='productsTable' class='table table-striped'>");
             var thead = $("<thead>");
             var tr = $("<tr>");
             tr.append($("<th/>"));
@@ -109,7 +109,7 @@ function updateNewStockTable(){
                 tr.data("stockItemId", responseData[i].stockItemId);
                 tr.data("stockItemIdString", responseData[i].stockItemIdString);
                 tr.click(function(){
-                    var url = new URL(window.location.origin + "{{ url_for("stockManagement.getStockPage") }}");
+                    var url = new URL(window.location.origin + "{{ url_for('stockManagement.getStockPage') }}");
                     url.searchParams.append("stockItemIdString", $(this).data("stockItemIdString"));
                     url.searchParams.append("stockItemIdToShow", $(this).data("stockItemId"));
                     window.location.href = url;

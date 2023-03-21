@@ -69,7 +69,6 @@ sudo rm /etc/nginx/sites-enabled/default
 echo "copy files to $INSTALL_DIR"
 cp -r digitme2_inventory_tracker $INSTALL_DIR
 
-
 # copy setup to systemd folder
 echo "copy service units to /etc/systemd/system"
 cp inventory_tracker_scheduled_task_worker.service /etc/systemd/system
@@ -79,6 +78,11 @@ cp inventory_tracker_server.service  /etc/systemd/system
 # copy nginx config files
 cp inventory_tracker_interface /etc/nginx/sites-available/inventory_tracker_interface
 ln -s /etc/nginx/sites-available/inventory_tracker_interface /etc/nginx/sites-enabled
+
+# install npm and node.js files
+apt -y install npm
+cd $ROOT_DIR/server/static
+npm install
 
 # move into the server and initialise the DB. Has to be done before anything else starts or it'll cause an error
 cd $ROOT_DIR/server

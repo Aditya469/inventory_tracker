@@ -95,8 +95,8 @@ class StockItem(Base):
 	price = Column(Price, default=0)
 	isCheckedIn = Column(Boolean)  # this only applies to specific items, and should always be True for bulk
 	lastUpdated = Column(DateTime(timezone=True), default=func.now())
-	batchNumber = Column(String)
-	serialNumber = Column(String)
+	batchNumber = Column(String, default="")
+	serialNumber = Column(String, default="")
 	dateOfManufacture = Column(Date, server_default=None)
 	associatedProduct = relationship("ProductType", back_populates="associatedStock")
 

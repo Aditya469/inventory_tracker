@@ -32,6 +32,8 @@ function updateStockTable(){
         requestParams.searchByIdNumber = $("#searchByIdNumber").is(":checked");
         requestParams.searchByBarcode = $("#searchByBarcode").is(":checked");
         requestParams.searchByDescriptors = $("#searchByDescriptors").is(":checked");
+        requestParams.searchByBatchNumber = $("#searchByBatchNumber").is(":checked");
+        requestParams.searchBySerialNumber = $("#searchBySerialNumber").is(":checked");
     }
 
     requestParams.onlyShowExpirableStock = $("#canExpire").is(":checked");
@@ -43,6 +45,16 @@ function updateStockTable(){
             requestParams.expiryStartDate = startDate;
         if(endDate != "")
             requestParams.expiryEndDate = endDate;
+    }
+
+    requestParams.limitDateOfManufacture = $("#limitDatesOfManufacture").is(":checked");
+    if($("#limitDatesOfManufacture").is(":checked")){
+        let startDate = $("#dateOfManufactureStartDate").val()
+        let endDate = $("#dateOfManufactureEndDate").val()
+        if(startDate != "")
+            requestParams.dateOfManufactureStartDate = startDate;
+        if(endDate != "")
+            requestParams.dateOfManufactureEndDate = endDate;
     }
 
     requestParams.limitByPrice = $("#limitByPrice").is(":checked");
@@ -80,7 +92,7 @@ function updateStockTable(){
 }
 
 function generateStockTable(stockData){
-    var table = $("<table id='stockTable' class='table'>");
+    var table = $("<table id='stockTable' class='table table-striped'>");
     var thead = $("<thead>");
     var tr = $("<tr>");
     var selectAllCheckbox = $("<input type='checkbox' class='form-check-input' id='selectAllCheckbox'>");
@@ -92,6 +104,9 @@ function generateStockTable(stockData){
     tr.append($("<th scope='col'>Expiry Date</th>"));
     tr.append($("<th scope='col'>Cost at Purchase</th>"));
     tr.append($("<th scope='col'>Barcode</th>"));
+    tr.append($("<th scope='col'>Batch Number</th>"));
+    tr.append($("<th scope='col'>Serial Number</th>"));
+    tr.append($("<th scope='col'>Date of Manufacture</th>"));
     tr.append($("<th scope='col'>Identifier</th>"));
     thead.append(tr);
     table.append(thead);
@@ -119,6 +134,9 @@ function generateStockTable(stockData){
         else
             tr.append("<td>");
         tr.append($("<td>" + stockData[i].productBarcode + "</td>"));
+        tr.append($("<td>" + stockData[i].batchNumber + "</td>"));
+        tr.append($("<td>" + stockData[i].serialNumber + "</td>"));
+        tr.append($("<td>" + stockData[i].dateOfManufacture + "</td>"));
         tr.append($("<td>" + stockData[i].idNumber + "</td>"));
         tbody.append(tr);
     }
@@ -173,6 +191,17 @@ function onLimitExpiryDatesClicked(){
         $("#endDate").prop("disabled", true);
     }
     updateStockTable();
+}
+
+function onLimitDateOfManufactureClicked(){
+    if($("#limitDatesOfManufacture").is(":checked")){
+        $("#dateOfManufactureStartDate").prop("disabled", false);
+        $("#dateOfManufactureEndDate").prop("disabled", false);
+    }
+    else {
+        $("#dateOfManufactureStartDate").prop("disabled", true);
+        $("#dateOfManufactureEndDate").prop("disabled", true);
+    }
 }
 
 function onLimitByPriceCheckboxClicked(){
