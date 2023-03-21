@@ -7,27 +7,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="additional server side changes due to some missed files">
-      <change beforePath="$PROJECT_DIR$/../app/app/src/main/java/com/admt/inventoryTracker/Utilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/app/src/main/java/com/admt/inventoryTracker/Utilities.java" afterDir="false" />
+    <list default="true" id="38abfc26-6f31-45ef-af91-6a530bc90f86" name="Changes" comment="bump app version to 3.0.0">
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/server.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbSchema.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/dbSchema.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/device_discovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/device_discovery.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/productManagement.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/productManagement.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/android-chrome-96x96.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/static/safari-pinned-tab.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/stockManagement.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/stockManagement.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productPanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/productPanel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/stockItemPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/stockItemPanel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/jobPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/jobPanel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageBins.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageBins.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageCheckingReasons.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/manageCheckingReasons.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/overview.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/overview.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productManagement.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/productManagement.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/overview.js" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/scripts/overview.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockItemPanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/templates/stockItemPanel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/users.py" beforeDir="false" afterPath="$PROJECT_DIR$/../installer_files/digitme2_inventory_tracker/server/users.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -60,6 +60,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
       <filtered-out-file-type name="LOCAL_BRANCH" />
@@ -67,6 +72,14 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="82eb263a-c81d-4c67-94c8-f339290efae6" />
+        <option name="url" value="https://github.com/DigitME2/inventory_tracker.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/__init__.py" root0="FORCE_HIGHLIGHTING" />
@@ -99,40 +112,41 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/richard/work/DigitME/inventory_tracker&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/richard/work/DigitME/inventory_tracker_testing",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/templates/scripts" />
       <recent name="$PROJECT_DIR$/templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.webapp">
-    <configuration name="clockuser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="server" />
+  <component name="RunManager" selected="Python.device_discovery">
+    <configuration name="config" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="inventory_tracker_testing" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/inventory_tracker/bin/python" />
-      <option name="SDK_NAME" value="Python 3.10 (inventory_tracker)" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../timelogger_docker/timelogger" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../inventory_tracker_testing" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../timelogger_docker/timelogger/clockuser.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../inventory_tracker_testing/config.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -186,42 +200,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../temp_files" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../temp_files/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="webapp" type="PythonConfigurationType" factoryName="Python">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
-        <env name="PYDEVD_USE_CYTHON" value="NO" />
         <env name="FLASK_APP" value="server" />
         <env name="FLASK_ENV" value="development" />
         <env name="FLASK_DEBUG" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$USER_HOME$/inventory_tracker/bin/python" />
+      <option name="SDK_NAME" value="Python 3.10 (inventory_tracker)" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -234,7 +226,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for runTests.StockCheckOutTestCases" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for main.TestClass" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="inventory_tracker_testing" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -245,7 +237,22 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;runTests.StockCheckOutTestCases&quot;" />
+      <option name="_new_target" value="&quot;main.TestClass&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for main.TestClass1" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="inventory_tracker_testing" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../inventory_tracker_testing" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;main.TestClass1&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -264,7 +271,7 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in runTests.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in main.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="inventory_tracker_testing" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -275,27 +282,27 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/../../inventory_tracker_testing/runTests.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/../../inventory_tracker_testing/main.py&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.scheduleWorker" />
       <item itemvalue="Python.webapp" />
-      <item itemvalue="Python.clockuser" />
       <item itemvalue="Python.device_discovery" />
-      <item itemvalue="Python.test" />
+      <item itemvalue="Python.config" />
       <item itemvalue="Python tests.Python tests in inventory_tracker_testing" />
-      <item itemvalue="Python tests.Python tests for runTests.StockCheckOutTestCases" />
-      <item itemvalue="Python tests.Python tests in runTests.py" />
+      <item itemvalue="Python tests.Python tests for main.TestClass" />
+      <item itemvalue="Python tests.Python tests for main.TestClass1" />
+      <item itemvalue="Python tests.Python tests in main.py" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.device_discovery" />
-        <item itemvalue="Python.clockuser" />
-        <item itemvalue="Python.test" />
-        <item itemvalue="Python tests.Python tests in runTests.py" />
-        <item itemvalue="Python tests.Python tests for runTests.StockCheckOutTestCases" />
+        <item itemvalue="Python.config" />
+        <item itemvalue="Python tests.Python tests for main.TestClass1" />
+        <item itemvalue="Python tests.Python tests in main.py" />
+        <item itemvalue="Python tests.Python tests for main.TestClass" />
       </list>
     </recent_temporary>
   </component>
@@ -320,70 +327,14 @@
       <workItem from="1678703212791" duration="10279000" />
       <workItem from="1678797879974" duration="3342000" />
       <workItem from="1678805874595" duration="892000" />
-      <workItem from="1678808275986" duration="671000" />
-    </task>
-    <task id="LOCAL-00087" summary="change timestamp defaults to func.now(). Bugfix for defaults only using the server startup timestamp">
-      <created>1673367195273</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1673367195274</updated>
-    </task>
-    <task id="LOCAL-00088" summary="change timestamp defaults to func.now(). Bugfix for defaults only using the server startup timestamp">
-      <created>1673367257368</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1673367257368</updated>
-    </task>
-    <task id="LOCAL-00089" summary="bugfix for stock location not updating correctly when changed on stockItem panel">
-      <created>1673367444332</created>
-      <option name="number" value="00089" />
-      <option name="presentableId" value="LOCAL-00089" />
-      <option name="project" value="LOCAL" />
-      <updated>1673367444333</updated>
-    </task>
-    <task id="LOCAL-00090" summary="prevent adding a template with no stock assignment">
-      <created>1673433231951</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1673433231952</updated>
-    </task>
-    <task id="LOCAL-00091" summary="fix getting wrong expiry dates for stock page when selecting from near-expiry or expired tabs on overview page">
-      <created>1673434544392</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1673434544392</updated>
-    </task>
-    <task id="LOCAL-00092" summary="fix for deleting products breaking references. Deleting a product type now also removes stock items, stock assignments, and templates assignments that reference that product type">
-      <created>1673442602706</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1673442602706</updated>
-    </task>
-    <task id="LOCAL-00093" summary="fix for deleting products breaking references. Deleting a product type now also removes stock items, stock assignments, and templates assignments that reference that product type">
-      <created>1673452219414</created>
-      <option name="number" value="00093" />
-      <option name="presentableId" value="LOCAL-00093" />
-      <option name="project" value="LOCAL" />
-      <updated>1673452219415</updated>
-    </task>
-    <task id="LOCAL-00094" summary="Fix templates not loading correctly">
-      <created>1673452235768</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1673452235768</updated>
-    </task>
-    <task id="LOCAL-00095" summary="bugfix on deleting stock not deleting associated ItemID">
-      <created>1673455997453</created>
-      <option name="number" value="00095" />
-      <option name="presentableId" value="LOCAL-00095" />
-      <option name="project" value="LOCAL" />
-      <updated>1673455997453</updated>
+      <workItem from="1678808275986" duration="1310000" />
+      <workItem from="1678873382564" duration="14257000" />
+      <workItem from="1678958535795" duration="83000" />
+      <workItem from="1678967118933" duration="456000" />
+      <workItem from="1678967600352" duration="5694000" />
+      <workItem from="1679043920514" duration="3537000" />
+      <workItem from="1679307522533" duration="14035000" />
+      <workItem from="1679394981017" duration="7598000" />
     </task>
     <task id="LOCAL-00096" summary="pressing enter on new bin name adds the bin now. Also updated feedback message to show confirmation, and clear after a few seconds">
       <created>1673520594171</created>
@@ -665,7 +616,70 @@
       <option name="project" value="LOCAL" />
       <updated>1678809205125</updated>
     </task>
-    <option name="localTasksCounter" value="136" />
+    <task id="LOCAL-00136" summary="update installer files">
+      <created>1678810088407</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1678810088409</updated>
+    </task>
+    <task id="LOCAL-00137" summary="Add function to disable check for wifi connection on troublesome networks">
+      <created>1678967850422</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1678967850423</updated>
+    </task>
+    <task id="LOCAL-00138" summary="Add a few missing IDs for testing purposes">
+      <created>1679320509481</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1679320509482</updated>
+    </task>
+    <task id="LOCAL-00139" summary="Fix creating user and resetting passwords not generating an email notification">
+      <created>1679322063012</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1679322063012</updated>
+    </task>
+    <task id="LOCAL-00140" summary="Fix access level to change a user's own password">
+      <created>1679322171859</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1679322171859</updated>
+    </task>
+    <task id="LOCAL-00141" summary="minor bugfixes in the overview page">
+      <created>1679325198934</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1679325198934</updated>
+    </task>
+    <task id="LOCAL-00142" summary="include stock serial and barch numbers and date of manufacture on the stock management page. Search options, table columns, and CSV columns have been added">
+      <created>1679398564353</created>
+      <option name="number" value="00142" />
+      <option name="presentableId" value="LOCAL-00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1679398564354</updated>
+    </task>
+    <task id="LOCAL-00143" summary="Make tables stripey and appease the angry IDE">
+      <created>1679402769682</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1679402769682</updated>
+    </task>
+    <task id="LOCAL-00144" summary="bump app version to 3.0.0">
+      <created>1679405271050</created>
+      <option name="number" value="00144" />
+      <option name="presentableId" value="LOCAL-00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1679405271050</updated>
+    </task>
+    <option name="localTasksCounter" value="145" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -684,15 +698,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Adjust to allow stock level checks to work on available rather than total stock levels" />
-    <MESSAGE value="logging level tweaks in db" />
-    <MESSAGE value="fix greyout divs moving with scroll" />
-    <MESSAGE value="tweaks to id card label generation" />
-    <MESSAGE value="bugfix on add stock bulk check in quantity" />
-    <MESSAGE value="Add qty unit to picking lists" />
-    <MESSAGE value="remove junk" />
-    <MESSAGE value="fix some wrong names in getAppProductData()" />
-    <MESSAGE value="make stock order by product name case insensitive" />
     <MESSAGE value="update installer and app release" />
     <MESSAGE value="update stock check functionality to include expiring and expired stock" />
     <MESSAGE value="version bump to 2.0.0" />
@@ -709,7 +714,16 @@
     <MESSAGE value="Add product name to single ID cards" />
     <MESSAGE value="get data url change in javascript. builds a URL properly now" />
     <MESSAGE value="additional server side changes due to some missed files" />
-    <option name="LAST_COMMIT_MESSAGE" value="additional server side changes due to some missed files" />
+    <MESSAGE value="update installer files" />
+    <MESSAGE value="Add function to disable check for wifi connection on troublesome networks" />
+    <MESSAGE value="Add a few missing IDs for testing purposes" />
+    <MESSAGE value="Fix creating user and resetting passwords not generating an email notification" />
+    <MESSAGE value="Fix access level to change a user's own password" />
+    <MESSAGE value="minor bugfixes in the overview page" />
+    <MESSAGE value="include stock serial and barch numbers and date of manufacture on the stock management page. Search options, table columns, and CSV columns have been added" />
+    <MESSAGE value="Make tables stripey and appease the angry IDE" />
+    <MESSAGE value="bump app version to 3.0.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="bump app version to 3.0.0" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -754,8 +768,11 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/server$device_discovery.coverage" NAME="device_discovery Coverage Results" MODIFIED="1678799345769" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/server$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1678805885622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
+    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1678879981659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../inventory_tracker_testing" />
+    <SUITE FILE_PATH="coverage/server$device_discovery.coverage" NAME="device_discovery Coverage Results" MODIFIED="1679404126189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/server$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1679402160154" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
+    <SUITE FILE_PATH="coverage/server$.coverage" NAME=" Coverage Results" MODIFIED="1678888756720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../inventory_tracker_testing" />
+    <SUITE FILE_PATH="coverage/server$config.coverage" NAME="config Coverage Results" MODIFIED="1678895853838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../inventory_tracker_testing" />
     <SUITE FILE_PATH="coverage/server$scheduleWorker.coverage" NAME="scheduleWorker Coverage Results" MODIFIED="1677689724615" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

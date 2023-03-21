@@ -23,8 +23,10 @@ from flask import (
 from sqlalchemy import delete, update
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from auth import admin_access_required
+from auth import admin_access_required, login_required
 from db import getDbSession, User, close_db
+from emailNotification import sendEmail
+from messages import getUserCreatedMessage, getPasswordResetMessage
 from qrCodeFunctions import generateIdCard
 
 bp = Blueprint('users', __name__)
@@ -78,6 +80,14 @@ def addUser():
     dbSession.add(newUser)
     dbSession.commit()
 
+    if newUser.emailAddress is not None and newUser.emailAddress is not "":
+        message = getUserCreatedMessage(newUser.username, request.form['newPassword'].strip())
+        sendEmail([newUser.emailAddress, ],
+                  "An account on the DigitME2 Inventory Tracker system has been created for you",
+                  message)
+
+
+
     return make_response("New user added", 200)
 
 
@@ -97,17 +107,19 @@ def deleteUser():
 def resetPassword():
     dbSession = getDbSession()
 
-    stmt = update(User)\
-        .where(User.username == request.form["username"])\
-        .values(passwordHash=generate_password_hash("password"))
-    dbSession.execute(stmt)
+    user = dbSession.query(User).filter(User.username == request.form["username"]).first()
+    user.passwordHash = generate_password_hash("password")
     dbSession.commit()
+
+    if user.emailAddress is not None and user.emailAddress is not "":
+        message = getPasswordResetMessage(user.username, "password")
+        sendEmail([user.emailAddress, ], "Your password has been reset", message)
 
     return make_response("password reset", 200)
 
 
 @bp.route("/changePassword", methods=("GET", "POST"))
-@admin_access_required
+@login_required
 def changePassword():
     if request.method == "GET":
         return render_template("changePassword.html")

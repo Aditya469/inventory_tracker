@@ -32,6 +32,7 @@ limitations under the License.
 <div id="contentContainer" class="container mt-2">
 	<input type="hidden" id="userCanCreate" {% if g.user.hasCreateAccess() %}value="1"{%else%}value="0"{% endif %} />
 	<div class="row row-cols-sm-1 row-cols-md-2	">
+
 		<div id="currentJobsContainer" class="col col-md-5 border">
 			<h1>Jobs</h1>
 			<div id="jobsContainerControls" class="row px-2">
@@ -42,6 +43,7 @@ limitations under the License.
 			<div id="jobsTableContainer">
 			</div>
 		</div>
+
 		<div id="stockDisplayContainer" class="col col-md-7 border">
 			<h1>Stock</h1>
 			<div id="stockSearchControls pb-1">
@@ -51,16 +53,16 @@ limitations under the License.
 			<div id="stockTableTabsContainer">
 				<ul class="nav nav-tabs">
 					<li class="nav-item">
-						<a class="nav-link active" href="#totalStockPanel" data-bs-toggle="tab">Total Stock</a>
+						<a id="stockOverviewNavTotal" class="nav-link active" href="#totalStockPanel" data-bs-toggle="tab">Total Stock</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#availableStockPanel" data-bs-toggle="tab">Unassigned Stock</a>
+						<a id="stockOverviewNavAvailable" class="nav-link" href="#availableStockPanel" data-bs-toggle="tab">Unassigned Stock</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#oldStockPanel" data-bs-toggle="tab">Near Expiry</a>
+						<a id="stockOverviewNavOld" class="nav-link" href="#oldStockPanel" data-bs-toggle="tab">Near Expiry</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#expiredStockPanel" data-bs-toggle="tab">Expired</a>
+						<a id="stockOverviewNavExpired" class="nav-link" href="#expiredStockPanel" data-bs-toggle="tab">Expired</a>
 					</li>
 				</ul>
 				<div id="stockOverviewTableContainer" class="tab-content overflow-auto">
