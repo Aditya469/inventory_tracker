@@ -30,7 +30,7 @@ function updateUsersTable(){
         success:function(responseData){
             console.log(responseData);
 
-            var table = $("<table class='table'>");
+            var table = $("<table class='table table-striped'>");
             var header = $("<thead>");
             var headerRow = $("<tr>");
             headerRow.append($("<th>Username</th>"));
@@ -78,7 +78,7 @@ function updateUsersTable(){
                 if(responseData[i].username != "admin") // special case
                 {
                     var idCardLink = $("<a>Download ID card</>")
-                    idCardLink.prop("href", "{{ url_for("users.getUserIdCard", username='')}}/" + responseData[i].username);
+                    idCardLink.prop("href", "{{ url_for('users.getUserIdCard', username='')}}/" + responseData[i].username);
                     row.append($("<th>").append(idCardLink));
                 }
                 else
@@ -181,7 +181,7 @@ function addNewUser(){
         formData.append("newUserId", newUserId);
 
     $.ajax({
-        url: "{{ url_for("users.addUser") }}",
+        url: "{{ url_for('users.addUser') }}",
         type: "POST",
         data: formData,
         processData: false,
@@ -211,7 +211,7 @@ function resetPassword(username){
     formData.append("username", username);
 
     $.ajax({
-        url: "{{ url_for("users.resetPassword") }}",
+        url: "{{ url_for('users.resetPassword') }}",
         type: "POST",
         data: formData,
         processData: false,
@@ -234,7 +234,7 @@ function deleteUser(username){
         formData.append("username", username);
 
         $.ajax({
-            url: "{{ url_for("users.deleteUser") }}",
+            url: "{{ url_for('users.deleteUser') }}",
             type: "POST",
             data: formData,
             processData: false,
@@ -264,7 +264,7 @@ function onUserConfigChanged(element){
     requestJson["receiveDbStatusNotifications"] = row.find(".receiveDbStatusNotificationsCheckbox").is(":checked");
 
     $.ajax({
-        url: "{{ url_for("users.updateUser") }}",
+        url: "{{ url_for('users.updateUser') }}",
         type: "POST",
         data: JSON.stringify(requestJson),
         processData: false,

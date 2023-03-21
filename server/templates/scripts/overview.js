@@ -30,7 +30,7 @@ function updateJobsTable(){
         success:function(responseData){
             console.log(responseData);
 
-            var table = $("<table id='jobsTable' class='table'>");
+            var table = $("<table id='jobsTable' class='table table-striped'>");
             var thead = $("<thead>");
             var tr = $("<tr>");
             tr.append($("<th scope='col'>Job Name</th>"));
@@ -179,7 +179,7 @@ function onExpiredRowClicked(){
 
 function generateOverviewStockTable(stockData, onClickFunction)
 {
-    var table = $("<table class='table'>");
+    var table = $("<table class='table table-striped'>");
     var thead = $("<thead>");
     var tr = $("<tr>");
     tr.append($("<th scope='col'>Product Name</th>"));

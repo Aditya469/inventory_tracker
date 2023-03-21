@@ -92,7 +92,7 @@ function updateStockTable(){
 }
 
 function generateStockTable(stockData){
-    var table = $("<table id='stockTable' class='table'>");
+    var table = $("<table id='stockTable' class='table table-striped'>");
     var thead = $("<thead>");
     var tr = $("<tr>");
     var selectAllCheckbox = $("<input type='checkbox' class='form-check-input' id='selectAllCheckbox'>");

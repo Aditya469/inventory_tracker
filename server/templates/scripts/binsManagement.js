@@ -36,7 +36,7 @@ function addBin(){
     requestParams["locationName"] = newBinName;
 
     $.ajax({
-        url: "{{ url_for("bins.createBin") }}",
+        url: "{{ url_for('bins.createBin') }}",
         type: "POST",
         data: JSON.stringify(requestParams),
         processData: false,
@@ -59,7 +59,7 @@ function deleteBin(binId){
     if(confirm("Delete this bin?")){
         $(this).prop("disabled", true);
         $.ajax({
-            url: "{{ url_for("bins.deleteBin", binId="") }}" + binId,
+            url: "{{ url_for('bins.deleteBin', binId='') }}" + binId,
             type: "POST",
             success: function(){
                 updateBinsTable();
