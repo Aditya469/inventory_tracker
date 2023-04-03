@@ -133,9 +133,9 @@ function generateStockTable(stockData){
             tr.append($("<td>" + "£" + stockData[i].price + "</td>"));
         else
             tr.append("<td>");
-        tr.append($("<td>" + stockData[i].productBarcode + "</td>"));
-        tr.append($("<td>" + stockData[i].batchNumber + "</td>"));
-        tr.append($("<td>" + stockData[i].serialNumber + "</td>"));
+        tr.append($("<td>" + (stockData[i].productBarcode ? stockData[i].productBarcode : "") + "</td>"));
+        tr.append($("<td>" + (stockData[i].batchNumber ? stockData[i].batchNumber : "") + "</td>"));
+        tr.append($("<td>" + (stockData[i].serialNumber ? stockData[i].serialNumber : "") + "</td>"));
         tr.append($("<td>" + stockData[i].dateOfManufacture + "</td>"));
         tr.append($("<td>" + stockData[i].idNumber + "</td>"));
         tbody.append(tr);

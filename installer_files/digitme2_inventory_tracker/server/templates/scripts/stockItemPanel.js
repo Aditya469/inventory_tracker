@@ -61,8 +61,8 @@ function openStockItemPanel(stockItemId){
             $("#location").data("locationUpdated", false);
 
             $("#productTypeName").html(stockItemDetails.productTypeName);
-            $("#serialNumber").val(stockItemDetails.serialNumber);
-            $("#batchNumber").val(stockItemDetails.batchNumber);
+            $("#serialNumber").val(stockItemDetails.serialNumber ? stockItemDetails.serialNumber : "");
+            $("#batchNumber").val(stockItemDetails.batchNumber ? stockItemDetails.batchNumber : "");
             $("#dateOfManufacture").val(stockItemDetails.dateOfManufacture);
             $("#quantityRemaining").val(stockItemDetails.quantityRemaining);
             $("#quantityUnitDisplay").html(stockItemDetails.quantityUnit);
