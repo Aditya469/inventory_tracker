@@ -663,7 +663,7 @@ def updateStock():
 	if "batchNumber" in request.form:
 		stockItem.batchNumber = request.form.get("batchNumber")
 
-	if "dateOfManufacture" in request.form:
+	if "dateOfManufacture" in request.form and request.form.get("dateOfManufacture") != "":
 		dateOfManufacture = datetime.datetime.strptime(request.form.get("dateOfManufacture"), "%Y-%m-%d").date()
 		stockItem.dateOfManufacture = dateOfManufacture
 
