@@ -493,23 +493,44 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
                             etItemBarcode.setText(BarcodeData);
                         }
 
+                        // set displayed product name
                         TextView tvProductName = (TextView) (getActivity()
                                 .findViewById(R.id.etAddStockProductName));
                         tvProductName.setText(mCurrentProduct.Name);
 
+                        // update prompt
                         TextView tvPrompt = (TextView) (getActivity()
                                 .findViewById(R.id.tvAddStockPrompt));
                         tvPrompt.setText(getString(R.string.prompt_add_stock_scan_qr_code));
 
-                        if(mCurrentProduct.CanExpire) {
-                            TableRow trExpiry = (TableRow) getActivity()
-                                    .findViewById(R.id.trAddStockExpiry);
+                        // set visibility of expiry date field. Visible for expiring products only.
+                        TableRow trExpiry = (TableRow) getActivity()
+                                .findViewById(R.id.trAddStockExpiry);
+                        if(mCurrentProduct.CanExpire)
                             trExpiry.setVisibility(View.VISIBLE);
-                        }
+                        else
+                            trExpiry.setVisibility(View.GONE);
+
+                        // if a bulk product, show the bulk quantity field and hide the
+                        // specific item fields
                         if(mCurrentProduct.IsBulkProduct) {
                             TableRow trBulkQty = (TableRow) getActivity()
                                     .findViewById(R.id.trAddStockBulkAddQty);
                             trBulkQty.setVisibility(View.VISIBLE);
+
+                            TableRow trBatchNumber = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockBatchNumber);
+                            trBatchNumber.setVisibility(View.GONE);
+                            TableRow trSerialNumber = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockSerialNumber);
+                            trSerialNumber.setVisibility(View.GONE);
+                            TableRow trDateOfManufacture = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockDateOfManufacture);
+                            trDateOfManufacture.setVisibility(View.GONE);
+
+                            TableRow trSpecQty = (TableRow) getActivity()
+                                    .findViewById(R.id.trAddStockSpecificItemQty);
+                            trSpecQty.setVisibility(View.GONE);
 
                             if(mCurrentProduct.IsAssignedStockId)
                             {
@@ -519,6 +540,8 @@ public class addNewStockFragment extends Fragment implements DatePickerDialog.On
                                 tvPrompt.setText(getString(R.string.prompt_add_stock_scan_bin_qr_code));
                             }
                         }
+
+                        // if a specific item, show the specific item fields and hide the bulk inputs
                         else {
                             TableRow trSpecQty = (TableRow) getActivity()
                                     .findViewById(R.id.trAddStockSpecificItemQty);
