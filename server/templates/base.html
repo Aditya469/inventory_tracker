@@ -39,13 +39,13 @@ limitations under the License.
 	<nav id="nav" class="navbar navbar-expand-xxl navbar-dark bg-primary">
 		<div class="container-fluid">
 
-			<a class="navbar-brand">
+			<div class="navbar-brand">
 				<a href="{{ url_for('overview.getOverview') }}">
 					<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
 				</a>
 				<br>
 				<span id="versionString">Version 3.0.2</span>
-			</a>
+			</div>
 
 			{% if g.user != None %}
 			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
