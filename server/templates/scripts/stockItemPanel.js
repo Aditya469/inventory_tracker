@@ -67,10 +67,24 @@ function openStockItemPanel(stockItemId){
             $("#quantityRemaining").val(stockItemDetails.quantityRemaining);
             $("#quantityUnitDisplay").html(stockItemDetails.quantityUnit);
 
-            if(stockItemDetails.isBulk)
+            if(stockItemDetails.isBulk) {
                 $("#isBulk").html("Yes");
-            else
+                $("#batchNumberLabel").prop("hidden", true);
+                $("#batchNumberContainer").prop("hidden", true);
+                $("#serialNumberLabel").prop("hidden", true);
+                $("#serialNumberContainer").prop("hidden", true);
+                $("#dateOfManufactureLabel").prop("hidden", true);
+                $("#dateOfManufactureContainer").prop("hidden", true);
+            }
+            else {
                 $("#isBulk").html("No");
+                $("#batchNumberLabel").prop("hidden", false);
+                $("#batchNumberContainer").prop("hidden", false);
+                $("#serialNumberLabel").prop("hidden", false);
+                $("#serialNumberContainer").prop("hidden", false);
+                $("#dateOfManufactureLabel").prop("hidden", false);
+                $("#dateOfManufactureContainer").prop("hidden", false);
+            }
 
             if(stockItemDetails.isCheckedIn)
                 $("#isCheckedIn").html("Yes");

@@ -28,18 +28,18 @@ limitations under the License.
                     <label class="col-6 col-form-label" for="productTypeName">Product type:</label>
                     <span class="col-6 editStockPanelInput" id="productTypeName"></span>
 
-                    <label class="col-6 col-form-label" for="batchNumber">Batch number:</label>
-                    <div class="col-6">
+                    <label class="col-6 col-form-label" for="batchNumber" id="batchNumberLabel">Batch number:</label>
+                    <div class="col-6" id="batchNumberContainer">
                         <input class="form-control editStockPanelInput" id="batchNumber" type="text" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                     </div>
 
-                    <label class="col-6 col-form-label" for="serialNumber">Serial number:</label>
-                    <div class="col-6">
+                    <label class="col-6 col-form-label" for="serialNumber" id="serialNumberLabel">Serial number:</label>
+                    <div class="col-6" id="serialNumberContainer">
                         <input class="form-control editStockPanelInput" id="serialNumber" type="text" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                     </div>
 
-                    <label class="col-6 col-form-label" for="dateOfManufacture">Date of manufacture:</label>
-                    <div class="col-6">
+                    <label class="col-6 col-form-label" for="dateOfManufacture" id="dateOfManufactureLabel">Date of manufacture:</label>
+                    <div class="col-6" id="dateOfManufactureContainer">
                         <input class="form-control editStockPanelInput" id="dateOfManufacture" type="date" value="" {% if not g.user.hasCreateAccess() %} disabled {% endif %}>
                     </div>
 
