@@ -17,8 +17,8 @@ limitations under the License.
 import os
 
 from flask import (
-	Blueprint, render_template, session, request, make_response, jsonify,
-	current_app, send_file
+    Blueprint, render_template, session, request, make_response, jsonify,
+    current_app, send_file
 )
 from sqlalchemy import delete, update
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -34,7 +34,7 @@ bp = Blueprint('users', __name__)
 
 @bp.teardown_request
 def afterRequest(self):
-	close_db()
+    close_db()
 
 
 @bp.route('/manageUsers')
@@ -80,13 +80,11 @@ def addUser():
     dbSession.add(newUser)
     dbSession.commit()
 
-    if newUser.emailAddress is not None and newUser.emailAddress is not "":
+    if newUser.emailAddress is not None and newUser.emailAddress != "":
         message = getUserCreatedMessage(newUser.username, request.form['newPassword'].strip())
         sendEmail([newUser.emailAddress, ],
                   "An account on the DigitME2 Inventory Tracker system has been created for you",
                   message)
-
-
 
     return make_response("New user added", 200)
 
@@ -130,8 +128,8 @@ def changePassword():
         if not check_password_hash(currentHashedPassword, request.form["currentPassword"]):
             return make_response("Current password incorrect", 400)
 
-        stmt = update(User)\
-            .where(User.username == session['username'])\
+        stmt = update(User) \
+            .where(User.username == session['username']) \
             .values(passwordHash=generate_password_hash(request.form["newPassword"]))
         dbSession.execute(stmt)
         dbSession.commit()
@@ -149,7 +147,6 @@ def updateUser():
     user.receiveStockNotifications = request.json["receiveStockNotifications"]
     user.receiveDbStatusNotifications = request.json["receiveDbStatusNotifications"]
     user.emailAddress = request.json["emailAddress"]
-
 
     dbSession.commit()
 

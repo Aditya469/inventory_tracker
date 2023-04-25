@@ -71,7 +71,6 @@ def getDbSession():
 	if 'dbSession' not in g:
 		try:
 			dbLock.acquire()
-			print("grab for " + request.path)
 			engine = create_engine(f'sqlite:///{dbPath}', echo=False)
 			Session = sessionmaker(bind=engine)
 			g.dbSession = Session()
@@ -92,7 +91,6 @@ def close_db(e=None):
 		print(e)
 	finally:
 		releaseDbLock()
-		logging.debug("release for " + request.path)
 
 
 def releaseDbLock():
