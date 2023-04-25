@@ -19,6 +19,7 @@ import sys
 
 from flask import Flask
 
+import db
 import paths
 
 
@@ -88,6 +89,11 @@ def create_app():
 
 app = create_app()
 
+
+@app.teardown_request
+def afterRequest(response):
+    db.releaseDbLock()
+
+
 if __name__ == "__main__":
     app.run()
-

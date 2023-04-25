@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,7 @@ import logging
 import sqlite3
 
 from filelock import FileLock, Timeout
-from flask import g, after_this_request
+from flask import g, after_this_request, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from werkzeug.exceptions import abort
@@ -27,6 +27,8 @@ from dbSchema import Base, User, ProductType, Settings, Bin
 from paths import dbPath, dbLockFilePath
 
 dbLock = FileLock(dbLockFilePath, timeout=1)
+
+
 # outsideContextConnectionCount = 0
 # outsideContextSession = None
 
@@ -56,10 +58,11 @@ def initApp(app):
 		# set up an undefined bin location
 		session.add(Bin(
 			id=-1,
-			locationName = "undefined location"
+			locationName="undefined location"
 		))
 
 		session.commit()
+
 
 # app.teardown_appcontext(close_db)
 
@@ -67,7 +70,7 @@ def initApp(app):
 def getDbSession():
 	if 'dbSession' not in g:
 		try:
-			dbLock.acquire(timeout=5)
+			dbLock.acquire()
 			engine = create_engine(f'sqlite:///{dbPath}', echo=False)
 			Session = sessionmaker(bind=engine)
 			g.dbSession = Session()
@@ -87,6 +90,9 @@ def close_db(e=None):
 	except sqlite3.ProgrammingError as e:
 		print(e)
 	finally:
-		dbLock.release(True)
-		logging.debug("dbLock released")
+		releaseDbLock()
+
+
+def releaseDbLock():
+	dbLock.release(True)
 

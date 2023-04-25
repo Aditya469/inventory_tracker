@@ -40,9 +40,11 @@ limitations under the License.
 		<div class="container-fluid">
 
 			<div class="navbar-brand">
-				<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+				<a href="{{ url_for('overview.getOverview') }}">
+					<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+				</a>
 				<br>
-				<span id="versionString">Version 3.0.1</span>
+				<span id="versionString">Version 3.0.2</span>
 			</div>
 
 			{% if g.user != None %}
