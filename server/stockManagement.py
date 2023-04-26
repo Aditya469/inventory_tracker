@@ -56,7 +56,6 @@ def getStockPage():
 		searchTerm = stockItemIdString
 		searchTermType = "stockItemIdString"
 
-
 	showExpiry = False
 	expiryDayCount = request.args.get("expiryDayCount", default=None) 	# note that if this is true, we are expecting to
 																		# see stock that expires within this many days
@@ -130,24 +129,55 @@ def getStockDataFromRequest():
 	).join(ProductType, StockItem.productType == ProductType.id)
 
 	# selection criteria...
+	# text search. If an option is not selected, a blank string that shouldn't match anything is used in place of the
+	# search term for that option. If no options are selected, the search term is ignored.
 	if "searchTerm" in request.args:
 		searchTerm = "%" + request.args.get("searchTerm") + "%"
+		nomatchTerm = "nomatchTerm"
+		atLeastOneOptionSelected = False
+
 		if request.args.get("searchByProductTypeName", default="false") == "true":
-			stmt = stmt.where(ProductType.productName.ilike(searchTerm))
+			atLeastOneOptionSelected = True
+			productSearchTerm = searchTerm
+		else:
+			productSearchTerm = nomatchTerm
 		if request.args.get("searchByIdNumber", default="false") == "true":
-			stmt = stmt.where(StockItem.idString.ilike(searchTerm))
+			atLeastOneOptionSelected = True
+			idSearchTerm = searchTerm
+		else:
+			idSearchTerm = nomatchTerm
 		if request.args.get("searchByBarcode", default="false") == "true":
-			stmt = stmt.where(ProductType.barcode.ilike(searchTerm))
+			atLeastOneOptionSelected = True
+			barcodeSearchTerm = searchTerm
+		else:
+			barcodeSearchTerm = nomatchTerm
 		if request.args.get("searchByDescriptors", default="false") == "true":
-			stmt = stmt.where(or_(
-				ProductType.productDescriptor1.ilike(searchTerm),
-				ProductType.productDescriptor2.ilike(searchTerm),
-				ProductType.productDescriptor3.ilike(searchTerm)
-			))
+			atLeastOneOptionSelected = True
+			descriptorSearchTerm = searchTerm
+		else:
+			descriptorSearchTerm = nomatchTerm
 		if request.args.get("searchBySerialNumber", default="false") == "true":
-			stmt = stmt.where(StockItem.serialNumber.ilike(searchTerm))
+			atLeastOneOptionSelected = True
+			serialNumberSearchTerm = searchTerm
+		else:
+			serialNumberSearchTerm = nomatchTerm
 		if request.args.get("searchByBatchNumber", default="false") == "true":
-			stmt = stmt.where(StockItem.batchNumber.ilike(searchTerm))
+			atLeastOneOptionSelected = True
+			batchNumberSearchTerm = searchTerm
+		else:
+			batchNumberSearchTerm = nomatchTerm
+
+		if atLeastOneOptionSelected:
+			stmt = stmt.where(or_(
+				ProductType.productName.ilike(productSearchTerm),
+				StockItem.idString.ilike(idSearchTerm),
+				ProductType.barcode.ilike(barcodeSearchTerm),
+				ProductType.productDescriptor1.ilike(descriptorSearchTerm),
+				ProductType.productDescriptor2.ilike(descriptorSearchTerm),
+				ProductType.productDescriptor3.ilike(descriptorSearchTerm),
+				StockItem.serialNumber.ilike(serialNumberSearchTerm),
+				StockItem.batchNumber.ilike(batchNumberSearchTerm)
+			))
 
 	if "onlyShowExpirableStock" in request.args:
 		if request.args.get("onlyShowExpirableStock", default="false") == "true":
