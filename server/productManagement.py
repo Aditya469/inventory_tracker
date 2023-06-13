@@ -263,6 +263,7 @@ def performStockCheckAndReport():
 	availableStock = getAvailableStockTotalsDataFromRequest()
 
 	for product in productList:
+		stockQty = None
 		if useAvailableStockTotals:
 			# loop through availableStock to find this product. This is a very ugly way of doing this,
 			# but I'm short of time, so it'll do for now. TODO: rework this into something less cumbersome
